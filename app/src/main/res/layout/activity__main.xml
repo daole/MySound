@@ -27,4 +27,8 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        style="@style/NavigationView" />
+
 </android.support.v4.widget.DrawerLayout>

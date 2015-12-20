@@ -52,6 +52,20 @@
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
+    <style name="NavigationView" parent="Container.WrapContent.Horizontal">
+        <item name="android:layout_gravity">start</item>
+        <item name="headerLayout">@layout/part__drawer_header</item>
+        <item name="menu">@menu/menu__drawer</item>
+    </style>
+
+    <style name="DrawerHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/drawer_header_height</item>
+        <item name="android:padding">@dimen/padding</item>
+        <item name="android:background">?attr/colorPrimaryDark</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark</item>
+    </style>
+
     <style name="Toolbar" parent="Container.WrapContent.Vertical">
         <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="android:background">?attr/colorPrimary</item>
