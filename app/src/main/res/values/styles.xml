@@ -1,0 +1,67 @@
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorAccent">@color/color_accent</item>
+    </style>
+
+    <style name="Container">
+
+    </style>
+
+    <style name="Container.Full" parent="Container">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="Container.WrapContent" parent="Container">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Container.WrapContent.Horizontal" parent="Container.WrapContent">
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="Container.WrapContent.Vertical" parent="Container.WrapContent">
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="Container.WrapContent.Horizontal.OrientationVertical" parent="Container.WrapContent.Horizontal">
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Container.WrapContent.Horizontal.OrientationHorizontal" parent="Container.WrapContent.Horizontal">
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Container.WrapContent.Vertical.OrientationVertical" parent="Container.WrapContent.Vertical">
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Container.WrapContent.Vertical.OrientationHorizontal" parent="Container.WrapContent.Vertical">
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="DrawerLayout" parent="Container.Full">
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:background">@color/window_background</item>
+    </style>
+
+    <style name="AppBarLayout" parent="Container.WrapContent.Vertical">
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <style name="Toolbar" parent="Container.WrapContent.Vertical">
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <style name="Shadow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/shadow_height</item>
+        <item name="android:background">@drawable/toolbar_shadow</item>
+    </style>
+</resources>

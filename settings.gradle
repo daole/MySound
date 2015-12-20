@@ -1,0 +1,3 @@
+include ':app'
+include ':androidBaseLibrary'
+project(':androidBaseLibrary').projectDir = new File(settingsDir, '../AndroidBaseLibrary/app')
