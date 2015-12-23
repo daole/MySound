@@ -25,6 +25,10 @@
 
         </LinearLayout>
 
+        <FrameLayout
+            android:id="@+id/container"
+            style="@style/Container.Full.Padding"/>
+
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">My Sound</string>
 
-    <string name="actionSearch">Search</string>
+    <string name="action__search">Search</string>
+    <string name="title__dialog">Message</string>
+    <string name="message__loading">Loading...</string>
 </resources>

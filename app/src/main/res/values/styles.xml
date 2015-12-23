@@ -6,12 +6,23 @@
     </style>
 
     <style name="Container">
-
     </style>
 
     <style name="Container.Full" parent="Container">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="Container.Full.Padding" parent="Container.Full">
+        <item name="android:padding">@dimen/padding</item>
+    </style>
+
+    <style name="Container.Full.OrientationVertical" parent="Container.Full">
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Container.Full.OrientationHorizontal" parent="Container">
+        <item name="android:orientation">horizontal</item>
     </style>
 
     <style name="Container.WrapContent" parent="Container">
