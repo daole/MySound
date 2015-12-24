@@ -26,7 +26,7 @@ public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewS
 
     @Override
     protected IPresenterSplash createPresenter() {
-        return PresenterFactory.createPresenter(IPresenterSplash.class, this);
+        return (IPresenterSplash) PresenterFactory.createPresenter(IPresenterSplash.class, this);
     }
 
     @Override

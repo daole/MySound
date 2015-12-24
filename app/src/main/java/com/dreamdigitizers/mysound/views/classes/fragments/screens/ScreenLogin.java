@@ -19,7 +19,7 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
 
     @Override
     protected IPresenterLogin createPresenter() {
-        return PresenterFactory.createPresenter(IPresenterLogin.class, this);
+        return (IPresenterLogin) PresenterFactory.createPresenter(IPresenterLogin.class, this);
     }
 
     @Override
