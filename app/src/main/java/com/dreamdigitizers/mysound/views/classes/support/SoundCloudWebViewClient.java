@@ -1,4 +1,4 @@
-package com.dreamdigitizers.mysound.views.support;
+package com.dreamdigitizers.mysound.views.classes.support;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

@@ -1,6 +1,8 @@
 package com.dreamdigitizers.mysound;
 
 public class Constants {
+    public static final int SPLASH_SCREEN_TIME = 3000;
+
     public static final String AMPERSAND = "&";
 
     public static final String SHARED_PREFERENCES_KEY__ACCESS_TOKEN = "access_token";

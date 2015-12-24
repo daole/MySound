@@ -1,4 +1,4 @@
-package com.dreamdigitizers.mysound.views.fragments.screens;
+package com.dreamdigitizers.mysound.views.classes.fragments.screens;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,22 +6,20 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.dreamdigitizers.androidbaselibrary.presenters.PresenterFactory;
-import com.dreamdigitizers.androidbaselibrary.views.fragments.screens.ScreenBase;
+import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
+import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
-import com.dreamdigitizers.mysound.presenters.PresenterLogin;
-import com.dreamdigitizers.mysound.views.IViewLogin;
-import com.dreamdigitizers.mysound.views.support.SoundCloudWebViewClient;
+import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
+import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
+import com.dreamdigitizers.mysound.views.classes.support.SoundCloudWebViewClient;
 
-import java.lang.reflect.InvocationTargetException;
-
-public class ScreenLogin extends ScreenBase implements IViewLogin, SoundCloudWebViewClient.IOnLoginCompleteListener {
+public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLogin, SoundCloudWebViewClient.IOnLoginCompleteListener {
     private WebView mWbvLogin;
 
     @Override
-    protected PresenterLogin createPresenter() throws InvocationTargetException, NoSuchMethodException, java.lang.InstantiationException, IllegalAccessException {
-        return PresenterFactory.createPresenter(PresenterLogin.class, IViewLogin.class, this);
+    protected IPresenterLogin createPresenter() {
+        return PresenterFactory.createPresenter(IPresenterLogin.class, this);
     }
 
     @Override
@@ -49,6 +47,7 @@ public class ScreenLogin extends ScreenBase implements IViewLogin, SoundCloudWeb
 
     @Override
     public void onLoginComplete(String pAccessToken) {
+        this.mPresenter.saveAccessToken(pAccessToken);
         Toast.makeText(this.getContext(), pAccessToken, Toast.LENGTH_LONG).show();
     }
 }

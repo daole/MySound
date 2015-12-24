@@ -1,13 +1,14 @@
-package com.dreamdigitizers.mysound.presenters;
+package com.dreamdigitizers.mysound.presenters.classes;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.dreamdigitizers.androidbaselibrary.presenters.Presenter;
+import com.dreamdigitizers.androidbaselibrary.presenters.classes.Presenter;
 import com.dreamdigitizers.mysound.Constants;
-import com.dreamdigitizers.mysound.views.IViewLogin;
+import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
+import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
 
-public class PresenterLogin extends Presenter {
+class PresenterLogin extends Presenter<IViewLogin> implements IPresenterLogin {
     private SharedPreferences mSharedPreferences;
 
     public PresenterLogin(IViewLogin pView) {
@@ -15,6 +16,7 @@ public class PresenterLogin extends Presenter {
         this.mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getView().getViewContext());
     }
 
+    @Override
     public void saveAccessToken(String pAccessToken) {
         SharedPreferences.Editor editor = this.mSharedPreferences.edit();
         editor.putString(Constants.SHARED_PREFERENCES_KEY__ACCESS_TOKEN, pAccessToken);

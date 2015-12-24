@@ -54,9 +54,12 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="DrawerLayout" parent="Container.Full">
-        <item name="android:fitsSystemWindows">true</item>
+    <style name="Root" parent="Container.Full">
         <item name="android:background">@color/window_background</item>
+    </style>
+
+    <style name="Root.DrawerLayout" parent="Root">
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="AppBarLayout" parent="Container.WrapContent.Vertical">

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_primary_dark">#33691E</color>
-    <color name="color_primary">#558B2F</color>
+    <color name="color_primary_dark">#E65100</color>
+    <color name="color_primary">#FF9800</color>
     <color name="text_color_primary">#FFFFFF</color>
     <color name="color_accent">@color/color_primary_dark</color>
-    <color name="window_background">#DCEDC8</color>
+    <color name="window_background">#FFE0B2</color>
     <color name="navigation_bar_color">@color/color_primary</color>
     <color name="gradient_start">#AA000000</color>
 </resources>

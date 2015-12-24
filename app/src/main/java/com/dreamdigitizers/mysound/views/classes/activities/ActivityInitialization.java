@@ -1,14 +1,14 @@
-package com.dreamdigitizers.mysound.views.activities;
+package com.dreamdigitizers.mysound.views.classes.activities;
 
-import com.dreamdigitizers.androidbaselibrary.views.activities.ActivityBase;
-import com.dreamdigitizers.androidbaselibrary.views.fragments.screens.ScreenBase;
+import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
+import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.R;
-import com.dreamdigitizers.mysound.views.fragments.screens.ScreenLogin;
+import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenLogin;
 
 public class ActivityInitialization extends ActivityBase {
     @Override
     protected void setLayout() {
-        this.setContentView(R.layout.activity__login);
+        this.setContentView(R.layout.activity__initialization);
     }
 
     @Override

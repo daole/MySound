@@ -1,16 +1,14 @@
-package com.dreamdigitizers.mysound.views.activities;
+package com.dreamdigitizers.mysound.views.classes.activities;
 
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.dreamdigitizers.androidbaselibrary.views.activities.ActivityBase;
-import com.dreamdigitizers.androidbaselibrary.views.fragments.screens.ScreenBase;
+import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
+import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.R;
 
 public class ActivityMain extends ActivityBase {

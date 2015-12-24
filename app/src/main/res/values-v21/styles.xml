@@ -1,5 +1,5 @@
 <resources>
-    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimaryDark">@color/color_primary_dark</item>
         <item name="android:colorPrimary">@color/color_primary</item>
         <item name="android:textColorPrimary">@color/text_color_primary</item>
