@@ -10,17 +10,11 @@ import android.view.MenuItem;
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.R;
+import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
 
 public class ActivityMain extends ActivityBase {
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
-
-    /*
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-    */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -62,7 +56,7 @@ public class ActivityMain extends ActivityBase {
 
     @Override
     protected ScreenBase getStartScreen() {
-        return null;
+        return new ScreenHome();
     }
 
     @Override

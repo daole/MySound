@@ -4,13 +4,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
+import com.dreamdigitizers.mysound.views.classes.activities.ActivityMain;
 import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
 import com.dreamdigitizers.mysound.views.classes.support.SoundCloudWebViewClient;
 
@@ -48,6 +48,10 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
     @Override
     public void onLoginComplete(String pAccessToken) {
         this.mPresenter.saveAccessToken(pAccessToken);
-        Toast.makeText(this.getContext(), pAccessToken, Toast.LENGTH_LONG).show();
+        this.goToMainActivity();
+    }
+
+    private void goToMainActivity() {
+        this.changeActivityAndFinish(ActivityMain.class);
     }
 }

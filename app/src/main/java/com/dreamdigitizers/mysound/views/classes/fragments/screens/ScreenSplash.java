@@ -1,6 +1,5 @@
 package com.dreamdigitizers.mysound.views.classes.fragments.screens;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,6 @@ import android.view.ViewGroup;
 
 import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.androidbaselibrary.utils.UtilsString;
-import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
@@ -65,16 +63,10 @@ public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewS
     }
 
     private void goToMainActivity() {
-        this.changeActivity(ActivityMain.class);
+        this.changeActivityAndFinish(ActivityMain.class);
     }
 
     private void goToInitializationActivity() {
-        this.changeActivity(ActivityInitialization.class);
-    }
-
-    private void changeActivity(Class pTargetActivityClass) {
-        Intent intent = new Intent(this.getContext(), pTargetActivityClass);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ((ActivityBase) this.getActivity()).changeActivity(intent, true);
+        this.changeActivityAndFinish(ActivityInitialization.class);
     }
 }
