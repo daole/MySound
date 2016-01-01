@@ -12,6 +12,8 @@ import android.view.View;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
+import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
+import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
 
@@ -30,9 +32,6 @@ public class ActivityMain extends ActivityBase {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            /*case R.id.home:
-                this.mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;*/
             case R.id.actionSearch:
                 return true;
         }
@@ -56,8 +55,7 @@ public class ActivityMain extends ActivityBase {
     protected void mapInformationToItems() {
         this.setSupportActionBar(this.mToolbar);
         this.setUpNavigationDrawer();
-        //ActionBar actionBar = this.getSupportActionBar();
-        //actionBar.setHomeAsUpIndicator(R.drawable.ic__drawer);
+        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID);
     }
 
     @Override
@@ -88,7 +86,6 @@ public class ActivityMain extends ActivityBase {
                         return true;
                     default:
                         return true;
-
                 }
             }
         });

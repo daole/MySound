@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.androidbaselibrary.utils.UtilsString;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
@@ -56,6 +57,7 @@ public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewS
                 if (UtilsString.isEmpty(accessToken)) {
                     ScreenSplash.this.goToInitializationActivity();
                 } else {
+                    Share.bundle.putString(Constants.SHARE_KEY__ACCESS_TOKEN, accessToken);
                     ScreenSplash.this.goToMainActivity();
                 }
             }
