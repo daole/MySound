@@ -34,6 +34,6 @@ public class ScreenHome extends ScreenBase<IPresenterHome> implements IViewHome 
 
     @Override
     protected int getTitle() {
-        return 0;
+        return R.string.title__screen_home;
     }
 }

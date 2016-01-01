@@ -1,9 +1,8 @@
 package com.dreamdigitizers.mysound.views.classes.activities;
 
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -21,6 +20,23 @@ public class ActivityMain extends ActivityBase {
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
+    private int mCurrentSelectedMenuId;
+
+    public ActivityMain() {
+        this.mCurrentSelectedMenuId = R.id.drawer_item__home;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle pOutState) {
+        super.onSaveInstanceState(pOutState);
+        pOutState.putInt(Constants.BUNDLE_KEY__SELECTED_MENU_ID, this.mCurrentSelectedMenuId);
+    }
+
+    @Override
+    protected void recoverInstanceState(Bundle pSavedInstanceState) {
+        super.recoverInstanceState(pSavedInstanceState);
+        this.mCurrentSelectedMenuId = pSavedInstanceState.getInt(Constants.BUNDLE_KEY__SELECTED_MENU_ID);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,7 +76,7 @@ public class ActivityMain extends ActivityBase {
 
     @Override
     protected ScreenBase getStartScreen() {
-        return new ScreenHome();
+        return null;
     }
 
     @Override
@@ -73,22 +89,11 @@ public class ActivityMain extends ActivityBase {
             @Override
             public boolean onNavigationItemSelected(MenuItem pMenuItem) {
                 ActivityMain.this.mDrawerLayout.closeDrawers();
-                pMenuItem.setChecked(true);
-
-                switch (pMenuItem.getItemId()){
-                    case R.id.drawer_item__home:
-                        return true;
-                    case R.id.drawer_item__sounds:
-                        return true;
-                    case R.id.drawer_item__playlists:
-                        return true;
-                    case R.id.drawer_item__favorites:
-                        return true;
-                    default:
-                        return true;
-                }
+                int id = pMenuItem.getItemId();
+                return ActivityMain.this.navigationItemSelected(id);
             }
         });
+        this.navigationItemSelected(this.mCurrentSelectedMenuId);
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -109,5 +114,23 @@ public class ActivityMain extends ActivityBase {
 
         this.mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+    }
+
+    private boolean navigationItemSelected(int pId) {
+        this.mNavigationView.setCheckedItem(pId);
+        this.mCurrentSelectedMenuId = pId;
+        switch (pId) {
+            case R.id.drawer_item__home:
+                this.changeScreen(new ScreenHome());
+                return true;
+            case R.id.drawer_item__sounds:
+                return true;
+            case R.id.drawer_item__playlists:
+                return true;
+            case R.id.drawer_item__favorites:
+                return true;
+            default:
+                return true;
+        }
     }
 }

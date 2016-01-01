@@ -60,7 +60,7 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
 
     @Override
     public void onPageStarted(WebView pWebView, String pUrl, Bitmap pFavicon) {
-        UtilsDialog.displayNetworkProgressDialog(
+        UtilsDialog.showNetworkProgressDialog(
                 this.getActivity(),
                 this.getString(R.string.title__dialog),
                 this.getString(R.string.message__loading));
@@ -68,7 +68,7 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
 
     @Override
     public void onPageFinished(WebView pWebView, String pUrl) {
-        UtilsDialog.closeNetworkProgressDialog();
+        UtilsDialog.hideNetworkProgressDialog();
     }
 
     @Override
