@@ -2,7 +2,15 @@
     <string name="title__app_name">My Sound</string>
     <string name="title__dialog">Message</string>
 
+    <string name="drawer_item__home">Home</string>
+    <string name="drawer_item__sounds">Sounds</string>
+    <string name="drawer_item__playlists">Playlists</string>
+    <string name="drawer_item__favorites">Favorites</string>
+
     <string name="action__search">Search</string>
 
     <string name="message__loading">Loading...</string>
+
+    <string name="desc__navigation_drawer_open">Open navigation drawer</string>
+    <string name="desc__navigation_drawer_close">Close navigation drawer</string>
 </resources>

@@ -92,4 +92,30 @@
         <item name="android:layout_height">@dimen/shadow_height</item>
         <item name="android:background">@drawable/toolbar_shadow</item>
     </style>
+
+    <style name="TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    </style>
+
+    <style name="TextView.Profile.Username" parent="TextView">
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginLeft">@dimen/margin</item>
+        <item name="android:textSize">@dimen/profile_username_text_size</item>
+    </style>
+
+    <style name="ImageView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="ImageView.Profile" parent="ImageView">
+        <item name="android:layout_width">@dimen/profile_image_width</item>
+        <item name="android:layout_height">@dimen/profile_image_height</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:src">@drawable/ic__default_profile</item>
+    </style>
 </resources>

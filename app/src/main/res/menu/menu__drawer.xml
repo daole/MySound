@@ -1,4 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/drawer_item__home"
+            android:checked="false"
+            android:icon="@drawable/ic__home"
+            android:title="@string/drawer_item__home" />
+
+        <item
+            android:id="@+id/drawer_item__sounds"
+            android:checked="false"
+            android:icon="@drawable/ic__sound"
+            android:title="@string/drawer_item__sounds" />
+
+        <item
+            android:id="@+id/drawer_item__playlists"
+            android:checked="false"
+            android:icon="@drawable/ic__playlist"
+            android:title="@string/drawer_item__playlists" />
+
+        <item
+            android:id="@+id/drawer_item__favorites"
+            android:checked="false"
+            android:icon="@drawable/ic__favorite"
+            android:title="@string/drawer_item__favorites" />
+
+    </group>
 
 </menu>
