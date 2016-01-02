@@ -5,12 +5,12 @@
     style="@style/DrawerHeader">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imgProfile"
+        android:id="@+id/imgAvatar"
         style="@style/ImageView.Profile" />
 
     <TextView
-        android:id="@+id/lblUsername"
-        android:layout_toRightOf="@id/imgProfile"
+        android:id="@+id/lblMyName"
+        android:layout_toRightOf="@id/imgAvatar"
         android:layout_centerVertical="true"
         style="@style/TextView.Profile.Username" />
 

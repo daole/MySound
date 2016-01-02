@@ -1,10 +1,10 @@
 package com.dreamdigitizers.mysound.presenters.classes;
 
 import com.dreamdigitizers.androidbaselibrary.presenters.classes.Presenter;
+import com.dreamdigitizers.androidbaselibrary.utils.UtilsDialog;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
-import com.dreamdigitizers.androidsoundcloudapi.models.User;
-import com.dreamdigitizers.mysound.Constants;
-import com.dreamdigitizers.mysound.Share;
+import com.dreamdigitizers.androidsoundcloudapi.models.Me;
+import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterHome;
 import com.dreamdigitizers.mysound.views.interfaces.IViewHome;
 
@@ -20,41 +20,61 @@ class PresenterHome extends Presenter<IViewHome> implements IPresenterHome {
         super(pView);
     }
 
-    public void retrieveUserData() {
-        this.mSubscription = ApiFactory.getApiInstance().meRx(Share.bundle.getString(Constants.SHARE_KEY__ACCESS_TOKEN))
+    @Override
+    public void dispose() {
+        super.dispose();
+        if(this.mSubscription != null) {
+            this.mSubscription.unsubscribe();
+        }
+    }
+
+    @Override
+    public void me(final String pAccessToken) {
+        this.mSubscription = ApiFactory.getApiInstance().meRx(pAccessToken)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<User>() {
+                .subscribe(new Subscriber<Me>() {
                     @Override
                     public void onStart() {
                         IViewHome view = PresenterHome.this.getView();
-                        if(view != null) {
-                            view.showProgress();
+                        if (view != null) {
+                            view.showNetworkProgress();
                         }
                     }
 
                     @Override
                     public void onCompleted() {
                         IViewHome view = PresenterHome.this.getView();
-                        if(view != null) {
-                            view.hideProgress();
+                        if (view != null) {
+                            view.hideNetworkProgress();
                         }
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(Throwable pError) {
                         IViewHome view = PresenterHome.this.getView();
-                        if(view != null) {
-                            view.hideProgress();
+                        if (view != null) {
+                            view.hideNetworkProgress();
+                            view.showRetryableError(
+                                    R.string.error__retryable_network_error,
+                                    false,
+                                    new UtilsDialog.IRetryAction() {
+                                        @Override
+                                        public void retry() {
+                                            PresenterHome.this.me(pAccessToken);
+                                        }
+                                    });
                         }
+
+                        pError.printStackTrace();
                     }
 
                     @Override
-                    public void onNext(User pUser) {
+                    public void onNext(Me pMe) {
                         IViewHome view = PresenterHome.this.getView();
-                        if(view != null) {
-                            view.hideProgress();
+                        if (view != null) {
+                            view.dispatchMe(pMe);
                         }
                     }
                 });

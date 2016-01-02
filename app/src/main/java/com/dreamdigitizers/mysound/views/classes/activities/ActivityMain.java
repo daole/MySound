@@ -2,24 +2,34 @@ package com.dreamdigitizers.mysound.views.classes.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
+import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
+import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ActivityMain extends ActivityBase {
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
+    private CircleImageView mImgAvatar;
+    private TextView mLblMyName;
+
     private int mCurrentSelectedMenuId;
 
     public ActivityMain() {
@@ -65,13 +75,28 @@ public class ActivityMain extends ActivityBase {
         this.mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         this.mToolbar = (Toolbar) this.findViewById(R.id.toolbar);
         this.mNavigationView = (NavigationView) this.findViewById(R.id.navigationView);
+        this.mImgAvatar = (CircleImageView) this.mNavigationView.getHeaderView(0).findViewById(R.id.imgAvatar);
+        this.mLblMyName = (TextView) this.mNavigationView.getHeaderView(0).findViewById(R.id.lblMyName);
     }
 
     @Override
     protected void mapInformationToItems() {
         this.setSupportActionBar(this.mToolbar);
         this.setUpNavigationDrawer();
+
         ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID);
+        Share.registerListener(new Share.OnDataChanged() {
+            @Override
+            public void onMeChanged(Me pNewMe, Me pOldMe) {
+                Picasso
+                        .with(ActivityMain.this)
+                        .load(pNewMe.getAvatarUrl())
+                        .placeholder(ContextCompat.getDrawable(ActivityMain.this, R.drawable.ic__default_profile))
+                        .error(ContextCompat.getDrawable(ActivityMain.this, R.drawable.ic__default_profile))
+                        .into(ActivityMain.this.mImgAvatar);
+                ActivityMain.this.mLblMyName.setText(pNewMe.getFullName());
+            }
+        });
     }
 
     @Override

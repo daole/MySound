@@ -57,7 +57,7 @@ public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewS
                 if (UtilsString.isEmpty(accessToken)) {
                     ScreenSplash.this.goToInitializationActivity();
                 } else {
-                    Share.bundle.putString(Constants.SHARE_KEY__ACCESS_TOKEN, accessToken);
+                    Share.setAccessToken(accessToken);
                     ScreenSplash.this.goToMainActivity();
                 }
             }

@@ -74,7 +74,7 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
     @Override
     public void onLoginComplete(String pAccessToken) {
         this.mPresenter.saveAccessToken(pAccessToken);
-        Share.bundle.putString(Constants.SHARE_KEY__ACCESS_TOKEN, pAccessToken);
+        Share.setAccessToken(pAccessToken);
         this.goToMainActivity();
     }
 
