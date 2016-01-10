@@ -12,6 +12,13 @@
     <string name="drawer_item__favorites">Favorites</string>
 
     <string name="action__search">Search</string>
+    <string name="action__play">Play</string>
+    <string name="action__pause">Pause</string>
+    <string name="action__stop">Stop</string>
+    <string name="action__skip_to_previous">Previous</string>
+    <string name="action__skip_to_next">Next</string>
+    <string name="action__rewind">Rewind</string>
+    <string name="action__fast_forward">Forward</string>
 
     <string name="desc__navigation_drawer_open">Open navigation drawer</string>
     <string name="desc__navigation_drawer_close">Close navigation drawer</string>

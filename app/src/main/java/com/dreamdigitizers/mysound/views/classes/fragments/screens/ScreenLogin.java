@@ -63,7 +63,7 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
         UtilsDialog.showNetworkProgressDialog(
                 this.getActivity(),
                 this.getString(R.string.title__dialog),
-                this.getString(R.string.message__loading));
+                this.getString(R.string.message__loading___));
     }
 
     @Override

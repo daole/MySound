@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dreamdigitizers.mysound" >
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <application
         android:allowBackup="true"
@@ -27,7 +29,31 @@
             android:name=".views.classes.activities.ActivityMain"
             android:configChanges="orientation|screenSize|locale"
             android:windowSoftInputMode="stateUnspecified|adjustResize" >
+            <intent-filter>
+                <action android:name="com.dreamdigitizers.mysound.views.classes.activities.ActivityMain" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
+
+        <service android:name=".views.classes.services.ServicePlayback" >
+            <intent-filter>
+                <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.TOGGLE_PLAYBACK" />
+                <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.PLAY" />
+                <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.PAUSE" />
+                <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.STOP" />
+                <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.SKIP_TO_PREVIOUS" />
+                <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.SKIP_TO_NEXT" />
+                <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.REWIND" />
+                <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.FAST_FORWARD" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer$MediaButtonReceiver" >
+            <intent-filter>
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
