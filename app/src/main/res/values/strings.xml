@@ -20,6 +20,14 @@
     <string name="action__rewind">Rewind</string>
     <string name="action__fast_forward">Forward</string>
 
+    <string name="media_description_title__new">New</string>
+    <string name="media_description_title__favorite">Favorite</string>
+    <string name="media_description_title__playlist">Playlist</string>
+
+    <string name="media_description_subtitle__new">New Sounds</string>
+    <string name="media_description_subtitle__favorite">Favorite Sounds</string>
+    <string name="media_description_subtitle__playlist">Sounds in playlist</string>
+
     <string name="desc__navigation_drawer_open">Open navigation drawer</string>
     <string name="desc__navigation_drawer_close">Close navigation drawer</string>
 </resources>

@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".views.classes.services.ServicePlayback" >
+        <service android:name=".views.classes.services.OldServicePlayback" >
             <intent-filter>
                 <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.TOGGLE_PLAYBACK" />
                 <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.PLAY" />
@@ -47,13 +47,6 @@
                 <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.FAST_FORWARD" />
             </intent-filter>
         </service>
-
-        <receiver android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer$MediaButtonReceiver" >
-            <intent-filter>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

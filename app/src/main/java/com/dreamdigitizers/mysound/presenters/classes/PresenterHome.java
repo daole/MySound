@@ -23,17 +23,18 @@ class PresenterHome extends Presenter<IViewHome> implements IPresenterHome {
     @Override
     public void dispose() {
         super.dispose();
-        if(this.mSubscription != null) {
-            this.mSubscription.unsubscribe();
-        }
+        this.unsubscribe();
     }
 
     @Override
     public void me(final String pAccessToken) {
-        this.mSubscription = ApiFactory.getApiInstance().meRx(pAccessToken)
+        this.unsubscribe();
+
+        this.mSubscription = ApiFactory.getApiInstance()
+                .meRx(pAccessToken)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Me>() {
                     @Override
                     public void onStart() {
@@ -78,5 +79,11 @@ class PresenterHome extends Presenter<IViewHome> implements IPresenterHome {
                         }
                     }
                 });
+    }
+
+    private void unsubscribe() {
+        if(this.mSubscription != null) {
+            this.mSubscription.unsubscribe();
+        }
     }
 }

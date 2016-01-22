@@ -3,6 +3,7 @@ package com.dreamdigitizers.mysound.views.classes.activities;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
-import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
@@ -24,7 +24,10 @@ import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ActivityMain extends ActivityBase {
+    public static final String EXTRA__CURRENT_MEDIA_DESCRIPTION = "current_media_description";
+
     private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
     private CircleImageView mImgAvatar;
@@ -34,6 +37,21 @@ public class ActivityMain extends ActivityBase {
 
     public ActivityMain() {
         this.mCurrentSelectedMenuId = R.id.drawer_item__home;
+    }
+
+    @Override
+    protected boolean handleNeededBackProcess() {
+        if (this.mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            this.mDrawerLayout.closeDrawers();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onPostCreate(Bundle pSavedInstanceState) {
+        super.onPostCreate(pSavedInstanceState);
+        this.mActionBarDrawerToggle.syncState();
     }
 
     @Override
@@ -84,7 +102,6 @@ public class ActivityMain extends ActivityBase {
         this.setSupportActionBar(this.mToolbar);
         this.setUpNavigationDrawer();
 
-        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID);
         Share.registerListener(new Share.OnDataChanged() {
             @Override
             public void onMeChanged(Me pNewMe, Me pOldMe) {
@@ -120,7 +137,7 @@ public class ActivityMain extends ActivityBase {
         });
         this.navigationItemSelected(this.mCurrentSelectedMenuId);
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
+        this.mActionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 this.mDrawerLayout,
                 this.mToolbar,
@@ -137,8 +154,7 @@ public class ActivityMain extends ActivityBase {
             }
         };
 
-        this.mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
+        this.mDrawerLayout.setDrawerListener(this.mActionBarDrawerToggle);
     }
 
     private boolean navigationItemSelected(int pId) {

@@ -56,6 +56,11 @@ public class Share {
         }
     }
 
+    public static void dispose() {
+        Share.bundle.clear();
+        Share.listeners.clear();
+    }
+
     public interface IOnDataChanged {
         void onAccessTokenChanged(String pNewValue, String pOldValue);
         void onMeChanged(Me pNewMe, Me pOldMe);
