@@ -6,14 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-import com.dreamdigitizers.androidbaselibrary.utils.UtilsDialog;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
+import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.support.SoundCloudWebViewClient;
-import com.dreamdigitizers.mysound.Share;
-import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
-import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
+import com.dreamdigitizers.mysound.Share;
+import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
 import com.dreamdigitizers.mysound.views.classes.activities.ActivityMain;
 import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;

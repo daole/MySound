@@ -3,12 +3,12 @@ package com.dreamdigitizers.mysound.presenters.classes;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.dreamdigitizers.androidbaselibrary.presenters.classes.Presenter;
+import com.dreamdigitizers.androidbaselibrary.presenters.classes.PresenterBase;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
 import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
 
-class PresenterLogin extends Presenter<IViewLogin> implements IPresenterLogin {
+class PresenterLogin extends PresenterBase<IViewLogin> implements IPresenterLogin {
     private SharedPreferences mSharedPreferences;
 
     public PresenterLogin(IViewLogin pView) {

@@ -1,7 +1,7 @@
 package com.dreamdigitizers.mysound.presenters.classes;
 
-import com.dreamdigitizers.androidbaselibrary.presenters.interfaces.IPresenter;
-import com.dreamdigitizers.androidbaselibrary.views.interfaces.IView;
+import com.dreamdigitizers.androidbaselibrary.presenters.interfaces.IPresenterBase;
+import com.dreamdigitizers.androidbaselibrary.views.interfaces.IViewBase;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterHome;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
@@ -12,9 +12,9 @@ import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSplash;
 
 public class PresenterFactory {
-    private static final String ERROR_MESSAGE__PRESENTER_NOT_FOUND = "There is no such Presenter class.";
+    private static final String ERROR_MESSAGE__PRESENTER_NOT_FOUND = "There is no such PresenterBase class.";
 
-    public static IPresenter createPresenter(Class pPresenterClass, IView pView) {
+    public static IPresenterBase createPresenter(Class pPresenterClass, IViewBase pView) {
         if(pPresenterClass.isAssignableFrom(IPresenterPlayback.class)) {
             return new PresenterPlayback((IViewPlayback) pView);
         }

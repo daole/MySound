@@ -5,16 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.dreamdigitizers.mysound.Share;
-import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
-import com.dreamdigitizers.androidbaselibrary.utils.UtilsString;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
+import com.dreamdigitizers.mysound.Share;
+import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSplash;
-import com.dreamdigitizers.mysound.views.interfaces.IViewSplash;
 import com.dreamdigitizers.mysound.views.classes.activities.ActivityInitialization;
 import com.dreamdigitizers.mysound.views.classes.activities.ActivityMain;
+import com.dreamdigitizers.mysound.views.interfaces.IViewSplash;
 
 public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewSplash {
     private Handler mHandler;

@@ -1,10 +1,10 @@
 package com.dreamdigitizers.mysound.presenters.interfaces;
 
-import com.dreamdigitizers.androidbaselibrary.presenters.interfaces.IPresenter;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 
-public interface IPresenterPlayback extends IPresenter {
-    void tracks();
-    void userFavorites(int pId);
-    void playlists(int pId);
-    void playlist(int pId);
+public interface IPresenterPlayback extends IPresenterRx {
+    void tracks(UtilsDialog.IRetryAction pRetryAction);
+    void userFavorites(int pId, UtilsDialog.IRetryAction pRetryAction);
+    void playlists(int pId, UtilsDialog.IRetryAction pRetryAction);
+    void playlist(int pId, UtilsDialog.IRetryAction pRetryAction);
 }

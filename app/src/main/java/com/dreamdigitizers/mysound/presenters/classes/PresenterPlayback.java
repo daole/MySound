@@ -1,6 +1,6 @@
 package com.dreamdigitizers.mysound.presenters.classes;
 
-import com.dreamdigitizers.androidbaselibrary.presenters.classes.Presenter;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
@@ -13,7 +13,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class PresenterPlayback extends Presenter<IViewPlayback> implements IPresenterPlayback {
+class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenterPlayback {
     private Subscription mSubscription;
 
     public PresenterPlayback(IViewPlayback pView) {
@@ -27,7 +27,7 @@ public class PresenterPlayback extends Presenter<IViewPlayback> implements IPres
     }
 
     @Override
-    public void tracks() {
+    public void tracks(final UtilsDialog.IRetryAction pRetryAction) {
         this.unsubscribe();
         this.mSubscription = ApiFactory.getApiInstance()
                 .tracksRx()
@@ -37,25 +37,31 @@ public class PresenterPlayback extends Presenter<IViewPlayback> implements IPres
                 .subscribe(new Subscriber<List<Track>>() {
                     @Override
                     public void onStart() {
-                    }
-
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable pError) {
-                        pError.printStackTrace();
+                        PresenterPlayback.this.onStart();
                     }
 
                     @Override
                     public void onNext(List<Track> pTracks) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxNewTracksNext(pTracks);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
                     }
                 });
     }
 
     @Override
-    public void userFavorites(int pId) {
+    public void userFavorites(final int pId, final UtilsDialog.IRetryAction pRetryAction) {
         this.unsubscribe();
         this.mSubscription = ApiFactory.getApiInstance()
                 .userFavoritesRx(pId)
@@ -65,36 +71,43 @@ public class PresenterPlayback extends Presenter<IViewPlayback> implements IPres
                 .subscribe(new Subscriber<List<Track>>() {
                     @Override
                     public void onStart() {
-                    }
-
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable pError) {
-                        pError.printStackTrace();
+                        PresenterPlayback.this.onStart();
                     }
 
                     @Override
                     public void onNext(List<Track> pTracks) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxFavoritesNext(pTracks);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
                     }
                 });
     }
 
     @Override
-    public void playlists(int pId) {
+    public void playlists(final int pId, final UtilsDialog.IRetryAction pRetryAction) {
 
     }
 
     @Override
-    public void playlist(int pId) {
+    public void playlist(final int pId, final UtilsDialog.IRetryAction pRetryAction) {
 
     }
 
     private void unsubscribe() {
         if(this.mSubscription != null) {
             this.mSubscription.unsubscribe();
+            this.mSubscription = null;
         }
     }
 }

@@ -1,6 +1,13 @@
 package com.dreamdigitizers.mysound.views.interfaces;
 
-import com.dreamdigitizers.androidbaselibrary.views.interfaces.IView;
+import com.dreamdigitizers.androidsoundcloudapi.models.Playlist;
+import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 
-public interface IViewPlayback extends IView {
+import java.util.List;
+
+public interface IViewPlayback extends IViewRx {
+    void onRxNewTracksNext(List<Track> pTracks);
+    void onRxFavoritesNext(List<Track> pTracks);
+    void onRxPlaylistsNext(List<Playlist> pTracks);
+    void onRxPlaylistNext(List<Track> pTracks);
 }

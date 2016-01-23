@@ -1,7 +1,7 @@
 package com.dreamdigitizers.mysound.presenters.interfaces;
 
-import com.dreamdigitizers.androidbaselibrary.presenters.interfaces.IPresenter;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 
-public interface IPresenterHome extends IPresenter {
-    void me(String pAccessToken);
+public interface IPresenterHome extends IPresenterRx {
+    void me(String pAccessToken, UtilsDialog.IRetryAction pRetryAction);
 }

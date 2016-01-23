@@ -2,7 +2,6 @@ package com.dreamdigitizers.mysound.views.classes.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,8 +17,8 @@ import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.Share;
+import com.dreamdigitizers.mysound.utilities.UtilsImage;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
-import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -105,12 +104,7 @@ public class ActivityMain extends ActivityBase {
         Share.registerListener(new Share.OnDataChanged() {
             @Override
             public void onMeChanged(Me pNewMe, Me pOldMe) {
-                Picasso
-                        .with(ActivityMain.this)
-                        .load(pNewMe.getAvatarUrl())
-                        .placeholder(ContextCompat.getDrawable(ActivityMain.this, R.drawable.ic__default_profile))
-                        .error(ContextCompat.getDrawable(ActivityMain.this, R.drawable.ic__default_profile))
-                        .into(ActivityMain.this.mImgAvatar);
+                UtilsImage.loadBitmap(ActivityMain.this, pNewMe.getAvatarUrl(), R.drawable.ic__default_profile, ActivityMain.this.mImgAvatar);
                 ActivityMain.this.mLblMyName.setText(pNewMe.getFullName());
             }
         });
