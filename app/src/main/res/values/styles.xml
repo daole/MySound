@@ -17,6 +17,16 @@
         <item name="android:padding">@dimen/padding</item>
     </style>
 
+    <style name="Container.Full.PaddingVertical" parent="Container.Full">
+        <item name="android:paddingTop">@dimen/padding</item>
+        <item name="android:paddingBottom">@dimen/padding</item>
+    </style>
+
+    <style name="Container.Full.PaddingHorizontal" parent="Container.Full">
+        <item name="android:paddingLeft">@dimen/padding</item>
+        <item name="android:paddingRight">@dimen/padding</item>
+    </style>
+
     <style name="Container.Full.OrientationVertical" parent="Container.Full">
         <item name="android:orientation">vertical</item>
     </style>
@@ -36,6 +46,14 @@
 
     <style name="Container.WrapContent.Vertical" parent="Container.WrapContent">
         <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="Container.WrapContent.Vertical.Row" parent="Container.WrapContent.Vertical">
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Container.WrapContent.Vertical.Row.WithPadding" parent="Container.WrapContent.Vertical.Row">
+        <item name="android:padding">@dimen/padding</item>
     </style>
 
     <style name="Container.WrapContent.Horizontal.OrientationVertical" parent="Container.WrapContent.Horizontal">
@@ -105,17 +123,57 @@
         <item name="android:textSize">@dimen/profile_username_text_size</item>
     </style>
 
+    <style name="TextView.ListItem" parent="TextView">
+    </style>
+
+    <style name="TextView.ListItem.Primary" parent="TextView.ListItem">
+        <item name="android:textColor">@color/text_color_primary</item>
+    </style>
+
+    <style name="TextView.ListItem.Secondary" parent="TextView.ListItem">
+        <item name="android:textColor">@color/text_color_secondary</item>
+    </style>
+
+    <style name="TextView.ListItem.Primary.Dark" parent="TextView.ListItem.Primary">
+        <item name="android:textColor">@color/text_color_primary_dark</item>
+    </style>
+
+    <style name="TextView.ListItem.Secondary.Dark" parent="TextView.ListItem.Secondary">
+        <item name="android:textColor">@color/text_color_secondary_dark</item>
+    </style>
+
+    <style name="TextView.ListItem.Secondary.Dark.Username" parent="TextView.ListItem.Secondary.Dark">
+        <item name="android:layout_marginLeft">@dimen/margin</item>
+    </style>
+
+    <style name="TextView.ListItem.Secondary.Dark.Duration" parent="TextView.ListItem.Secondary.Dark">
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+
+    <style name="TextView.ListItem.Secondary.Dark.PlaybackCount" parent="TextView.ListItem.Secondary.Dark">
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
     <style name="ImageView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:scaleType">centerInside</item>
     </style>
 
-    <style name="ImageView.Profile" parent="ImageView">
+    <style name="ImageView.Logo" parent="ImageView">
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:src">@drawable/ic__my_music</item>
+    </style>
+
+    <style name="ImageView.Avatar" parent="ImageView">
         <item name="android:layout_width">@dimen/profile_image_width</item>
         <item name="android:layout_height">@dimen/profile_image_height</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:scaleType">centerCrop</item>
         <item name="android:src">@drawable/ic__default_profile</item>
+    </style>
+
+    <style name="ImageView.PlaybackCount" parent="ImageView">
+        <item name="android:src">@drawable/ic__play</item>
     </style>
 </resources>

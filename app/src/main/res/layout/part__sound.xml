@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:support="http://schemas.android.com/apk/res-auto"
+    support:cardUseCompatPadding="true"
+    support:cardElevation="1dp"
+    style="@style/Container.WrapContent.Vertical" >
+
+    <RelativeLayout
+        style="@style/Container.WrapContent.Vertical.Row.WithPadding" >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgAvatar"
+            style="@style/ImageView.Avatar" />
+
+        <TextView
+            android:id="@+id/lblUsername"
+            android:layout_toRightOf="@id/imgAvatar"
+            style="@style/TextView.ListItem.Secondary.Dark.Username" />
+
+        <TextView
+            android:id="@+id/lblDuration"
+            android:layout_alignBaseline="@id/lblUsername"
+            style="@style/TextView.ListItem.Secondary.Dark.Duration" />
+
+        <TextView
+            android:id="@+id/lblTitle"
+            android:layout_below="@id/lblUsername"
+            android:layout_alignLeft="@id/lblUsername"
+            style="@style/TextView.ListItem.Primary.Dark" />
+
+        <RelativeLayout
+            android:layout_below="@id/lblTitle"
+            android:layout_alignLeft="@id/lblTitle"
+            style="@style/Container.WrapContent.Vertical.Row" >
+
+            <ImageView
+                android:id="@+id/imgPlaybackCount"
+                style="@style/ImageView.PlaybackCount" />
+
+            <TextView
+                android:id="@+id/lblPlaybackCount"
+                android:layout_toRightOf="@id/imgPlaybackCount"
+                style="@style/TextView.ListItem.Secondary.Dark.PlaybackCount" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

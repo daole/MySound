@@ -13,12 +13,14 @@ import android.widget.TextView;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
+import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.utilities.UtilsImage;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
+import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenSounds;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -101,6 +103,7 @@ public class ActivityMain extends ActivityBase {
         this.setSupportActionBar(this.mToolbar);
         this.setUpNavigationDrawer();
 
+        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
         Share.registerListener(new Share.OnDataChanged() {
             @Override
             public void onMeChanged(Me pNewMe, Me pOldMe) {
@@ -154,18 +157,31 @@ public class ActivityMain extends ActivityBase {
     private boolean navigationItemSelected(int pId) {
         this.mNavigationView.setCheckedItem(pId);
         this.mCurrentSelectedMenuId = pId;
+        ScreenBase screenBase = null;
+
         switch (pId) {
             case R.id.drawer_item__home:
-                this.changeScreen(new ScreenHome());
-                return true;
+                if (!(this.mCurrentScreen instanceof ScreenHome)) {
+                    screenBase = new ScreenHome();
+                }
+                break;
             case R.id.drawer_item__sounds:
-                return true;
+                if (!(this.mCurrentScreen instanceof ScreenSounds)) {
+                    screenBase = new ScreenSounds();
+                }
+                break;
             case R.id.drawer_item__playlists:
-                return true;
+                break;
             case R.id.drawer_item__favorites:
-                return true;
+                break;
             default:
-                return true;
+                break;
         }
+
+        if(screenBase != null) {
+            this.changeScreen(screenBase);
+        }
+
+        return true;
     }
 }

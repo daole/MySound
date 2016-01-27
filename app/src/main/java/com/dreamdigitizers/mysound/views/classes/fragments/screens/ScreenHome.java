@@ -31,7 +31,10 @@ public class ScreenHome extends ScreenRx<IPresenterHome> implements IViewHome {
 
     @Override
     protected void mapInformationToScreenItems(View pView) {
-        this.me();
+        Me me = Share.getMe();
+        if (me == null) {
+            this.me();
+        }
     }
 
     @Override

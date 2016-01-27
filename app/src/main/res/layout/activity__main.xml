@@ -24,11 +24,11 @@
             <View
                 style="@style/Shadow" />
 
-        </LinearLayout>
+            <FrameLayout
+                android:id="@+id/container"
+                style="@style/Container.Full"/>
 
-        <FrameLayout
-            android:id="@+id/container"
-            style="@style/Container.Full.Padding"/>
+        </LinearLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 

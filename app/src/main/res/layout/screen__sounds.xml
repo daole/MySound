@@ -5,4 +5,8 @@
     style="@style/Container.Full"
     tools:context=".views.classes.activities.ActivityMain" >
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lstSounds"
+        style="@style/Container.Full" />
+
 </RelativeLayout>

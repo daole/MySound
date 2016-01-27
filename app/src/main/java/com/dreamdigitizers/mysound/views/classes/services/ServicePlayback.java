@@ -39,7 +39,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private static final int ICON_HEIGHT = 128;
 
     public static final String MEDIA_ID__ROOT = "__ROOT__";
-    public static final String MEDIA_ID__NEW = "__NEW__";
+    public static final String MEDIA_ID__SOUNDS = "__SOUNDS__";
     public static final String MEDIA_ID__FAVORITES = "__FAVORITES__";
     public static final String MEDIA_ID__PLAYLISTS = "__PLAYLISTS__";
     public static final String MEDIA_ID__PLAYLIST = "__PLAYLIST__";
@@ -59,7 +59,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     @Override
     public void onCreate() {
         super.onCreate();
-        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID);
+        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
         this.mPresenter = (IPresenterPlayback) PresenterFactory.createPresenter(IPresenterPlayback.class, this);
     }
 
@@ -112,8 +112,8 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
             case ServicePlayback.MEDIA_ID__ROOT:
                 this.loadChildrenRoot(pResult);
                 break;
-            case ServicePlayback.MEDIA_ID__NEW:
-                this.loadChildrenNew(pResult);
+            case ServicePlayback.MEDIA_ID__SOUNDS:
+                this.loadChildrenSounds(pResult);
                 break;
             case ServicePlayback.MEDIA_ID__FAVORITES:
                 this.loadChildrenFavorites(pResult);
@@ -177,7 +177,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     @Override
-    public void onRxNewTracksNext(List<Track> pTracks) {
+    public void onRxSoundsNext(List<Track> pTracks) {
         if (this.mNewResult != null) {
             List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks);
             this.mNewResult.sendResult(mediaItems);
@@ -211,7 +211,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private void loadChildrenRoot(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
         mediaItems.add(this.buildChildrenRootMediaItem(
-                ServicePlayback.MEDIA_ID__NEW,
+                ServicePlayback.MEDIA_ID__SOUNDS,
                 R.string.media_description_title__new,
                 ServicePlayback.URI__DRAWABLE_ICON_NEW,
                 R.string.media_description_subtitle__new));
@@ -231,7 +231,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         pResult.sendResult(mediaItems);
     }
 
-    private void loadChildrenNew(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+    private void loadChildrenSounds(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mNewResult = pResult;
         this.mNewResult.detach();
         this.mPresenter.tracks(null);
@@ -270,7 +270,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         for(Track track : pTracks) {
             MediaMetadataCompat mediaMetadata = SoundCloudMetadataBuilder.build(track);
 
-            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(mediaMetadata.getDescription(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(SoundCloudMetadataBuilder.build(mediaMetadata)/*mediaMetadata.getDescription()*/, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
             mediaItems.add(mediaItem);
 
             MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(mediaMetadata.getDescription(), track.getId());

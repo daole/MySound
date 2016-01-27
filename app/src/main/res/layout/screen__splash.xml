@@ -6,9 +6,6 @@
     tools:context=".views.classes.activities.ActivityStart" >
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/ic__my_music"/>
+        style="@style/ImageView.Logo" />
 
 </RelativeLayout>
