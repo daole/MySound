@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Container.Full" >
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lstTracks"
+        style="@style/Container.Full" />
+    
+    <fragment
+        android:id="@+id/fraPlaybackControls"
+        android:name="com.dreamdigitizers.mysound.views.classes.fragments.FragmentPlaybackControls"
+        style="@style/FragmentPlaybackControls"
+        tools:layout="@layout/fragment__playback_controls" />
+
+</RelativeLayout>

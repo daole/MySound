@@ -7,11 +7,13 @@ import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSplash;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSounds;
+import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterTracks;
 import com.dreamdigitizers.mysound.views.interfaces.IViewHome;
 import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSplash;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSounds;
+import com.dreamdigitizers.mysound.views.interfaces.IViewTracks;
 
 public class PresenterFactory {
     private static final String ERROR_MESSAGE__PRESENTER_NOT_FOUND = "There is no such Presenter class.";

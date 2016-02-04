@@ -11,6 +11,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.MediaPlayerNotificationReceiver;
+import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.views.classes.activities.ActivityMain;
 
@@ -66,6 +67,7 @@ public class PlaybackNotificationReceiver extends MediaPlayerNotificationReceive
         }
 
         MediaDescriptionCompat mediaDescription = this.mMediaMetadata.getDescription();
+        Track track = (Track) this.mMediaMetadata.getBundle().getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
 
         boolean isShouldFetchArt = false;
         Bitmap art = mediaDescription.getIconBitmap();
@@ -77,14 +79,13 @@ public class PlaybackNotificationReceiver extends MediaPlayerNotificationReceive
         notificationBuilder
                 .setStyle(new NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(buttons)
-                        //.setShowCancelButton(true)
-                        //.setCancelButtonIntent(this.getStopPendingIntent())
+                        .setShowCancelButton(true)
+                        .setCancelButtonIntent(this.getStopPendingIntent())
                         .setMediaSession(this.mSessionToken))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setUsesChronometer(true)
                 .setContentIntent(this.createContentIntent(mediaDescription))
-                .setContentTitle(mediaDescription.getTitle())
-                .setContentText(mediaDescription.getSubtitle())
+                .setContentTitle(track.getTitle())
+                .setContentText(track.getUser().getUsername())
                 .setSmallIcon(R.drawable.ic__notification)
                 .setLargeIcon(art);
 
@@ -116,6 +117,6 @@ public class PlaybackNotificationReceiver extends MediaPlayerNotificationReceive
                     .setShowWhen(false)
                     .setUsesChronometer(false);
         }
-        pNotificationBuilder.setOngoing(this.mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING);
+        //pNotificationBuilder.setOngoing(this.mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING);
     }
 }

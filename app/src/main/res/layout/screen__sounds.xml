@@ -5,8 +5,13 @@
     style="@style/Container.Full"
     tools:context=".views.classes.activities.ActivityMain" >
 
-    <android.support.v7.widget.RecyclerView
+    <fragment
+        android:id="@+id/fraTracks"
+        android:name="com.dreamdigitizers.mysound.views.classes.fragments.FragmentTracks"
+        style="@style/Container.Full"
+        tools:layout="@layout/fragment__tracks" />
+    <!--<android.support.v7.widget.RecyclerView
         android:id="@+id/lstSounds"
-        style="@style/Container.Full" />
+        style="@style/Container.Full" />-->
 
 </RelativeLayout>

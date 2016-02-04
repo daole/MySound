@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Container.PlaybackControls" >
+
+    <RelativeLayout
+        style="@style/Container.WrapContent.Vertical" >
+
+        <TextView
+            android:id="@+id/lblTrackTitle"
+            style="@style/TextView.PlaybackControls.TrackTitle" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        style="@style/Container.WrapContent.Vertical" >
+        
+        <TextView
+            android:id="@+id/lblDurationStart"
+            style="@style/TextView.DurationStart" />
+
+        <SeekBar
+            android:id="@+id/skbCurrentPosition"
+            android:layout_toRightOf="@id/lblDurationStart"
+            android:layout_toLeftOf="@+id/lblDurationEnd"
+            style="@style/SeekBar" />
+        
+        <TextView
+            android:id="@id/lblDurationEnd"
+            style="@style/TextView.DurationEnd" />
+        
+    </RelativeLayout>
+
+    <RelativeLayout
+        style="@style/Container.WrapContent.Vertical" >
+
+        <ImageButton
+            android:id="@+id/btnSkipToPrevious"
+            style="@style/ImageButton.SkipToPrevious.Inline" />
+
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            style="@style/ImageButton.Play.Inline" />
+
+        <ImageButton
+            android:id="@+id/btnSkipToNext"
+            style="@style/ImageButton.SkipToNext.Inline" />
+
+    </RelativeLayout>
+
+</LinearLayout>

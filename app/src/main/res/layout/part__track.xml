@@ -7,7 +7,7 @@
     style="@style/Container.WrapContent.Vertical" >
 
     <RelativeLayout
-        style="@style/Container.WrapContent.Vertical.Row.WithPadding" >
+        style="@style/Container.WrapContent.Vertical.Row.Padding" >
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgAvatar"

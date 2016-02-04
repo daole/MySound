@@ -3,8 +3,6 @@ package com.dreamdigitizers.mysound;
 public class Constants {
     public static final int SPLASH_SCREEN_TIME = 3000;
 
-    public static final String FORMAT__DURATION = "mm:ss";
-
     public static final String SHARED_PREFERENCES_KEY__ACCESS_TOKEN = "access_token";
     public static final String BUNDLE_KEY__SELECTED_MENU_ID = "selected_menu_id";
 

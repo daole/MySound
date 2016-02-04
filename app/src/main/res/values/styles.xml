@@ -52,7 +52,7 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Container.WrapContent.Vertical.Row.WithPadding" parent="Container.WrapContent.Vertical.Row">
+    <style name="Container.WrapContent.Vertical.Row.Padding" parent="Container.WrapContent.Vertical.Row">
         <item name="android:padding">@dimen/padding</item>
     </style>
 
@@ -60,16 +60,36 @@
         <item name="android:orientation">vertical</item>
     </style>
 
+    <style name="Container.WrapContent.Horizontal.OrientationVertical.Padding" parent="Container.WrapContent.Horizontal.OrientationVertical">
+        <item name="android:padding">@dimen/padding</item>
+    </style>
+
     <style name="Container.WrapContent.Horizontal.OrientationHorizontal" parent="Container.WrapContent.Horizontal">
         <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Container.WrapContent.Horizontal.OrientationHorizontal.Padding" parent="Container.WrapContent.Horizontal.OrientationHorizontal">
+        <item name="android:padding">@dimen/padding</item>
     </style>
 
     <style name="Container.WrapContent.Vertical.OrientationVertical" parent="Container.WrapContent.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
+    <style name="Container.WrapContent.Vertical.OrientationVertical.Padding" parent="Container.WrapContent.Vertical.OrientationVertical">
+        <item name="android:padding">@dimen/padding</item>
+    </style>
+
+    <style name="Container.PlaybackControls" parent="Container.WrapContent.Vertical.OrientationVertical.Padding">
+        <item name="android:background">@color/window_background</item>
+    </style>
+
     <style name="Container.WrapContent.Vertical.OrientationHorizontal" parent="Container.WrapContent.Vertical">
         <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Container.WrapContent.Vertical.OrientationHorizontal.Padding" parent="Container.WrapContent.Vertical.OrientationHorizontal">
+        <item name="android:padding">@dimen/padding</item>
     </style>
 
     <style name="Root" parent="Container.Full">
@@ -115,6 +135,21 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    </style>
+
+    <style name="TextView.DurationStart" parent="TextView">
+        <item name="android:layout_alignParentLeft">true</item>
+    </style>
+
+    <style name="TextView.DurationEnd" parent="TextView">
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+
+    <style name="TextView.PlaybackControls.TrackTitle" parent="TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:ellipsize">marquee</item>
     </style>
 
     <style name="TextView.Profile.Username" parent="TextView">
@@ -175,5 +210,52 @@
 
     <style name="ImageView.PlaybackCount" parent="ImageView">
         <item name="android:src">@drawable/ic__play</item>
+    </style>
+
+    <style name="ImageButton" parent="ImageView">
+        <item name="android:background">@null</item>
+    </style>
+
+    <style name="ImageButton.SkipToPrevious" parent="ImageButton">
+        <item name="android:src">@drawable/ic__skip_to_previous</item>
+    </style>
+
+    <style name="ImageButton.SkipToPrevious.Inline" parent="ImageButton.SkipToPrevious">
+        <item name="android:layout_alignParentLeft">true</item>
+    </style>
+
+    <style name="ImageButton.Play" parent="ImageButton">
+        <item name="android:src">@drawable/ic__play</item>
+    </style>
+
+    <style name="ImageButton.Play.Inline" parent="ImageButton.Play">
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="ImageButton.Pause" parent="ImageButton">
+        <item name="android:src">@drawable/ic__pause</item>
+    </style>
+
+    <style name="ImageButton.Pause.Inline" parent="ImageButton.Pause">
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="ImageButton.SkipToNext" parent="ImageButton">
+        <item name="android:src">@drawable/ic__skip_to_next</item>
+    </style>
+
+    <style name="ImageButton.SkipToNext.Inline" parent="ImageButton.SkipToNext">
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+
+    <style name="SeekBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/margin</item>
+        <item name="android:layout_marginRight">@dimen/margin</item>
+    </style>
+
+    <style name="FragmentPlaybackControls" parent="Container.WrapContent">
+        <item name="android:layout_alignParentBottom">true</item>
     </style>
 </resources>

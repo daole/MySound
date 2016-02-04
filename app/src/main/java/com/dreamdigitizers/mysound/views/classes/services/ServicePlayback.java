@@ -269,17 +269,22 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
         for(Track track : pTracks) {
             MediaMetadataCompat mediaMetadata = SoundCloudMetadataBuilder.build(track);
+            MediaDescriptionCompat mediaDescription = SoundCloudMetadataBuilder.build(mediaMetadata);
 
-            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(SoundCloudMetadataBuilder.build(mediaMetadata)/*mediaMetadata.getDescription()*/, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(mediaDescription, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
             mediaItems.add(mediaItem);
 
-            MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(mediaMetadata.getDescription(), track.getId());
-            CustomQueueItem customQueueItem = new CustomQueueItem(queueItem, mediaMetadata, track.getStreamUrl());
+            MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(mediaDescription, track.getId());
+            CustomQueueItem customQueueItem = new CustomQueueItem(queueItem, mediaMetadata, this.buildStreamUrl(track.getStreamUrl()));
             playingQueue.add(customQueueItem);
         }
 
         this.setPlayingQueue(playingQueue);
         return mediaItems;
+    }
+
+    private String buildStreamUrl(String pStreamUrl) {
+        return pStreamUrl + "?client_id=" + Constants.SOUNDCLOUD__CLIENT_ID;
     }
 
     private void publishArt(CustomQueueItem pCustomQueueItem, Bitmap pBitmap) {

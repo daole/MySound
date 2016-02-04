@@ -5,46 +5,52 @@ import android.graphics.Bitmap;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
-import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.utilities.UtilsImage;
 import com.dreamdigitizers.mysound.views.classes.services.support.SoundCloudMetadataBuilder;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SoundAdapter extends RecyclerView.Adapter<SoundAdapter.TrackViewHolder> {
+public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHolder> {
     private Context mContext;
     private List<MediaBrowserCompat.MediaItem> mMediaItems;
 
-    public SoundAdapter(Context pContext) {
+    private IOnItemClickListener mListener;
+
+    public TrackAdapter(Context pContext) {
         this(pContext, new ArrayList<MediaBrowserCompat.MediaItem>());
     }
 
-    public SoundAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems) {
+    public TrackAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems) {
+        this(pContext, pMediaItems, null);
+    }
+
+    public TrackAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, IOnItemClickListener pListener) {
         this.mContext = pContext;
         this.mMediaItems = pMediaItems;
+        this.mListener = pListener;
     }
 
     @Override
     public TrackViewHolder onCreateViewHolder(ViewGroup pParent, int pViewType) {
-        View itemView = LayoutInflater.from(pParent.getContext()).inflate(R.layout.part__sound, pParent, false);
+        View itemView = LayoutInflater.from(pParent.getContext()).inflate(R.layout.part__track, pParent, false);
         return new TrackViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(TrackViewHolder pHolder, int pPosition) {
-        MediaDescriptionCompat mediaDescription = this.mMediaItems.get(pPosition).getDescription();
+        MediaBrowserCompat.MediaItem mediaItem = this.mMediaItems.get(pPosition);
+        MediaDescriptionCompat mediaDescription = mediaItem.getDescription();
         Track track = (Track) mediaDescription.getExtras().getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
         Bitmap bitmap = mediaDescription.getIconBitmap();
         if (bitmap != null) {
@@ -53,10 +59,10 @@ public class SoundAdapter extends RecyclerView.Adapter<SoundAdapter.TrackViewHol
             UtilsImage.loadBitmap(this.mContext, track.getArtworkUrl(), R.drawable.ic__my_music, pHolder.mImgAvatar);
         }
         pHolder.mLblUsername.setText(track.getUser().getUsername());
-        String duration = new SimpleDateFormat(Constants.FORMAT__DURATION).format(new Date(track.getDuration()));
-        pHolder.mLblDuration.setText(duration);
+        pHolder.mLblDuration.setText(DateUtils.formatElapsedTime(track.getDuration() / 1000));
         pHolder.mLblTitle.setText(track.getTitle());
         pHolder.mLblPlaybackCount.setText(Integer.toString(track.getPlaybackCount()));
+        pHolder.mMediaItem = mediaItem;
     }
 
     @Override
@@ -64,17 +70,22 @@ public class SoundAdapter extends RecyclerView.Adapter<SoundAdapter.TrackViewHol
         return this.mMediaItems.size();
     }
 
+    public void setOnItemClickListener(IOnItemClickListener pListener) {
+        this.mListener = pListener;
+    }
+
     public void setMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
         this.mMediaItems = pMediaItems;
         this.notifyDataSetChanged();
     }
 
-    public static class TrackViewHolder extends RecyclerView.ViewHolder {
+    public class TrackViewHolder extends RecyclerView.ViewHolder {
         CircleImageView mImgAvatar;
         TextView mLblUsername;
         TextView mLblDuration;
         TextView mLblTitle;
         TextView mLblPlaybackCount;
+        MediaBrowserCompat.MediaItem mMediaItem;
 
         public TrackViewHolder(View pItemView) {
             super(pItemView);
@@ -83,6 +94,22 @@ public class SoundAdapter extends RecyclerView.Adapter<SoundAdapter.TrackViewHol
             this.mLblDuration = (TextView) pItemView.findViewById(R.id.lblDuration);
             this.mLblTitle = (TextView) pItemView.findViewById(R.id.lblTitle);
             this.mLblPlaybackCount = (TextView) pItemView.findViewById(R.id.lblPlaybackCount);
+            pItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View pView) {
+                    TrackViewHolder.this.clicked();
+                }
+            });
         }
+
+        private void clicked() {
+            if(TrackAdapter.this.mListener != null) {
+                TrackAdapter.this.mListener.onItemClicked(this.mMediaItem);
+            }
+        }
+    }
+
+    public interface IOnItemClickListener {
+        void onItemClicked(MediaBrowserCompat.MediaItem pMediaItem);
     }
 }
