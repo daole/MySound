@@ -42,6 +42,10 @@
             android:id="@+id/btnPlayPause"
             style="@style/ImageButton.Play.Inline" />
 
+        <ProgressBar
+            android:id="@+id/pgbLoading"
+            style="@style/ProgressBar.Inline" />
+
         <ImageButton
             android:id="@+id/btnSkipToNext"
             style="@style/ImageButton.SkipToNext.Inline" />

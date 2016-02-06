@@ -58,7 +58,7 @@ public class FragmentTracks extends FragmentBase {
     }
 
     public void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {
-        this.mTrackAdapter.notifyDataSetChanged();
+        this.mTrackAdapter.onPlaybackStateChanged(pPlaybackState);
         this.mFragmentPlaybackControls.onPlaybackStateChanged(pPlaybackState);
         if (isShowPlaybackControls(pPlaybackState)) {
             this.showPlaybackControls();
@@ -68,7 +68,7 @@ public class FragmentTracks extends FragmentBase {
     }
 
     public void onMetadataChanged(MediaMetadataCompat pMediaMetadata) {
-        this.mTrackAdapter.notifyDataSetChanged();
+        this.mTrackAdapter.onMetadataChanged(pMediaMetadata);
         this.mFragmentPlaybackControls.onMetadataChanged(pMediaMetadata);
     }
 

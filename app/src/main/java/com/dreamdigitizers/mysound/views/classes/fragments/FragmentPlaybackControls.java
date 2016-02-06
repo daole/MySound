@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ public class FragmentPlaybackControls extends FragmentBase {
     private TextView mLblDurationEnd;
     private ImageButton mBtnSkipToPrevious;
     private ImageButton mBtnPlayPause;
+    private ProgressBar mPgbLoading;
     private ImageButton mBtnSkipToNext;
     private Drawable mPlayDrawable;
     private Drawable mPauseDrawable;
@@ -70,6 +72,7 @@ public class FragmentPlaybackControls extends FragmentBase {
         this.mLblDurationEnd = (TextView) pView.findViewById(R.id.lblDurationEnd);
         this.mBtnSkipToPrevious = (ImageButton) pView.findViewById(R.id.btnSkipToPrevious);
         this.mBtnPlayPause = (ImageButton) pView.findViewById(R.id.btnPlayPause);
+        this.mPgbLoading = (ProgressBar) pView.findViewById(R.id.pgbLoading);
         this.mBtnSkipToNext = (ImageButton) pView.findViewById(R.id.btnSkipToNext);
         this.mPlayDrawable = ContextCompat.getDrawable(this.getContext(), R.drawable.ic__play);
         this.mPauseDrawable = ContextCompat.getDrawable(this.getContext(), R.drawable.ic__pause);
@@ -77,6 +80,8 @@ public class FragmentPlaybackControls extends FragmentBase {
 
     @Override
     protected void mapInformationToScreenItems(View pView) {
+        this.mLblTrackTitle.setSelected(true);
+
         this.mSkbTrackProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar pSeekBar, int pProgress, boolean pFromUser) {
@@ -141,11 +146,13 @@ public class FragmentPlaybackControls extends FragmentBase {
         switch (this.mLastPlaybackState.getState()) {
             case PlaybackStateCompat.STATE_PLAYING:
                 this.mBtnPlayPause.setVisibility(View.VISIBLE);
+                this.mPgbLoading.setVisibility(View.INVISIBLE);
                 this.mBtnPlayPause.setImageDrawable(this.mPauseDrawable);
                 this.scheduleSeekBarUpdate();
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 this.mBtnPlayPause.setVisibility(View.VISIBLE);
+                this.mPgbLoading.setVisibility(View.INVISIBLE);
                 this.mBtnPlayPause.setImageDrawable(this.mPlayDrawable);
                 this.stopSeekBarUpdate();
                 break;
@@ -153,11 +160,13 @@ public class FragmentPlaybackControls extends FragmentBase {
             case PlaybackStateCompat.STATE_STOPPED:
             case PlaybackStateCompat.STATE_ERROR:
                 this.mBtnPlayPause.setVisibility(View.VISIBLE);
+                this.mPgbLoading.setVisibility(View.INVISIBLE);
                 this.mBtnPlayPause.setImageDrawable(this.mPlayDrawable);
                 this.stopSeekBarUpdate();
                 break;
             case PlaybackStateCompat.STATE_BUFFERING:
                 this.mBtnPlayPause.setVisibility(View.INVISIBLE);
+                this.mPgbLoading.setVisibility(View.VISIBLE);
                 this.stopSeekBarUpdate();
                 break;
             default:

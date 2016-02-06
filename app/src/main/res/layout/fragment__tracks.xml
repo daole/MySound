@@ -6,10 +6,11 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lstTracks"
+        android:layout_above="@+id/fraPlaybackControls"
         style="@style/Container.Full" />
     
     <fragment
-        android:id="@+id/fraPlaybackControls"
+        android:id="@id/fraPlaybackControls"
         android:name="com.dreamdigitizers.mysound.views.classes.fragments.FragmentPlaybackControls"
         style="@style/FragmentPlaybackControls"
         tools:layout="@layout/fragment__playback_controls" />

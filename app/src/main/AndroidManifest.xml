@@ -35,14 +35,16 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".views.classes.services.ServicePlayback" >
+        <service
+            android:name=".views.classes.services.ServicePlayback" >
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserServiceCompat" />
                 <action android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer.ACTION__MEDIA_COMMAND" />
             </intent-filter>
         </service>
 
-        <receiver android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer$MediaButtonReceiver">
+        <receiver
+            android:name="com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer$MediaButtonReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
