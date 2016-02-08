@@ -34,4 +34,9 @@ public class ScreenSounds extends ScreenTracks<IPresenterSounds> implements IVie
     protected int getTitle() {
         return R.string.title__screen_sounds;
     }
+
+    @Override
+    public int getScreenId() {
+        return R.id.drawer_item__sounds;
+    }
 }

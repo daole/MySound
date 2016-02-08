@@ -48,6 +48,11 @@ public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewS
     }
 
     @Override
+    public int getScreenId() {
+        return 0;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         final String accessToken = this.mPresenter.getAccessToken();

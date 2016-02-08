@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dreamdigitizers.mysound" >
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -34,6 +35,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityDummy"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:allowTaskReparenting="true"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:stateNotNeeded="true"
+            android:clearTaskOnLaunch="true"
+            android:finishOnTaskLaunch="true" />
 
         <service
             android:name=".views.classes.services.ServicePlayback" >

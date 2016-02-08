@@ -59,6 +59,11 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
     }
 
     @Override
+    public int getScreenId() {
+        return 0;
+    }
+
+    @Override
     public void onPageStarted(WebView pWebView, String pUrl, Bitmap pFavicon) {
         UtilsDialog.showNetworkProgressDialog(
                 this.getActivity(),

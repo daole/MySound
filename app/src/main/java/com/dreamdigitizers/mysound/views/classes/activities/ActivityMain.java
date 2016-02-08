@@ -85,6 +85,16 @@ public class ActivityMain extends ActivityBase {
     }
 
     @Override
+    public void onSetCurrentScreen(ScreenBase pCurrentScreen) {
+        super.onSetCurrentScreen(pCurrentScreen);
+        int id = pCurrentScreen.getScreenId();
+        if (id > 0) {
+            this.mCurrentSelectedMenuId = id;
+            this.mNavigationView.setCheckedItem(this.mCurrentSelectedMenuId);
+        }
+    }
+
+    @Override
     protected void setLayout() {
         this.setContentView(R.layout.activity__main);
     }
@@ -155,11 +165,11 @@ public class ActivityMain extends ActivityBase {
     }
 
     private boolean navigationItemSelected(int pId) {
-        this.mNavigationView.setCheckedItem(pId);
         this.mCurrentSelectedMenuId = pId;
+        this.mNavigationView.setCheckedItem(this.mCurrentSelectedMenuId);
         ScreenBase screenBase = null;
 
-        switch (pId) {
+        switch (this.mCurrentSelectedMenuId) {
             case R.id.drawer_item__home:
                 if (!(this.mCurrentScreen instanceof ScreenHome)) {
                     screenBase = new ScreenHome();

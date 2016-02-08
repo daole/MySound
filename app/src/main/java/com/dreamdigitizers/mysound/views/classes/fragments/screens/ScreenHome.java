@@ -43,13 +43,13 @@ public class ScreenHome extends ScreenRx<IPresenterHome> implements IViewHome {
     }
 
     @Override
-    public void onRxNext(Me pMe) {
-        Share.setMe(pMe);
+     public int getScreenId() {
+        return R.id.drawer_item__home;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onRxNext(Me pMe) {
+        Share.setMe(pMe);
     }
 
     private void me() {
