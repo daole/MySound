@@ -103,6 +103,16 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
                 this.mMediaController = new MediaControllerCompat(view.getViewContext(), this.mMediaBrowser.getSessionToken());
                 this.mTransportControls = this.mMediaController.getTransportControls();
                 this.mMediaController.registerCallback(this.mMediaControllerCallback);
+
+                MediaMetadataCompat mediaMetadata = this.mMediaController.getMetadata();
+                if (mediaMetadata != null) {
+                    view.onMetadataChanged(mediaMetadata);
+                }
+
+                PlaybackStateCompat playbackState = this.mMediaController.getPlaybackState();
+                if (playbackState != null) {
+                    view.onPlaybackStateChanged(playbackState);
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -162,18 +172,16 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     private class MediaControllerCallback extends MediaControllerCompat.Callback {
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {
-            if (pPlaybackState == null) {
-                return;
+            if (pPlaybackState != null) {
+                PresenterTracks.this.onPlaybackStateChanged(pPlaybackState);
             }
-            PresenterTracks.this.onPlaybackStateChanged(pPlaybackState);
         }
 
         @Override
         public void onMetadataChanged(MediaMetadataCompat pMediaMetadata) {
-            if (pMediaMetadata == null) {
-                return;
+            if (pMediaMetadata != null) {
+                PresenterTracks.this.onMetadataChanged(pMediaMetadata);
             }
-            PresenterTracks.this.onMetadataChanged(pMediaMetadata);
         }
     }
 }
