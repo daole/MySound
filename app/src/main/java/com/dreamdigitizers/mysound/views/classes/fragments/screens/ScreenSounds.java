@@ -28,6 +28,7 @@ public class ScreenSounds extends ScreenTracks<IPresenterSounds> implements IVie
 
     @Override
     protected void mapInformationToScreenItems(View pView) {
+        super.mapInformationToScreenItems(pView);
     }
 
     @Override

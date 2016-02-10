@@ -141,6 +141,10 @@ public class FragmentPlaybackControls extends FragmentBase {
     private void updatePlaybackState(PlaybackStateCompat pPlaybackState) {
         this.mLastPlaybackState = pPlaybackState;
 
+        long currentPosition = this.mLastPlaybackState.getPosition();
+        this.mLblDurationStart.setText(DateUtils.formatElapsedTime(currentPosition / 1000));
+        this.mSkbTrackProgress.setProgress((int) currentPosition);
+
         this.mBtnSkipToPrevious.setVisibility((this.mLastPlaybackState.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) == 0 ? View.INVISIBLE : View.VISIBLE);
         this.mBtnSkipToNext.setVisibility((this.mLastPlaybackState.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_NEXT) == 0 ? View.INVISIBLE : View.VISIBLE);
         switch (this.mLastPlaybackState.getState()) {
@@ -210,12 +214,13 @@ public class FragmentPlaybackControls extends FragmentBase {
         if (this.mLastPlaybackState == null) {
             return;
         }
-        long currentPosition = this.mLastPlaybackState.getPosition();
-        if (this.mLastPlaybackState.getState() != PlaybackStateCompat.STATE_PAUSED) {
+
+        if (this.mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
+            long currentPosition = this.mLastPlaybackState.getPosition();
             long deltaTime = SystemClock.elapsedRealtime() - this.mLastPlaybackState.getLastPositionUpdateTime();
             currentPosition += (int) deltaTime * this.mLastPlaybackState.getPlaybackSpeed();
+            this.mSkbTrackProgress.setProgress((int) currentPosition);
         }
-        this.mSkbTrackProgress.setProgress((int) currentPosition);
     }
 
     private void onTrackProgressSeekBarProgressChanged(int pProgress) {

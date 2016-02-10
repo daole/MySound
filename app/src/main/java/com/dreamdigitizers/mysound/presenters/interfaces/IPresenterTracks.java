@@ -13,4 +13,5 @@ public interface IPresenterTracks extends IPresenterBase {
     void pause();
     void skipToNext();
     void seekTo(int pPosition);
+    void refresh();
 }

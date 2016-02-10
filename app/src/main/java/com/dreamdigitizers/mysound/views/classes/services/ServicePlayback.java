@@ -33,16 +33,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback {
-    private static final int ART_WIDTH = 800;
-    private static final int ART_HEIGHT = 480;
+    //private static final int ART_WIDTH = 800;
+    //private static final int ART_HEIGHT = 480;
     private static final int ICON_WIDTH = 128;
     private static final int ICON_HEIGHT = 128;
 
     public static final String MEDIA_ID__ROOT = "__ROOT__";
     public static final String MEDIA_ID__SOUNDS = "__SOUNDS__";
+    public static final String MEDIA_ID__SOUNDS_REFRESH = "__SOUNDS_REFRESH__";
     public static final String MEDIA_ID__FAVORITES = "__FAVORITES__";
+    public static final String MEDIA_ID__FAVORITES_REFRESH = "__FAVORITES_REFRESH__";
     public static final String MEDIA_ID__PLAYLISTS = "__PLAYLISTS__";
+    public static final String MEDIA_ID__PLAYLISTS_REFRESH = "__PLAYLISTS_REFRESH__";
     public static final String MEDIA_ID__PLAYLIST = "__PLAYLIST__";
+    public static final String MEDIA_ID__PLAYLIST_REFRESH = "__PLAYLIST_REFRESH__";
 
     private static final String URI__DRAWABLE = "android.resource://com.dreamdigitizers.mysound/drawable/";
     private static final String URI__DRAWABLE_ICON_NEW = ServicePlayback.URI__DRAWABLE + "ic__sound";
@@ -51,10 +55,19 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
     private IPresenterPlayback mPresenter;
 
-    private Result mNewResult;
+    private Result mSoundsResult;
     private Result mFavoritesResult;
     private Result mPlaylistsResult;
     private Result mPlaylistResult;
+
+    private List<CustomQueueItem> mActiveQueue;
+    private List<CustomQueueItem> mSoundsQueue;
+    private List<CustomQueueItem> mFavoritesQueue;
+    private List<CustomQueueItem> mPlaylistQueue;
+
+    private List<MediaBrowserCompat.MediaItem> mSoundsMediaItems;
+    private List<MediaBrowserCompat.MediaItem> mFavoritesMediaItems;
+    private List<MediaBrowserCompat.MediaItem> mPlayListMediaItems;
 
     @Override
     public void onCreate() {
@@ -92,6 +105,12 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     @Override
+    protected void processPlayFromMediaIdRequest(String pMediaId, Bundle pExtras) {
+        this.setPlayingQueue(this.mActiveQueue);
+        super.processPlayFromMediaIdRequest(pMediaId, pExtras);
+    }
+
+    @Override
     protected boolean isOnlineStreaming() {
         return true;
     }
@@ -115,14 +134,26 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
             case ServicePlayback.MEDIA_ID__SOUNDS:
                 this.loadChildrenSounds(pResult);
                 break;
+            case ServicePlayback.MEDIA_ID__SOUNDS_REFRESH:
+                this.loadChildrenSoundsRefresh(pResult);
+                break;
             case ServicePlayback.MEDIA_ID__FAVORITES:
                 this.loadChildrenFavorites(pResult);
+                break;
+            case ServicePlayback.MEDIA_ID__FAVORITES_REFRESH:
+                this.loadChildrenFavoritesRefresh(pResult);
                 break;
             case ServicePlayback.MEDIA_ID__PLAYLISTS:
                 this.loadChildrenPlaylists(pResult);
                 break;
+            case ServicePlayback.MEDIA_ID__PLAYLISTS_REFRESH:
+                //this.loadChildrenPlaylistsRefresh(pResult);
+                break;
             case ServicePlayback.MEDIA_ID__PLAYLIST:
                 this.loadChildrenPlaylist(pResult);
+                break;
+            case ServicePlayback.MEDIA_ID__PLAYLIST_REFRESH:
+                this.loadChildrenPlaylistRefresh(pResult);
                 break;
             default:
                 break;
@@ -178,19 +209,23 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
     @Override
     public void onRxSoundsNext(List<Track> pTracks) {
-        if (this.mNewResult != null) {
-            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks);
-            this.mNewResult.sendResult(mediaItems);
-            this.mNewResult = null;
+        if (this.mSoundsResult != null) {
+            this.mSoundsQueue = new ArrayList<>();
+            this.mSoundsMediaItems = this.buildPlaylist(pTracks, this.mSoundsQueue);
+            this.mSoundsResult.sendResult(this.mSoundsMediaItems);
+            this.mSoundsResult = null;
+            this.mActiveQueue = this.mSoundsQueue;
         }
     }
 
     @Override
     public void onRxFavoritesNext(List<Track> pTracks) {
         if (this.mFavoritesResult != null) {
-            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks);
-            this.mFavoritesResult.sendResult(mediaItems);
+            this.mFavoritesQueue = new ArrayList<>();
+            this.mFavoritesMediaItems = this.buildPlaylist(pTracks, this.mFavoritesQueue);
+            this.mFavoritesResult.sendResult(this.mFavoritesMediaItems);
             this.mFavoritesResult = null;
+            this.mActiveQueue = this.mFavoritesQueue;
         }
     }
 
@@ -232,12 +267,30 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     private void loadChildrenSounds(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
-        this.mNewResult = pResult;
-        this.mNewResult.detach();
+        if (this.mSoundsMediaItems != null && this.mSoundsMediaItems.size() > 0) {
+            pResult.sendResult(this.mSoundsMediaItems);
+            return;
+        }
+
+        this.loadChildrenSoundsRefresh(pResult);
+    }
+
+    private void loadChildrenSoundsRefresh(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        this.mSoundsResult = pResult;
+        this.mSoundsResult.detach();
         this.mPresenter.tracks(null);
     }
 
     private void loadChildrenFavorites(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        if (this.mFavoritesMediaItems != null && this.mFavoritesMediaItems.size() > 0) {
+            pResult.sendResult(this.mFavoritesMediaItems);
+            return;
+        }
+
+        this.loadChildrenFavoritesRefresh(pResult);
+    }
+
+    private void loadChildrenFavoritesRefresh(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mFavoritesResult = pResult;
         this.mFavoritesResult.detach();
         this.mPresenter.userFavorites(Share.getMe().getId(), null);
@@ -250,6 +303,15 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     private void loadChildrenPlaylist(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        if (this.mPlayListMediaItems != null && this.mPlayListMediaItems.size() > 0) {
+            pResult.sendResult(this.mPlayListMediaItems);
+            return;
+        }
+
+        this.loadChildrenPlaylistRefresh(pResult);
+    }
+
+    private void loadChildrenPlaylistRefresh(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mPlaylistResult = pResult;
         this.mPlaylistResult.detach();
     }
@@ -263,9 +325,8 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
                 .build(), MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
     }
 
-    private List<MediaBrowserCompat.MediaItem> buildPlaylist(List<Track> pTracks) {
+    private List<MediaBrowserCompat.MediaItem> buildPlaylist(List<Track> pTracks, List<CustomQueueItem> pPlayingQueue) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
-        List<CustomQueueItem> playingQueue = new ArrayList<>();
 
         for(Track track : pTracks) {
             MediaMetadataCompat mediaMetadata = SoundCloudMetadataBuilder.build(track);
@@ -276,10 +337,9 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
             MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(mediaDescription, track.getId());
             CustomQueueItem customQueueItem = new CustomQueueItem(queueItem, mediaMetadata, this.buildStreamUrl(track.getStreamUrl()));
-            playingQueue.add(customQueueItem);
+            pPlayingQueue.add(customQueueItem);
         }
 
-        this.setPlayingQueue(playingQueue);
         return mediaItems;
     }
 

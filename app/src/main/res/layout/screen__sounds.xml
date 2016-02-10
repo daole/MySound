@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sfrRefresh"
     style="@style/Container.Full"
     tools:context=".views.classes.activities.ActivityMain" >
 
-    <fragment
-        android:id="@+id/fraTracks"
-        android:name="com.dreamdigitizers.mysound.views.classes.fragments.FragmentTracks"
-        style="@style/Container.Full"
-        tools:layout="@layout/fragment__tracks" />
-    <!--<android.support.v7.widget.RecyclerView
-        android:id="@+id/lstSounds"
-        style="@style/Container.Full" />-->
+    <RelativeLayout
+        style="@style/Container.Full" >
 
-</RelativeLayout>
+        <fragment
+            android:id="@+id/fraTracks"
+            android:name="com.dreamdigitizers.mysound.views.classes.fragments.FragmentTracks"
+            style="@style/Container.Full"
+            tools:layout="@layout/fragment__tracks" />
+
+    </RelativeLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

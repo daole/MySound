@@ -36,18 +36,22 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     public void connect() {
         V view = this.getView();
         if (view != null) {
-            view.showNetworkProgress();
-            view.getViewContext().startService(new Intent(ServicePlayback.ACTION__MEDIA_COMMAND));
-            this.mMediaBrowser.connect();
+            if (!this.mMediaBrowser.isConnected()) {
+                view.showNetworkProgress();
+                view.getViewContext().startService(new Intent(ServicePlayback.ACTION__MEDIA_COMMAND));
+                this.mMediaBrowser.connect();
+            }
         }
     }
 
     @Override
     public void disconnect() {
-        String mediaId = this.getMediaId();
-        this.mMediaBrowser.unsubscribe(mediaId);
-        this.mMediaBrowser.disconnect();
-        this.mMediaController.unregisterCallback(this.mMediaControllerCallback);
+        if (this.mMediaBrowser.isConnected()) {
+            String mediaId = this.getMediaId();
+            this.mMediaBrowser.unsubscribe(mediaId);
+            this.mMediaBrowser.disconnect();
+            this.mMediaController.unregisterCallback(this.mMediaControllerCallback);
+        }
     }
 
     @Override
@@ -92,10 +96,18 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         }
     }
 
+    @Override
+    public void refresh() {
+        this.refresh(this.getMediaIdRefresh());
+    }
+
+    private void refresh(String pMediaId) {
+        this.mMediaBrowser.unsubscribe(pMediaId);
+        this.mMediaBrowser.subscribe(pMediaId, this.mMediaBrowserSubscriptionCallback);
+    }
+
     private void onConnected() {
-        String mediaId = this.getMediaId();
-        this.mMediaBrowser.unsubscribe(mediaId);
-        this.mMediaBrowser.subscribe(mediaId, this.mMediaBrowserSubscriptionCallback);
+        this.refresh(this.getMediaId());
 
         V view = this.getView();
         if (view != null) {
@@ -149,6 +161,7 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     }
 
     protected abstract String getMediaId();
+    protected abstract String getMediaIdRefresh();
 
     private class MediaBrowserConnectionCallback extends MediaBrowserCompat.ConnectionCallback {
         @Override
