@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.FragmentBase;
 import com.dreamdigitizers.mysound.R;
@@ -16,9 +17,23 @@ import com.dreamdigitizers.mysound.views.classes.support.TrackAdapter;
 import java.util.List;
 
 public class FragmentTracks extends FragmentBase {
+    private static final int VISIBLE_THRESHOLD = 0;
+
     private RecyclerView mLstTracks;
+    private ProgressBar mPgbLoading;
     private FragmentPlaybackControls mFragmentPlaybackControls;
+
+    private LinearLayoutManager mLinearLayoutManager;
     private TrackAdapter mTrackAdapter;
+
+    private IOnScrollEndListener mListener;
+
+    private boolean mIsLoading;
+    private int mPreviousTotalItemCount;
+
+    public FragmentTracks() {
+        this.mIsLoading = true;
+    }
 
     @Override
     protected View loadView(LayoutInflater pInflater, ViewGroup pContainer) {
@@ -29,20 +44,32 @@ public class FragmentTracks extends FragmentBase {
     @Override
     protected void retrieveScreenItems(View pView) {
         this.mLstTracks = (RecyclerView) pView.findViewById(R.id.lstTracks);
+        this.mPgbLoading = (ProgressBar) pView.findViewById(R.id.pgbLoading);
         this.mFragmentPlaybackControls = (FragmentPlaybackControls) this.getChildFragmentManager().findFragmentById(R.id.fraPlaybackControls);
     }
 
     @Override
     protected void mapInformationToScreenItems(View pView) {
+        this.mLinearLayoutManager = new LinearLayoutManager(this.getContext());
         this.mTrackAdapter = new TrackAdapter(this.getContext());
+        this.mLstTracks.setLayoutManager(this.mLinearLayoutManager);
         this.mLstTracks.setAdapter(this.mTrackAdapter);
-        this.mLstTracks.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        this.mLstTracks.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView pRecyclerView, int pDx, int pDy) {
+                FragmentTracks.this.onTrackListScrolled();
+            }
+        });
         this.hidePlaybackControls();
     }
 
     @Override
     protected int getTitle() {
         return 0;
+    }
+
+    public void setOnScrollEndListener(IOnScrollEndListener pListener) {
+        this.mListener = pListener;
     }
 
     public void setPlaybackControlListener(FragmentPlaybackControls.IPlaybackControlListener pListener) {
@@ -55,6 +82,10 @@ public class FragmentTracks extends FragmentBase {
 
     public void setMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
         this.mTrackAdapter.setMediaItems(pMediaItems);
+    }
+
+    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
+        this.mTrackAdapter.addMediaItems(pMediaItems);
     }
 
     public void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {
@@ -70,6 +101,14 @@ public class FragmentTracks extends FragmentBase {
     public void onMetadataChanged(MediaMetadataCompat pMediaMetadata) {
         this.mTrackAdapter.onMetadataChanged(pMediaMetadata);
         this.mFragmentPlaybackControls.onMetadataChanged(pMediaMetadata);
+    }
+
+    public void showLoadMoreProgress() {
+        this.mPgbLoading.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoadMoreProgress() {
+        this.mPgbLoading.setVisibility(View.GONE);
     }
 
     private boolean isShowPlaybackControls(PlaybackStateCompat pPlaybackState) {
@@ -99,5 +138,29 @@ public class FragmentTracks extends FragmentBase {
                     .hide(this.mFragmentPlaybackControls)
                     .commit();
         }
+    }
+
+    private void onTrackListScrolled() {
+        int visibleItemCount = this.mLinearLayoutManager.getChildCount();
+        int firstVisibleItem = this.mLinearLayoutManager.findFirstVisibleItemPosition();
+        int totalItemCount = this.mLinearLayoutManager.getItemCount();
+
+        if (this.mIsLoading) {
+            if (totalItemCount > this.mPreviousTotalItemCount) {
+                this.mIsLoading = false;
+                this.mPreviousTotalItemCount = totalItemCount;
+            }
+        }
+
+        if (!this.mIsLoading && totalItemCount - visibleItemCount <= firstVisibleItem + FragmentTracks.VISIBLE_THRESHOLD) {
+            this.mIsLoading = true;
+            if (this.mListener != null) {
+                this.mListener.onScrollEnd();
+            }
+        }
+    }
+
+    public interface IOnScrollEndListener {
+        void onScrollEnd();
     }
 }

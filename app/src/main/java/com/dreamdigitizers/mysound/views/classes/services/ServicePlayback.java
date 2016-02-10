@@ -17,6 +17,7 @@ import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMedi
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.CustomQueueItem;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.MediaPlayerNotificationReceiver;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
+import com.dreamdigitizers.androidsoundcloudapi.models.Collection;
 import com.dreamdigitizers.androidsoundcloudapi.models.Playlist;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.Constants;
@@ -41,6 +42,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     public static final String MEDIA_ID__ROOT = "__ROOT__";
     public static final String MEDIA_ID__SOUNDS = "__SOUNDS__";
     public static final String MEDIA_ID__SOUNDS_REFRESH = "__SOUNDS_REFRESH__";
+    public static final String MEDIA_ID__SOUNDS_MORE = "__SOUNDS_MORE__";
     public static final String MEDIA_ID__FAVORITES = "__FAVORITES__";
     public static final String MEDIA_ID__FAVORITES_REFRESH = "__FAVORITES_REFRESH__";
     public static final String MEDIA_ID__PLAYLISTS = "__PLAYLISTS__";
@@ -68,6 +70,10 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private List<MediaBrowserCompat.MediaItem> mSoundsMediaItems;
     private List<MediaBrowserCompat.MediaItem> mFavoritesMediaItems;
     private List<MediaBrowserCompat.MediaItem> mPlayListMediaItems;
+
+    private int mSoundsOffset;
+    private int mFavoritesOffset;
+    private int mPlayListOffset;
 
     @Override
     public void onCreate() {
@@ -136,6 +142,9 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
                 break;
             case ServicePlayback.MEDIA_ID__SOUNDS_REFRESH:
                 this.loadChildrenSoundsRefresh(pResult);
+                break;
+            case ServicePlayback.MEDIA_ID__SOUNDS_MORE:
+                this.loadChildrenSoundsMore(pResult);
                 break;
             case ServicePlayback.MEDIA_ID__FAVORITES:
                 this.loadChildrenFavorites(pResult);
@@ -219,6 +228,16 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     @Override
+    public void onRxSoundsNext(Collection pCollection) {
+        if (this.mSoundsResult != null) {
+            List<Track> tracks = pCollection.getCollection();
+            this.mSoundsMediaItems = this.buildPlaylist(tracks, this.mSoundsQueue);
+            this.mSoundsResult.sendResult(this.mSoundsMediaItems);
+            this.mSoundsResult = null;
+        }
+    }
+
+    @Override
     public void onRxFavoritesNext(List<Track> pTracks) {
         if (this.mFavoritesResult != null) {
             this.mFavoritesQueue = new ArrayList<>();
@@ -279,6 +298,12 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         this.mSoundsResult = pResult;
         this.mSoundsResult.detach();
         this.mPresenter.tracks(null);
+    }
+
+    private void loadChildrenSoundsMore(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        this.mSoundsResult = pResult;
+        this.mSoundsResult.detach();
+        this.mPresenter.tracks(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mSoundsOffset);
     }
 
     private void loadChildrenFavorites(Result<List<MediaBrowserCompat.MediaItem>> pResult) {

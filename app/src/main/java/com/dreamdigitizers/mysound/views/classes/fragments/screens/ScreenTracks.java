@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBase<P>
-        implements IViewTracks, FragmentPlaybackControls.IPlaybackControlListener, TrackAdapter.IOnItemClickListener {
+        implements IViewTracks, FragmentTracks.IOnScrollEndListener, FragmentPlaybackControls.IPlaybackControlListener, TrackAdapter.IOnItemClickListener {
     private static final String ERROR_MESSAGE__MISSING_FRAGMENT = "Missing fragment with id \"fraTracks\" in layout.";
 
     private static final String BUNDLE_KEY__MEDIA_ITEMS = "media_items";
@@ -78,6 +78,7 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
             });
         }
 
+        this.mFragmentTracks.setOnScrollEndListener(this);
         if (this.mMediaItems != null && this.mMediaItems.size() > 0) {
             this.mFragmentTracks.setMediaItems(this.mMediaItems);
         }
@@ -93,6 +94,13 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     }
 
     @Override
+    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
+        this.mMediaItems.addAll(pMediaItems);
+        this.mFragmentTracks.addMediaItems(pMediaItems);
+        this.mFragmentTracks.hideLoadMoreProgress();
+    }
+
+    @Override
     public void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {
         this.mFragmentTracks.onPlaybackStateChanged(pPlaybackState);
     }
@@ -100,6 +108,12 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     @Override
     public void onMetadataChanged(MediaMetadataCompat pMediaMetadata) {
         this.mFragmentTracks.onMetadataChanged(pMediaMetadata);
+    }
+
+    @Override
+    public void onScrollEnd() {
+        this.mFragmentTracks.showLoadMoreProgress();
+        this.mPresenter.loadMore();
     }
 
     @Override

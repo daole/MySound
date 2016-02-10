@@ -4,10 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Container.Full" >
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lstTracks"
+    <RelativeLayout
         android:layout_above="@+id/fraPlaybackControls"
-        style="@style/Container.Full" />
+        style="@style/Container.Full" >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/lstTracks"
+            android:layout_above="@+id/pgbLoading"
+            style="@style/Container.Full" />
+
+        <ProgressBar
+            android:id="@id/pgbLoading"
+            style="@style/ProgressBar.Inline.LoadMore" />
+
+    </RelativeLayout>
     
     <fragment
         android:id="@id/fraPlaybackControls"

@@ -101,6 +101,13 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         this.refresh(this.getMediaIdRefresh());
     }
 
+    @Override
+    public void loadMore() {
+        String mediaId = this.getMediaIdMore();
+        this.mMediaBrowser.unsubscribe(mediaId);
+        this.mMediaBrowser.subscribe(mediaId, this.mMediaBrowserSubscriptionCallback);
+    }
+
     private void refresh(String pMediaId) {
         this.mMediaBrowser.unsubscribe(pMediaId);
         this.mMediaBrowser.subscribe(pMediaId, this.mMediaBrowserSubscriptionCallback);
@@ -134,8 +141,12 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     private void onChildrenLoaded(String pParentId, List<MediaBrowserCompat.MediaItem> pChildren) {
         V view = this.getView();
         if (view != null) {
-            view.setMediaItems(pChildren);
-            view.hideNetworkProgress();
+            if (pParentId == this.getMediaIdMore()) {
+                view.addMediaItems(pChildren);
+            } else {
+                view.setMediaItems(pChildren);
+                view.hideNetworkProgress();
+            }
         }
     }
 
@@ -162,6 +173,7 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
 
     protected abstract String getMediaId();
     protected abstract String getMediaIdRefresh();
+    protected abstract String getMediaIdMore();
 
     private class MediaBrowserConnectionCallback extends MediaBrowserCompat.ConnectionCallback {
         @Override

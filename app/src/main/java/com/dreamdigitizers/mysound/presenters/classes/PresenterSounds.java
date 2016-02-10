@@ -18,4 +18,9 @@ class PresenterSounds extends PresenterTracks<IViewSounds> implements IPresenter
     protected String getMediaIdRefresh() {
         return ServicePlayback.MEDIA_ID__SOUNDS_REFRESH;
     }
+
+    @Override
+    protected String getMediaIdMore() {
+        return ServicePlayback.MEDIA_ID__SOUNDS_MORE;
+    }
 }

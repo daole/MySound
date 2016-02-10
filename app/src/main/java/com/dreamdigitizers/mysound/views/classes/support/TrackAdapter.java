@@ -116,6 +116,11 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
         this.notifyDataSetChanged();
     }
 
+    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
+        this.mMediaItems.addAll(pMediaItems);
+        this.notifyDataSetChanged();
+    }
+
     public void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {
         this.mPlaybackState = pPlaybackState;
         this.notifyDataSetChanged();

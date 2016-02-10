@@ -5,6 +5,11 @@
         <item name="colorAccent">@color/color_accent</item>
     </style>
 
+    <style name="Container.TrackList" parent="Container.Full">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_alignWithParentIfMissing">true</item>
+    </style>
+
     <style name="Container.PlaybackControls" parent="Container.WrapContent.Vertical.OrientationVertical.Padding">
         <item name="android:background">@color/window_background</item>
     </style>
@@ -132,6 +137,11 @@
         <item name="android:layout_width">@dimen/inline_progress_bar_width</item>
         <item name="android:layout_height">@dimen/inline_progress_bar_height</item>
         <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="ProgressBar.Inline.LoadMore" parent="ProgressBar.Inline">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:visibility">gone</item>
     </style>
 
     <style name="FragmentPlaybackControls" parent="Container.WrapContent">

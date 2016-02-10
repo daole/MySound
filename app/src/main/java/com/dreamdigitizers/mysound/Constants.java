@@ -13,4 +13,7 @@ public class Constants {
     public static final String SOUNDCLOUD__SCOPE = "non-expiring";
     public static final String SOUNDCLOUD__DISPLAY = "popup";
     public static final String SOUNDCLOUD__STATE = "";
+
+    public static final int SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING = 1;
+    public static final int SOUNDCLOUD_PARAMETER__LIMIT = 50;
 }
