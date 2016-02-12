@@ -40,11 +40,17 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private static final int ICON_WIDTH = 128;
     private static final int ICON_HEIGHT = 128;
 
+    private static final int ACTIVE_MODE__SOUNDS = 1;
+    private static final int ACTIVE_MODE__SOUNDS_SEARCH = 2;
+    private static final int ACTIVE_MODE__FAVORITES = 3;
+    private static final int ACTIVE_MODE__PLAYLIST = 4;
+
     public static final String MEDIA_ID__ROOT = "__ROOT__";
     public static final String MEDIA_ID__SOUNDS = "__SOUNDS__";
     public static final String MEDIA_ID__SOUNDS_REFRESH = "__SOUNDS_REFRESH__";
     public static final String MEDIA_ID__SOUNDS_MORE = "__SOUNDS_MORE__";
     public static final String MEDIA_ID__SOUNDS_SEARCH = "__SOUNDS_SEARCH__";
+    public static final String MEDIA_ID__SOUNDS_SEARCH_MORE = "__SOUNDS_SEARCH_MORE__";
     public static final String MEDIA_ID__FAVORITES = "__FAVORITES__";
     public static final String MEDIA_ID__FAVORITES_REFRESH = "__FAVORITES_REFRESH__";
     public static final String MEDIA_ID__PLAYLISTS = "__PLAYLISTS__";
@@ -60,6 +66,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private IPresenterPlayback mPresenter;
 
     private Result mSoundsResult;
+    private Result mSoundsSearchResult;
     private Result mFavoritesResult;
     private Result mPlaylistsResult;
     private Result mPlaylistResult;
@@ -71,6 +78,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private List<CustomQueueItem> mPlaylistQueue;
 
     private List<MediaBrowserCompat.MediaItem> mSoundsMediaItems;
+    private List<MediaBrowserCompat.MediaItem> mSoundsSearchMediaItems;
     private List<MediaBrowserCompat.MediaItem> mFavoritesMediaItems;
     private List<MediaBrowserCompat.MediaItem> mPlayListMediaItems;
 
@@ -78,6 +86,9 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private int mSoundsSearchOffset;
     private int mFavoritesOffset;
     private int mPlayListOffset;
+
+    private int mActiveMode;
+    private String mQuery;
 
     @Override
     public void onCreate() {
@@ -87,6 +98,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         this.mFavoritesQueue = new ArrayList<>();
 
         this.mSoundsMediaItems = new ArrayList<>();
+        this.mSoundsSearchMediaItems = new ArrayList<>();
         this.mFavoritesMediaItems = new ArrayList<>();
 
         this.mPresenter = (IPresenterPlayback) PresenterFactory.createPresenter(IPresenterPlayback.class, this);
@@ -137,12 +149,8 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     public void onLoadChildren(String pParentId, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         if (pParentId.startsWith(ServicePlayback.MEDIA_ID__SOUNDS_SEARCH)) {
             String query = pParentId.substring(ServicePlayback.MEDIA_ID__SOUNDS_SEARCH.length());
-            if (UtilsString.isEmpty(query)) {
-                pParentId = ServicePlayback.MEDIA_ID__SOUNDS;
-            } else {
-                this.loadChildrenSoundsSearch(query, pResult);
-                return;
-            }
+            this.loadChildrenSoundsSearch(query, pResult);
+            return;
         }
 
         switch (pParentId) {
@@ -157,6 +165,9 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
                 break;
             case ServicePlayback.MEDIA_ID__SOUNDS_MORE:
                 this.loadChildrenSoundsMore(pResult);
+                break;
+            case ServicePlayback.MEDIA_ID__SOUNDS_SEARCH_MORE:
+                this.loadChildrenSoundsSearchMore(pResult);
                 break;
             case ServicePlayback.MEDIA_ID__FAVORITES:
                 this.loadChildrenFavorites(pResult);
@@ -245,6 +256,9 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
             this.mSoundsMediaItems.addAll(0, mediaItems);
             this.mSoundsResult.sendResult(mediaItems);
             this.mSoundsResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS) {
+                this.mActiveQueue = this.mSoundsQueue;
+            }
         }
     }
 
@@ -256,6 +270,23 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
             this.mSoundsMediaItems.addAll(mediaItems);
             this.mSoundsResult.sendResult(mediaItems);
             this.mSoundsResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS) {
+                this.mActiveQueue = this.mSoundsQueue;
+            }
+        }
+    }
+
+    @Override
+    public void onRxSoundsSearchNext(Collection pCollection) {
+        if (this.mSoundsSearchResult != null) {
+            List<Track> tracks = pCollection.getCollection();
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mSoundsSearchQueue, false);
+            this.mSoundsSearchMediaItems.addAll(mediaItems);
+            this.mSoundsSearchResult.sendResult(mediaItems);
+            this.mSoundsSearchResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS_SEARCH) {
+                this.mActiveQueue = this.mSoundsSearchQueue;
+            }
         }
     }
 
@@ -308,12 +339,12 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     private void loadChildrenSounds(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
-        this.mActiveQueue = this.mSoundsQueue;
+        this.mActiveMode = ServicePlayback.ACTIVE_MODE__SOUNDS;
         if (this.mSoundsMediaItems.size() > 0) {
             pResult.sendResult(this.mSoundsMediaItems);
+            this.mActiveQueue = this.mSoundsQueue;
             return;
         }
-
         this.loadChildrenSoundsMore(pResult);
     }
 
@@ -331,8 +362,35 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     private void loadChildrenSoundsSearch(String pQuery, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
-        this.mSoundsResult = pResult;
-        this.mSoundsResult.detach();
+        this.mActiveMode = ServicePlayback.ACTIVE_MODE__SOUNDS_SEARCH;
+        if (UtilsString.equals(pQuery, this.mQuery)) {
+            if (this.mSoundsSearchMediaItems.size() > 0) {
+                pResult.sendResult(this.mSoundsSearchMediaItems);
+                this.mActiveQueue = this.mSoundsSearchQueue;
+                return;
+            }
+        } else {
+            this.mQuery = pQuery;
+            this.mSoundsSearchOffset = 0;
+            this.mSoundsSearchQueue = new ArrayList<>();
+            this.mSoundsSearchMediaItems.clear();
+        }
+        this.loadChildrenSoundsSearchMore(pQuery, pResult);
+    }
+
+    private void loadChildrenSoundsSearchMore(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        this.loadChildrenSoundsSearchMore(this.mQuery, pResult);
+    }
+
+    private void loadChildrenSoundsSearchMore(String pQuery, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        if (UtilsString.isEmpty(pQuery)) {
+            this.loadChildrenSounds(pResult);
+            return;
+        }
+        this.mSoundsSearchResult = pResult;
+        this.mSoundsSearchResult.detach();
+        this.mPresenter.tracks(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mSoundsSearchOffset, pQuery);
+        this.mSoundsSearchOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
     }
 
     private void loadChildrenFavorites(Result<List<MediaBrowserCompat.MediaItem>> pResult) {

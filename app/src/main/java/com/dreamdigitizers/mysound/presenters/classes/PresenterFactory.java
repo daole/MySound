@@ -5,12 +5,14 @@ import com.dreamdigitizers.androidbaselibrary.views.interfaces.IViewBase;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterHome;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
+import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSoundsSearch;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSplash;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSounds;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterTracks;
 import com.dreamdigitizers.mysound.views.interfaces.IViewHome;
 import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
+import com.dreamdigitizers.mysound.views.interfaces.IViewSoundsSearch;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSplash;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSounds;
 import com.dreamdigitizers.mysound.views.interfaces.IViewTracks;
@@ -37,6 +39,10 @@ public class PresenterFactory {
 
         if(pPresenterClass.isAssignableFrom(IPresenterSounds.class)) {
             return new PresenterSounds((IViewSounds) pView);
+        }
+
+        if(pPresenterClass.isAssignableFrom(IPresenterSoundsSearch.class)) {
+            return new PresenterSoundsSearch((IViewSoundsSearch) pView);
         }
 
         throw new RuntimeException(PresenterFactory.ERROR_MESSAGE__PRESENTER_NOT_FOUND);

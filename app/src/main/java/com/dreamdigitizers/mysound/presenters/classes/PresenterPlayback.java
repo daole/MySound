@@ -113,7 +113,7 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                     public void onNext(Collection pCollection) {
                         IViewPlayback view = PresenterPlayback.this.getView();
                         if (view != null) {
-                            view.onRxSoundsNext(pCollection);
+                            view.onRxSoundsSearchNext(pCollection);
                         }
                     }
 

@@ -145,11 +145,7 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
             if (UtilsString.equals(pParentId, this.getMediaIdMore())) {
                 view.addMediaItems(pChildren, false);
             } else {
-                if (UtilsString.equals(pParentId, this.getMediaId())) {
-                    view.setMediaItems(pChildren);
-                } else {
-                    view.addMediaItems(pChildren, true);
-                }
+                view.addMediaItems(pChildren, true);
                 view.hideNetworkProgress();
             }
         }

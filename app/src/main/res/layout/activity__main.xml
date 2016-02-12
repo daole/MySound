@@ -25,8 +25,8 @@
                 style="@style/Shadow" />
 
             <FrameLayout
-                android:id="@+id/container"
-                style="@style/Container.Full"/>
+                android:id="@+id/placeHolderScreen"
+                style="@style/Container.Full" />
 
         </LinearLayout>
 

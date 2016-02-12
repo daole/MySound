@@ -112,7 +112,7 @@ public class ActivityMain extends ActivityBase {
 
     @Override
     protected int getScreenContainerViewId() {
-        return R.id.container;
+        return R.id.placeHolderScreen;
     }
 
     private void setUpNavigationDrawer() {

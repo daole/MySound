@@ -26,6 +26,6 @@ public class ActivityStart extends ActivityBase {
 
     @Override
     protected int getScreenContainerViewId() {
-        return R.id.container;
+        return R.id.placeHolderScreen;
     }
 }

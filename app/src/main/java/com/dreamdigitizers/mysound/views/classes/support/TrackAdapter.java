@@ -111,8 +111,8 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
         this.mListener = pListener;
     }
 
-    public void setMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
-        this.mMediaItems = pMediaItems;
+    public void clearMediaItems() {
+        this.mMediaItems.clear();
         this.notifyDataSetChanged();
     }
 

@@ -5,7 +5,7 @@
     style="@style/Container.Full" >
 
     <RelativeLayout
-        android:layout_above="@+id/fraPlaybackControls"
+        android:layout_above="@+id/placeHolderPlaybackControls"
         style="@style/Container.Full" >
 
         <android.support.v7.widget.RecyclerView
@@ -18,11 +18,9 @@
             style="@style/ProgressBar.Inline.LoadMore" />
 
     </RelativeLayout>
-    
-    <fragment
-        android:id="@id/fraPlaybackControls"
-        android:name="com.dreamdigitizers.mysound.views.classes.fragments.FragmentPlaybackControls"
-        style="@style/FragmentPlaybackControls"
-        tools:layout="@layout/fragment__playback_controls" />
+
+    <FrameLayout
+        android:id="@id/placeHolderPlaybackControls"
+        style="@style/PlaceHolder.PlaybackControls" />
 
 </RelativeLayout>

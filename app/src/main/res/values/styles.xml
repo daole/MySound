@@ -144,7 +144,7 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="FragmentPlaybackControls" parent="Container.WrapContent">
+    <style name="PlaceHolder.PlaybackControls" parent="Container.WrapContent">
         <item name="android:layout_alignParentBottom">true</item>
     </style>
 </resources>

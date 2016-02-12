@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.FragmentBase;
@@ -19,20 +20,29 @@ import java.util.List;
 public class FragmentTracks extends FragmentBase {
     private static final int VISIBLE_THRESHOLD = 0;
 
-    private RecyclerView mLstTracks;
-    private ProgressBar mPgbLoading;
-    private FragmentPlaybackControls mFragmentPlaybackControls;
+    protected RecyclerView mLstTracks;
+    protected ProgressBar mPgbLoading;
+    protected FrameLayout mPlaceHolderPlaybackControls;
+    protected FragmentPlaybackControls mFragmentPlaybackControls;
 
-    private LinearLayoutManager mLinearLayoutManager;
-    private TrackAdapter mTrackAdapter;
+    protected LinearLayoutManager mLinearLayoutManager;
+    protected TrackAdapter mTrackAdapter;
+    protected IOnScrollEndListener mListener;
 
-    private IOnScrollEndListener mListener;
-
-    private boolean mIsLoading;
-    private int mPreviousTotalItemCount;
+    protected boolean mIsLoading;
+    protected int mPreviousTotalItemCount;
 
     public FragmentTracks() {
         this.mIsLoading = true;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.getChildFragmentManager()
+                .beginTransaction()
+                .remove(this.mFragmentPlaybackControls)
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -45,7 +55,7 @@ public class FragmentTracks extends FragmentBase {
     protected void retrieveScreenItems(View pView) {
         this.mLstTracks = (RecyclerView) pView.findViewById(R.id.lstTracks);
         this.mPgbLoading = (ProgressBar) pView.findViewById(R.id.pgbLoading);
-        this.mFragmentPlaybackControls = (FragmentPlaybackControls) this.getChildFragmentManager().findFragmentById(R.id.fraPlaybackControls);
+        this.mPlaceHolderPlaybackControls = (FrameLayout) pView.findViewById(R.id.placeHolderPlaybackControls);
     }
 
     @Override
@@ -60,6 +70,12 @@ public class FragmentTracks extends FragmentBase {
                 FragmentTracks.this.onTrackListScrolled();
             }
         });
+
+        this.mFragmentPlaybackControls = new FragmentPlaybackControls();
+        this.getChildFragmentManager()
+                .beginTransaction()
+                .add(R.id.placeHolderPlaybackControls, this.mFragmentPlaybackControls)
+                .commit();
         this.hidePlaybackControls();
     }
 
@@ -80,8 +96,9 @@ public class FragmentTracks extends FragmentBase {
         this.mTrackAdapter.setOnItemClickListener(pListener);
     }
 
-    public void setMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
-        this.mTrackAdapter.setMediaItems(pMediaItems);
+    public void clearMediaItems() {
+        this.mPreviousTotalItemCount = 0;
+        this.mTrackAdapter.clearMediaItems();
     }
 
     public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop) {
@@ -124,7 +141,8 @@ public class FragmentTracks extends FragmentBase {
 
     private void showPlaybackControls() {
         if (this.mFragmentPlaybackControls.isHidden()) {
-            this.getChildFragmentManager().beginTransaction()
+            this.getChildFragmentManager()
+                    .beginTransaction()
                     .setCustomAnimations(com.dreamdigitizers.androidbaselibrary.R.anim.slide_in_from_bottom, 0)
                     .show(this.mFragmentPlaybackControls)
                     .commit();
@@ -133,7 +151,8 @@ public class FragmentTracks extends FragmentBase {
 
     private void hidePlaybackControls() {
         if (!this.mFragmentPlaybackControls.isHidden()) {
-            this.getChildFragmentManager().beginTransaction()
+            this.getChildFragmentManager()
+                    .beginTransaction()
                     .setCustomAnimations(0, com.dreamdigitizers.androidbaselibrary.R.anim.slide_out_to_bottom)
                     .hide(this.mFragmentPlaybackControls)
                     .commit();
