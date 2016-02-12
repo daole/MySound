@@ -84,8 +84,8 @@ public class FragmentTracks extends FragmentBase {
         this.mTrackAdapter.setMediaItems(pMediaItems);
     }
 
-    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
-        this.mTrackAdapter.addMediaItems(pMediaItems);
+    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop) {
+        this.mTrackAdapter.addMediaItems(pMediaItems, pIsAddToTop);
     }
 
     public void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {

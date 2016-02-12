@@ -2,7 +2,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorAccent">@color/color_accent</item>
+        <item name="colorAccent">@color/color_progress_dialog</item>
     </style>
 
     <style name="Container.TrackList" parent="Container.Full">

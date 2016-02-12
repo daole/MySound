@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ActivityMain" >
 
-    <item android:id="@+id/actionSearch"
+    <item
+        android:id="@+id/actionSearch"
         android:title="@string/action__search"
         android:icon="@drawable/ic__action_search"
-        android:orderInCategory="100"
-        app:showAsAction="ifRoom" />
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
 
 </menu>

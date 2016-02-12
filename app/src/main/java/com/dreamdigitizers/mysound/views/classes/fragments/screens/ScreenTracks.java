@@ -1,10 +1,19 @@
 package com.dreamdigitizers.mysound.views.classes.fragments.screens;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
@@ -24,8 +33,11 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
 
     private static final String BUNDLE_KEY__MEDIA_ITEMS = "media_items";
 
+    protected MenuItem mActionSearch;
+    protected SearchView mSearchView;
     protected SwipeRefreshLayout mSfrRefresh;
     protected FragmentTracks mFragmentTracks;
+
     protected List<MediaBrowserCompat.MediaItem> mMediaItems;
 
     @Override
@@ -55,6 +67,44 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
         this.mFragmentTracks.setPlaybackControlListener(null);
         this.mFragmentTracks.setOnItemClickListener(null);
         this.mPresenter.disconnect();
+    }
+
+    @Override
+    protected void createOptionsMenu(Menu pMenu, MenuInflater pInflater) {
+        pInflater.inflate(R.menu.menu__tracks, pMenu);
+
+        SearchManager searchManager = (SearchManager) this.getContext().getSystemService(Context.SEARCH_SERVICE);
+        this.mActionSearch = pMenu.findItem(R.id.actionSearch);
+        this.mSearchView = (SearchView) this.mActionSearch.getActionView();
+        this.mSearchView.setSearchableInfo(searchManager.getSearchableInfo(this.getActivity().getComponentName()));
+        this.mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String pQuery) {
+                return ScreenTracks.this.onSearchViewQueryTextSubmitted(pQuery);
+            }
+
+            @Override
+            public boolean onQueryTextChange(String pNewText) {
+                return ScreenTracks.this.onSearchViewQueryTextChanged(pNewText);
+            }
+        });
+        this.mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem pMenuItem) {
+        int id = pMenuItem.getItemId();
+        switch (id) {
+            case R.id.actionSearch:
+                return true;
+        }
+
+        return super.onOptionsItemSelected(pMenuItem);
     }
 
     @Override
@@ -88,15 +138,22 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     public void setMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
         this.mMediaItems = pMediaItems;
         this.mFragmentTracks.setMediaItems(this.mMediaItems);
-        if (this.mSfrRefresh != null && this.mSfrRefresh.isRefreshing()) {
-            this.mSfrRefresh.setRefreshing(false);
-        }
     }
 
     @Override
-    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems) {
-        this.mMediaItems.addAll(pMediaItems);
-        this.mFragmentTracks.addMediaItems(pMediaItems);
+    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop) {
+        if (this.mMediaItems == null) {
+            this.mMediaItems = new ArrayList<>();
+        }
+        if (pIsAddToTop) {
+            this.mMediaItems.addAll(0, pMediaItems);
+        } else {
+            this.mMediaItems.addAll(pMediaItems);
+        }
+        if (this.mSfrRefresh != null && this.mSfrRefresh.isRefreshing()) {
+            this.mSfrRefresh.setRefreshing(false);
+        }
+        this.mFragmentTracks.addMediaItems(pMediaItems, pIsAddToTop);
         this.mFragmentTracks.hideLoadMoreProgress();
     }
 
@@ -149,5 +206,14 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     private void refresh() {
         this.mSfrRefresh.setRefreshing(true);
         this.mPresenter.refresh();
+    }
+
+    private boolean onSearchViewQueryTextSubmitted(String pQuery) {
+        MenuItemCompat.collapseActionView(this.mActionSearch);
+        return true;
+    }
+
+    private boolean onSearchViewQueryTextChanged(String pNewText) {
+        return false;
     }
 }

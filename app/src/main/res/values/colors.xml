@@ -9,4 +9,5 @@
     <color name="color_accent">@color/color_primary_dark</color>
     <color name="window_background">#FFCCBC</color>
     <color name="navigation_bar_color">@color/color_primary</color>
+    <color name="color_progress_dialog">@color/color_primary_dark</color>
 </resources>

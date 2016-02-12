@@ -9,6 +9,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.dreamdigitizers.androidbaselibrary.presenters.classes.PresenterBase;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterTracks;
 import com.dreamdigitizers.mysound.views.classes.services.ServicePlayback;
@@ -141,10 +142,14 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     private void onChildrenLoaded(String pParentId, List<MediaBrowserCompat.MediaItem> pChildren) {
         V view = this.getView();
         if (view != null) {
-            if (pParentId == this.getMediaIdMore()) {
-                view.addMediaItems(pChildren);
+            if (UtilsString.equals(pParentId, this.getMediaIdMore())) {
+                view.addMediaItems(pChildren, false);
             } else {
-                view.setMediaItems(pChildren);
+                if (UtilsString.equals(pParentId, this.getMediaId())) {
+                    view.setMediaItems(pChildren);
+                } else {
+                    view.addMediaItems(pChildren, true);
+                }
                 view.hideNetworkProgress();
             }
         }

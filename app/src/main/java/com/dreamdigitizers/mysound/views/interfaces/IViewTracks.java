@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IViewTracks extends IViewBase {
     void setMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems);
-    void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems);
+    void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop);
     void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState);
     void onMetadataChanged(MediaMetadataCompat pMediaMetadata);
 }

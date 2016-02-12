@@ -2,10 +2,10 @@
     <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
         <item name="android:colorPrimaryDark">@color/color_primary_dark</item>
         <item name="android:colorPrimary">@color/color_primary</item>
-        <item name="android:textColorPrimary">@color/text_color_primary</item>
-        <item name="android:colorAccent">@color/color_accent</item>
-        <item name="android:windowBackground">@color/window_background</item>
-        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
+        <!--<item name="android:textColorPrimary">@color/text_color_primary</item>-->
+        <item name="android:colorAccent">@color/color_progress_dialog</item>
+        <!--<item name="android:windowBackground">@color/window_background</item>-->
+        <!--<item name="android:navigationBarColor">@color/navigation_bar_color</item>-->
 
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>

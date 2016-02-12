@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsBitmap;
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.CustomQueueItem;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.MediaPlayerNotificationReceiver;
@@ -43,6 +44,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     public static final String MEDIA_ID__SOUNDS = "__SOUNDS__";
     public static final String MEDIA_ID__SOUNDS_REFRESH = "__SOUNDS_REFRESH__";
     public static final String MEDIA_ID__SOUNDS_MORE = "__SOUNDS_MORE__";
+    public static final String MEDIA_ID__SOUNDS_SEARCH = "__SOUNDS_SEARCH__";
     public static final String MEDIA_ID__FAVORITES = "__FAVORITES__";
     public static final String MEDIA_ID__FAVORITES_REFRESH = "__FAVORITES_REFRESH__";
     public static final String MEDIA_ID__PLAYLISTS = "__PLAYLISTS__";
@@ -64,6 +66,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
     private List<CustomQueueItem> mActiveQueue;
     private List<CustomQueueItem> mSoundsQueue;
+    private List<CustomQueueItem> mSoundsSearchQueue;
     private List<CustomQueueItem> mFavoritesQueue;
     private List<CustomQueueItem> mPlaylistQueue;
 
@@ -72,14 +75,23 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private List<MediaBrowserCompat.MediaItem> mPlayListMediaItems;
 
     private int mSoundsOffset;
+    private int mSoundsSearchOffset;
     private int mFavoritesOffset;
     private int mPlayListOffset;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
+        this.mSoundsQueue = new ArrayList<>();
+        this.mSoundsSearchQueue = new ArrayList<>();
+        this.mFavoritesQueue = new ArrayList<>();
+
+        this.mSoundsMediaItems = new ArrayList<>();
+        this.mFavoritesMediaItems = new ArrayList<>();
+
         this.mPresenter = (IPresenterPlayback) PresenterFactory.createPresenter(IPresenterPlayback.class, this);
+
+        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
     }
 
     @Override
@@ -117,22 +129,22 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     @Override
-    protected boolean isOnlineStreaming() {
-        return true;
-    }
-
-    @Override
-    protected MediaPlayerNotificationReceiver createMediaPlayerNotificationReceiver() {
-        return new PlaybackNotificationReceiver(this);
-    }
-
-    @Override
     public BrowserRoot onGetRoot(String pClientPackageName, int pClientUid, Bundle pRootHints) {
         return new BrowserRoot(ServicePlayback.MEDIA_ID__ROOT, null);
     }
 
     @Override
     public void onLoadChildren(String pParentId, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        if (pParentId.startsWith(ServicePlayback.MEDIA_ID__SOUNDS_SEARCH)) {
+            String query = pParentId.substring(ServicePlayback.MEDIA_ID__SOUNDS_SEARCH.length());
+            if (UtilsString.isEmpty(query)) {
+                pParentId = ServicePlayback.MEDIA_ID__SOUNDS;
+            } else {
+                this.loadChildrenSoundsSearch(query, pResult);
+                return;
+            }
+        }
+
         switch (pParentId) {
             case ServicePlayback.MEDIA_ID__ROOT:
                 this.loadChildrenRoot(pResult);
@@ -167,6 +179,16 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
             default:
                 break;
         }
+    }
+
+    @Override
+    protected boolean isOnlineStreaming() {
+        return true;
+    }
+
+    @Override
+    protected MediaPlayerNotificationReceiver createMediaPlayerNotificationReceiver() {
+        return new PlaybackNotificationReceiver(this);
     }
 
     @Override
@@ -219,11 +241,10 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     @Override
     public void onRxSoundsNext(List<Track> pTracks) {
         if (this.mSoundsResult != null) {
-            this.mSoundsQueue = new ArrayList<>();
-            this.mSoundsMediaItems = this.buildPlaylist(pTracks, this.mSoundsQueue);
-            this.mSoundsResult.sendResult(this.mSoundsMediaItems);
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks, this.mSoundsQueue, true);
+            this.mSoundsMediaItems.addAll(0, mediaItems);
+            this.mSoundsResult.sendResult(mediaItems);
             this.mSoundsResult = null;
-            this.mActiveQueue = this.mSoundsQueue;
         }
     }
 
@@ -231,8 +252,9 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     public void onRxSoundsNext(Collection pCollection) {
         if (this.mSoundsResult != null) {
             List<Track> tracks = pCollection.getCollection();
-            this.mSoundsMediaItems = this.buildPlaylist(tracks, this.mSoundsQueue);
-            this.mSoundsResult.sendResult(this.mSoundsMediaItems);
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mSoundsQueue, false);
+            this.mSoundsMediaItems.addAll(mediaItems);
+            this.mSoundsResult.sendResult(mediaItems);
             this.mSoundsResult = null;
         }
     }
@@ -241,7 +263,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     public void onRxFavoritesNext(List<Track> pTracks) {
         if (this.mFavoritesResult != null) {
             this.mFavoritesQueue = new ArrayList<>();
-            this.mFavoritesMediaItems = this.buildPlaylist(pTracks, this.mFavoritesQueue);
+            this.mFavoritesMediaItems = this.buildPlaylist(pTracks, this.mFavoritesQueue, true);
             this.mFavoritesResult.sendResult(this.mFavoritesMediaItems);
             this.mFavoritesResult = null;
             this.mActiveQueue = this.mFavoritesQueue;
@@ -286,12 +308,13 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     private void loadChildrenSounds(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
-        if (this.mSoundsMediaItems != null && this.mSoundsMediaItems.size() > 0) {
+        this.mActiveQueue = this.mSoundsQueue;
+        if (this.mSoundsMediaItems.size() > 0) {
             pResult.sendResult(this.mSoundsMediaItems);
             return;
         }
 
-        this.loadChildrenSoundsRefresh(pResult);
+        this.loadChildrenSoundsMore(pResult);
     }
 
     private void loadChildrenSoundsRefresh(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
@@ -304,6 +327,12 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         this.mSoundsResult = pResult;
         this.mSoundsResult.detach();
         this.mPresenter.tracks(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mSoundsOffset);
+        this.mSoundsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
+    }
+
+    private void loadChildrenSoundsSearch(String pQuery, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        this.mSoundsResult = pResult;
+        this.mSoundsResult.detach();
     }
 
     private void loadChildrenFavorites(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
@@ -350,8 +379,9 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
                 .build(), MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
     }
 
-    private List<MediaBrowserCompat.MediaItem> buildPlaylist(List<Track> pTracks, List<CustomQueueItem> pPlayingQueue) {
+    private List<MediaBrowserCompat.MediaItem> buildPlaylist(List<Track> pTracks, List<CustomQueueItem> pPlayingQueue, boolean pIsAddToTop) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
+        List<CustomQueueItem> customQueueItems = new ArrayList<>();
 
         for(Track track : pTracks) {
             MediaMetadataCompat mediaMetadata = SoundCloudMetadataBuilder.build(track);
@@ -362,7 +392,13 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
             MediaSessionCompat.QueueItem queueItem = new MediaSessionCompat.QueueItem(mediaDescription, track.getId());
             CustomQueueItem customQueueItem = new CustomQueueItem(queueItem, mediaMetadata, this.buildStreamUrl(track.getStreamUrl()));
-            pPlayingQueue.add(customQueueItem);
+            customQueueItems.add(customQueueItem);
+        }
+
+        if (pIsAddToTop) {
+            pPlayingQueue.addAll(0, customQueueItems);
+        } else {
+            pPlayingQueue.addAll(customQueueItems);
         }
 
         return mediaItems;
