@@ -9,6 +9,7 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.view.View;
 import android.widget.Toast;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsBitmap;
@@ -52,7 +53,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     public static final String MEDIA_ID__SOUNDS_SEARCH = "__SOUNDS_SEARCH__";
     public static final String MEDIA_ID__SOUNDS_SEARCH_MORE = "__SOUNDS_SEARCH_MORE__";
     public static final String MEDIA_ID__FAVORITES = "__FAVORITES__";
-    public static final String MEDIA_ID__FAVORITES_REFRESH = "__FAVORITES_REFRESH__";
+    public static final String MEDIA_ID__FAVORITES_MORE = "__FAVORITES_MORE__";
     public static final String MEDIA_ID__PLAYLISTS = "__PLAYLISTS__";
     public static final String MEDIA_ID__PLAYLISTS_REFRESH = "__PLAYLISTS_REFRESH__";
     public static final String MEDIA_ID__PLAYLIST = "__PLAYLIST__";
@@ -84,8 +85,12 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
     private int mSoundsOffset;
     private int mSoundsSearchOffset;
-    private int mFavoritesOffset;
+    private String mFavoritesOffset;
     private int mPlayListOffset;
+
+    private boolean mIsSoundsMore;
+    private boolean mIsSoundsSearchMore;
+    private boolean mIsFavoritesMore;
 
     private int mActiveMode;
     private String mQuery;
@@ -100,6 +105,10 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         this.mSoundsMediaItems = new ArrayList<>();
         this.mSoundsSearchMediaItems = new ArrayList<>();
         this.mFavoritesMediaItems = new ArrayList<>();
+
+        this.mIsSoundsMore = true;
+        this.mIsSoundsSearchMore = true;
+        this.mIsFavoritesMore = true;
 
         this.mPresenter = (IPresenterPlayback) PresenterFactory.createPresenter(IPresenterPlayback.class, this);
 
@@ -172,8 +181,8 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
             case ServicePlayback.MEDIA_ID__FAVORITES:
                 this.loadChildrenFavorites(pResult);
                 break;
-            case ServicePlayback.MEDIA_ID__FAVORITES_REFRESH:
-                this.loadChildrenFavoritesRefresh(pResult);
+            case ServicePlayback.MEDIA_ID__FAVORITES_MORE:
+                this.loadChildrenFavoritesMore(pResult);
                 break;
             case ServicePlayback.MEDIA_ID__PLAYLISTS:
                 this.loadChildrenPlaylists(pResult);
@@ -213,20 +222,45 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     }
 
     @Override
-    public void showMessage(int pStringResourceId) {
-        Toast.makeText(this, pStringResourceId, Toast.LENGTH_SHORT).show();
+    public void showMessage(int pMessageResourceId) {
+        this.showMessage(this.getString(pMessageResourceId));
     }
 
     @Override
-    public void showConfirmation(int pStringResourceId, UtilsDialog.IOnDialogButtonClickListener pListener) {
+    public void showMessage(String pMessage) {
+        Toast.makeText(this, pMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showError(int pStringResourceId) {
+    public void showMessage(int pMessageResourceId, int pActionResourceId, View.OnClickListener pActionListener) {
     }
 
     @Override
-    public void showRetryableError(int pStringResourceId, boolean pIsEndActivity, UtilsDialog.IRetryAction pRetryAction) {
+    public void showMessage(String pMessage, String pAction, View.OnClickListener pActionListener) {
+    }
+
+    @Override
+    public void showConfirmation(int pMessageResourceId, UtilsDialog.IOnDialogButtonClickListener pListener) {
+    }
+
+    @Override
+    public void showConfirmation(String pMessage, UtilsDialog.IOnDialogButtonClickListener pListener) {
+    }
+
+    @Override
+    public void showError(int pMessageResourceId) {
+    }
+
+    @Override
+    public void showError(String pMessage) {
+    }
+
+    @Override
+    public void showRetryableError(int pMessageResourceId, boolean pIsEndActivity, UtilsDialog.IRetryAction pRetryAction) {
+    }
+
+    @Override
+    public void showRetryableError(String pMessage, boolean pIsEndActivity, UtilsDialog.IRetryAction pRetryAction) {
     }
 
     @Override
@@ -247,6 +281,12 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
     @Override
     public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
+        pError.printStackTrace();
+        this.mSoundsResult = null;
+        this.mSoundsSearchResult = null;
+        this.mFavoritesResult = null;
+        this.mPlaylistsResult = null;
+        this.mPlaylistResult = null;
     }
 
     @Override
@@ -265,6 +305,18 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     @Override
     public void onRxSoundsNext(Collection pCollection) {
         if (this.mSoundsResult != null) {
+            String nextHref = pCollection.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsSoundsMore) {
+                    this.mSoundsResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mSoundsResult = null;
+                    return;
+                }
+                this.mIsSoundsMore = false;
+            } else {
+                this.mSoundsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
+                this.mIsSoundsMore = true;
+            }
             List<Track> tracks = pCollection.getCollection();
             List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mSoundsQueue, false);
             this.mSoundsMediaItems.addAll(mediaItems);
@@ -279,6 +331,18 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     @Override
     public void onRxSoundsSearchNext(Collection pCollection) {
         if (this.mSoundsSearchResult != null) {
+            String nextHref = pCollection.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsSoundsSearchMore) {
+                    this.mSoundsSearchResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mSoundsSearchResult = null;
+                    return;
+                }
+                this.mIsSoundsSearchMore = false;
+            } else {
+                this.mSoundsSearchOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
+                this.mIsSoundsSearchMore = true;
+            }
             List<Track> tracks = pCollection.getCollection();
             List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mSoundsSearchQueue, false);
             this.mSoundsSearchMediaItems.addAll(mediaItems);
@@ -293,11 +357,40 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     @Override
     public void onRxFavoritesNext(List<Track> pTracks) {
         if (this.mFavoritesResult != null) {
-            this.mFavoritesQueue = new ArrayList<>();
-            this.mFavoritesMediaItems = this.buildPlaylist(pTracks, this.mFavoritesQueue, true);
-            this.mFavoritesResult.sendResult(this.mFavoritesMediaItems);
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks, this.mFavoritesQueue, true);
+            this.mFavoritesMediaItems.addAll(0, mediaItems);
+            this.mFavoritesResult.sendResult(mediaItems);
             this.mFavoritesResult = null;
-            this.mActiveQueue = this.mFavoritesQueue;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__FAVORITES) {
+                this.mActiveQueue = this.mFavoritesQueue;
+            }
+        }
+    }
+
+    @Override
+    public void onRxFavoritesNext(Collection pCollection) {
+        if (this.mFavoritesResult != null) {
+            String nextHref = pCollection.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsFavoritesMore) {
+                    this.mFavoritesResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mFavoritesResult = null;
+                    return;
+                }
+                this.mIsFavoritesMore = false;
+            } else {
+                Uri uri = Uri.parse(nextHref);
+                this.mFavoritesOffset = uri.getQueryParameter("cursor");
+                this.mIsFavoritesMore = true;
+            }
+            List<Track> tracks = pCollection.getCollection();
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mFavoritesQueue, false);
+            this.mFavoritesMediaItems.addAll(mediaItems);
+            this.mFavoritesResult.sendResult(mediaItems);
+            this.mFavoritesResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__FAVORITES) {
+                this.mActiveQueue = this.mFavoritesQueue;
+            }
         }
     }
 
@@ -358,7 +451,6 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         this.mSoundsResult = pResult;
         this.mSoundsResult.detach();
         this.mPresenter.tracks(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mSoundsOffset);
-        this.mSoundsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
     }
 
     private void loadChildrenSoundsSearch(String pQuery, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
@@ -390,22 +482,23 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         this.mSoundsSearchResult = pResult;
         this.mSoundsSearchResult.detach();
         this.mPresenter.tracks(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mSoundsSearchOffset, pQuery);
-        this.mSoundsSearchOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
     }
 
     private void loadChildrenFavorites(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
-        if (this.mFavoritesMediaItems != null && this.mFavoritesMediaItems.size() > 0) {
+        this.mActiveMode = ServicePlayback.ACTIVE_MODE__FAVORITES;
+        if (this.mFavoritesMediaItems.size() > 0) {
             pResult.sendResult(this.mFavoritesMediaItems);
+            this.mActiveQueue = this.mFavoritesQueue;
             return;
         }
 
-        this.loadChildrenFavoritesRefresh(pResult);
+        this.loadChildrenFavoritesMore(pResult);
     }
 
-    private void loadChildrenFavoritesRefresh(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+    private void loadChildrenFavoritesMore(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mFavoritesResult = pResult;
         this.mFavoritesResult.detach();
-        this.mPresenter.userFavorites(Share.getMe().getId(), null);
+        this.mPresenter.userFavorites(null, Share.getMe().getId(), Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mFavoritesOffset);
     }
 
     private void loadChildrenPlaylists(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
@@ -453,10 +546,12 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
             customQueueItems.add(customQueueItem);
         }
 
-        if (pIsAddToTop) {
-            pPlayingQueue.addAll(0, customQueueItems);
-        } else {
-            pPlayingQueue.addAll(customQueueItems);
+        if (customQueueItems.size() > 0) {
+            if (pIsAddToTop) {
+                pPlayingQueue.addAll(0, customQueueItems);
+            } else {
+                pPlayingQueue.addAll(customQueueItems);
+            }
         }
 
         return mediaItems;

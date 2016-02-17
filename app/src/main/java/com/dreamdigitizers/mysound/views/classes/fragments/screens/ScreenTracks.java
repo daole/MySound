@@ -79,12 +79,6 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
                 return ScreenTracks.this.onSearchViewQueryTextChanged(pNewText);
             }
         });
-        this.mSearchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 
     @Override

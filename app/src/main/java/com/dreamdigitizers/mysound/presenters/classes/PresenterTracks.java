@@ -142,6 +142,11 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     private void onChildrenLoaded(String pParentId, List<MediaBrowserCompat.MediaItem> pChildren) {
         V view = this.getView();
         if (view != null) {
+            if (pChildren == null) {
+                view.showMessage(R.string.error__unknown_error, R.string.blank, null);
+            } else if (pChildren.size() <= 0) {
+                view.showMessage(R.string.message__no_data_to_load, R.string.blank, null);
+            }
             if (UtilsString.equals(pParentId, this.getMediaIdMore())) {
                 view.addMediaItems(pChildren, false);
             } else {
@@ -151,7 +156,7 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         }
     }
 
-    private void onError(String pId) {
+    private void onError(String pParentId) {
         V view = this.getView();
         if (view != null) {
             view.showError(R.string.error__unknown_error);
@@ -190,8 +195,8 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         }
 
         @Override
-        public void onError(String pId) {
-            PresenterTracks.this.onError(pId);
+        public void onError(String pParentId) {
+            PresenterTracks.this.onError(pParentId);
         }
     }
 

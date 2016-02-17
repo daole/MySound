@@ -11,6 +11,7 @@ public interface IViewPlayback extends IViewRx {
     void onRxSoundsNext(Collection pCollection);
     void onRxSoundsSearchNext(Collection pCollection);
     void onRxFavoritesNext(List<Track> pTracks);
+    void onRxFavoritesNext(Collection pCollection);
     void onRxPlaylistsNext(List<Playlist> pTracks);
     void onRxPlaylistNext(List<Track> pTracks);
 }

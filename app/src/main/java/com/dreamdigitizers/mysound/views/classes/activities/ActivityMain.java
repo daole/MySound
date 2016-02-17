@@ -1,6 +1,7 @@
 package com.dreamdigitizers.mysound.views.classes.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +19,7 @@ import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.utilities.UtilsImage;
+import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenFavorites;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenSounds;
 
@@ -27,6 +29,7 @@ public class ActivityMain extends ActivityBase {
     public static final String EXTRA__CURRENT_MEDIA_DESCRIPTION = "current_media_description";
 
     private DrawerLayout mDrawerLayout;
+    private CoordinatorLayout mCoordinatorLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
@@ -77,13 +80,19 @@ public class ActivityMain extends ActivityBase {
     }
 
     @Override
+    protected CoordinatorLayout getCoordinatorLayout() {
+        return this.mCoordinatorLayout;
+    }
+
+    @Override
     protected void setLayout() {
         this.setContentView(R.layout.activity__main);
     }
 
     @Override
     protected void retrieveItems() {
-        this.mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        this.mDrawerLayout = (DrawerLayout) this.findViewById(R.id.drawerLayout);
+        this.mCoordinatorLayout = (CoordinatorLayout) this.findViewById(R.id.coordinatorLayout);
         this.mToolbar = (Toolbar) this.findViewById(R.id.toolbar);
         this.mNavigationView = (NavigationView) this.findViewById(R.id.navigationView);
         this.mImgAvatar = (CircleImageView) this.mNavigationView.getHeaderView(0).findViewById(R.id.imgAvatar);
@@ -162,10 +171,15 @@ public class ActivityMain extends ActivityBase {
                     screenBase = new ScreenSounds();
                 }
                 break;
+            case R.id.drawer_item__favorites:
+                if (!(this.mCurrentScreen instanceof ScreenFavorites)) {
+                    screenBase = new ScreenFavorites();
+                }
+                break;
+            /*
             case R.id.drawer_item__playlists:
                 break;
-            case R.id.drawer_item__favorites:
-                break;
+            */
             default:
                 break;
         }
