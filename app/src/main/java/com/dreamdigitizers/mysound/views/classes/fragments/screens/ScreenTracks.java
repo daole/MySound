@@ -122,12 +122,32 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     }
 
     @Override
-    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop) {
-        this.mFragmentTracks.addMediaItems(pMediaItems, pIsAddToTop);
-        this.mFragmentTracks.hideLoadMoreProgress();
+    public void showRefreshProgress() {
+        if (this.mSfrRefresh != null && !this.mSfrRefresh.isRefreshing()) {
+            this.mSfrRefresh.setRefreshing(true);
+        }
+    }
+
+    @Override
+    public void hideRefreshProgress() {
         if (this.mSfrRefresh != null && this.mSfrRefresh.isRefreshing()) {
             this.mSfrRefresh.setRefreshing(false);
         }
+    }
+
+    @Override
+     public void showLoadMoreProgress() {
+        this.mFragmentTracks.showLoadMoreProgress();
+    }
+
+    @Override
+    public void hideLoadMoreProgress() {
+        this.mFragmentTracks.hideLoadMoreProgress();
+    }
+
+    @Override
+    public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop) {
+        this.mFragmentTracks.addMediaItems(pMediaItems, pIsAddToTop);
     }
 
     @Override
@@ -142,7 +162,6 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
 
     @Override
     public void onScrollEnd() {
-        this.mFragmentTracks.showLoadMoreProgress();
         this.mPresenter.loadMore();
     }
 
@@ -180,9 +199,6 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     }
 
     private void refresh() {
-        if (this.mSfrRefresh != null && !this.mSfrRefresh.isRefreshing()) {
-            this.mSfrRefresh.setRefreshing(true);
-        }
         this.mPresenter.refresh();
     }
 

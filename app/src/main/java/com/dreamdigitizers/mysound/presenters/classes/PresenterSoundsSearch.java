@@ -24,6 +24,15 @@ class PresenterSoundsSearch extends PresenterTracks<IViewSoundsSearch> implement
         return ServicePlayback.MEDIA_ID__SOUNDS_SEARCH_MORE;
     }
 
+    @Override
+    public void search() {
+        IViewSoundsSearch view = this.getView();
+        if (view != null) {
+            view.showNetworkProgress();
+            this.load(this.getMediaIdRefresh());
+        }
+    }
+
     private String buildMediaId(String pMediaId) {
         String query = "";
         IViewSoundsSearch view = this.getView();

@@ -23,7 +23,7 @@ public abstract class ScreenRx<P extends IPresenterRx> extends ScreenBase<P> imp
         this.hideNetworkProgress();
         if (pRetryAction != null) {
             this.showRetryableError(
-                    R.string.error__retryable_network_error,
+                    R.string.error__retryable_network,
                     false,
                     pRetryAction);
         }

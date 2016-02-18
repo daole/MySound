@@ -35,4 +35,6 @@
     <string name="desc__navigation_drawer_close">Close navigation drawer</string>
 
     <string name="hint__track_search">Sound title</string>
+
+    <string name="error__media_network">A network-related error has occurred.</string>
 </resources>

@@ -99,23 +99,31 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
 
     @Override
     public void refresh() {
-        this.refresh(this.getMediaIdRefresh());
+        V view = this.getView();
+        if (view != null) {
+            view.showRefreshProgress();
+            this.load(this.getMediaIdRefresh());
+        }
     }
 
     @Override
     public void loadMore() {
-        String mediaId = this.getMediaIdMore();
-        this.mMediaBrowser.unsubscribe(mediaId);
-        this.mMediaBrowser.subscribe(mediaId, this.mMediaBrowserSubscriptionCallback);
+        V view = this.getView();
+        if (view != null) {
+            view.showLoadMoreProgress();
+            String mediaId = this.getMediaIdMore();
+            this.mMediaBrowser.unsubscribe(mediaId);
+            this.mMediaBrowser.subscribe(mediaId, this.mMediaBrowserSubscriptionCallback);
+        }
     }
 
-    private void refresh(String pMediaId) {
+    protected void load(String pMediaId) {
         this.mMediaBrowser.unsubscribe(pMediaId);
         this.mMediaBrowser.subscribe(pMediaId, this.mMediaBrowserSubscriptionCallback);
     }
 
     private void onConnected() {
-        this.refresh(this.getMediaId());
+        this.load(this.getMediaId());
 
         V view = this.getView();
         if (view != null) {
@@ -142,16 +150,23 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     private void onChildrenLoaded(String pParentId, List<MediaBrowserCompat.MediaItem> pChildren) {
         V view = this.getView();
         if (view != null) {
-            if (pChildren == null) {
-                view.showMessage(R.string.error__unknown_error, R.string.blank, null);
-            } else if (pChildren.size() <= 0) {
+            if (pChildren.size() <= 0) {
                 view.showMessage(R.string.message__no_data_to_load, R.string.blank, null);
             }
             if (UtilsString.equals(pParentId, this.getMediaIdMore())) {
                 view.addMediaItems(pChildren, false);
             } else {
                 view.addMediaItems(pChildren, true);
+            }
+
+            if (UtilsString.equals(pParentId, this.getMediaId())) {
                 view.hideNetworkProgress();
+            }
+            if (UtilsString.equals(pParentId, this.getMediaIdRefresh())) {
+                view.hideRefreshProgress();
+            }
+            if (UtilsString.equals(pParentId, this.getMediaIdMore())) {
+                view.hideLoadMoreProgress();
             }
         }
     }
@@ -159,13 +174,49 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     private void onError(String pParentId) {
         V view = this.getView();
         if (view != null) {
-            view.showError(R.string.error__unknown_error);
+            view.showError(R.string.error__unknown);
         }
     }
 
     private void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {
         V view = this.getView();
         if (view != null) {
+            if (pPlaybackState.getState() == PlaybackStateCompat.STATE_ERROR) {
+                view.hideNetworkProgress();
+                view.hideRefreshProgress();
+                view.hideLoadMoreProgress();
+
+                int errorMessageResourceId = 0;
+                String errorCode = pPlaybackState.getErrorMessage().toString();
+                switch (errorCode) {
+                    case ServicePlayback.ERROR_CODE__MEDIA_NETWORK:
+                        errorMessageResourceId = R.string.error__media_network;
+                        break;
+                    case ServicePlayback.ERROR_CODE__MEDIA_UNKNOWN:
+                        errorMessageResourceId = R.string.error__media_unknown;
+                        break;
+                    case ServicePlayback.ERROR_CODE__MEDIA_SKIP:
+                        errorMessageResourceId = R.string.error__media_skip;
+                        break;
+                    case ServicePlayback.ERROR_CODE__MEDIA_NO_MATCHED_TRACK:
+                        errorMessageResourceId = R.string.error__media_no_matched_track;
+                        break;
+                    case ServicePlayback.ERROR_CODE__MEDIA_UNPLAYABLE:
+                        errorMessageResourceId = R.string.error__media_unplayable;
+                        break;
+                    case ServicePlayback.ERROR_CODE__MEDIA_INVALID_INDEX:
+                        errorMessageResourceId = R.string.error__media_invalid_index;
+                        break;
+                    default:
+                        break;
+                }
+                if (errorMessageResourceId > 0) {
+                    view.showMessage(errorMessageResourceId, R.string.blank, null);
+                }
+                if (Integer.parseInt(errorCode) >= 0) {
+                    return;
+                }
+            }
             view.onPlaybackStateChanged(pPlaybackState);
         }
     }

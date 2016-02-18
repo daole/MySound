@@ -32,10 +32,9 @@ public class ScreenSoundsSearch extends ScreenTracks<IPresenterSoundsSearch> imp
 
     @Override
     protected void handleSearch(String pQuery) {
-        this.showNetworkProgress();
         this.mQuery = pQuery;
         this.mFragmentTracks.clearMediaItems();
-        this.mPresenter.refresh();
+        this.mPresenter.search();
     }
 
     @Override

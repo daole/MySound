@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback {
+    public static final String ERROR_CODE__MEDIA_NETWORK = "1";
+
     //private static final int ART_WIDTH = 800;
     //private static final int ART_HEIGHT = 480;
     private static final int ICON_WIDTH = 128;
@@ -281,12 +283,13 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
     @Override
     public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
-        pError.printStackTrace();
         this.mSoundsResult = null;
         this.mSoundsSearchResult = null;
         this.mFavoritesResult = null;
         this.mPlaylistsResult = null;
         this.mPlaylistResult = null;
+        this.updatePlaybackState(ServicePlayback.ERROR_CODE__MEDIA_NETWORK);
+        pError.printStackTrace();
     }
 
     @Override

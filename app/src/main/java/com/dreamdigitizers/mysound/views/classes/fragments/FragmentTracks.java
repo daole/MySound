@@ -130,9 +130,9 @@ public class FragmentTracks extends FragmentBase {
 
     private boolean isShowPlaybackControls(PlaybackStateCompat pPlaybackState) {
         switch (pPlaybackState.getState()) {
-            case PlaybackStateCompat.STATE_ERROR:
             case PlaybackStateCompat.STATE_NONE:
             case PlaybackStateCompat.STATE_STOPPED:
+            case PlaybackStateCompat.STATE_ERROR:
                 return false;
             default:
                 return true;
