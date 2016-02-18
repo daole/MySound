@@ -2,16 +2,21 @@ package com.dreamdigitizers.mysound.presenters.classes;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
+import com.dreamdigitizers.androidsoundcloudapi.core.IApi;
 import com.dreamdigitizers.androidsoundcloudapi.models.Collection;
+import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
+import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
 
 import java.util.List;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenterPlayback {
@@ -130,11 +135,27 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
     }
 
     @Override
-    public void userFavorites(final UtilsDialog.IRetryAction pRetryAction, final int pId) {
+    public void userFavorites(final UtilsDialog.IRetryAction pRetryAction) {
         this.unsubscribe();
-        this.mSubscription = ApiFactory.getApiInstance()
-                .userFavoritesRx(pId)
-                .subscribeOn(Schedulers.io())
+        final IApi api = ApiFactory.getApiInstance();
+        this.mSubscription = Observable.just(Share.getMe())
+                .flatMap(new Func1<Me, Observable<Me>>() {
+                    @Override
+                    public Observable<Me> call(Me pMe) {
+                        if (pMe != null) {
+                            return Observable.just(pMe);
+                        } else {
+                            return api.meRx(Share.getAccessToken());
+                        }
+                    }
+                })
+                .flatMap(new Func1<Me, Observable<List<Track>>>() {
+                    @Override
+                    public Observable<List<Track>> call(Me pMe) {
+                        Share.setMe(pMe);
+                        return api.userFavoritesRx(pMe.getId());
+                    }
+                }).subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Track>>() {
@@ -164,11 +185,27 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
     }
 
     @Override
-    public void userFavorites(final UtilsDialog.IRetryAction pRetryAction, final int pId, final int pLinkedPartitioning, final int pLimit, final String pOffset) {
+    public void userFavorites(final UtilsDialog.IRetryAction pRetryAction, final int pLinkedPartitioning, final int pLimit, final String pOffset) {
         this.unsubscribe();
-        this.mSubscription = ApiFactory.getApiInstance()
-                .userFavoritesRx(pId, pLinkedPartitioning, pLimit, pOffset)
-                .subscribeOn(Schedulers.io())
+        final IApi api = ApiFactory.getApiInstance();
+        this.mSubscription = Observable.just(Share.getMe())
+                .flatMap(new Func1<Me, Observable<Me>>() {
+                    @Override
+                    public Observable<Me> call(Me pMe) {
+                        if (pMe != null) {
+                            return Observable.just(pMe);
+                        } else {
+                            return api.meRx(Share.getAccessToken());
+                        }
+                    }
+                })
+                .flatMap(new Func1<Me, Observable<Collection>>() {
+                    @Override
+                    public Observable<Collection> call(Me pMe) {
+                        Share.setMe(pMe);
+                        return api.userFavoritesRx(pMe.getId(), pLinkedPartitioning, pLimit, pOffset);
+                    }
+                }).subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Collection>() {

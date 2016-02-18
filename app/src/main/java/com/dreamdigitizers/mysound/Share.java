@@ -2,6 +2,7 @@ package com.dreamdigitizers.mysound;
 
 import android.os.Bundle;
 
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class Share {
     public static void setAccessToken(String pAccessToken) {
         if (pAccessToken != null) {
             String oldAccessToken = Share.getAccessToken();
-            if (!oldAccessToken.equals(pAccessToken)) {
+            if (!UtilsString.equals(pAccessToken, oldAccessToken)) {
                 Share.bundle.putString(Share.SHARE_KEY__ACCESS_TOKEN, pAccessToken);
                 for (IOnDataChanged listener : Share.listeners) {
                     listener.onAccessTokenChanged(pAccessToken, oldAccessToken);
@@ -33,9 +34,11 @@ public class Share {
     public static void setMe(Me pMe) {
         if (pMe != null) {
             Me oldMe = Share.getMe();
-            Share.bundle.putSerializable(Share.SHARE_KEY__MY_DATA, pMe);
-            for(IOnDataChanged listener : Share.listeners) {
-                listener.onMeChanged(pMe, oldMe);
+            if (pMe != oldMe) {
+                Share.bundle.putSerializable(Share.SHARE_KEY__MY_DATA, pMe);
+                for (IOnDataChanged listener : Share.listeners) {
+                    listener.onMeChanged(pMe, oldMe);
+                }
             }
         }
     }

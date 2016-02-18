@@ -501,7 +501,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private void loadChildrenFavoritesMore(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mFavoritesResult = pResult;
         this.mFavoritesResult.detach();
-        this.mPresenter.userFavorites(null, Share.getMe().getId(), Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mFavoritesOffset);
+        this.mPresenter.userFavorites(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mFavoritesOffset);
     }
 
     private void loadChildrenPlaylists(Result<List<MediaBrowserCompat.MediaItem>> pResult) {

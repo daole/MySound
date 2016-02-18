@@ -107,9 +107,14 @@ public class ActivityMain extends ActivityBase {
         ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
         Share.registerListener(new Share.OnDataChanged() {
             @Override
-            public void onMeChanged(Me pNewMe, Me pOldMe) {
-                UtilsImage.loadBitmap(ActivityMain.this, pNewMe.getAvatarUrl(), R.drawable.ic__default_profile, ActivityMain.this.mImgAvatar);
-                ActivityMain.this.mLblMyName.setText(pNewMe.getFullName());
+            public void onMeChanged(final Me pNewMe, final Me pOldMe) {
+                ActivityMain.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UtilsImage.loadBitmap(ActivityMain.this, pNewMe.getAvatarUrl(), R.drawable.ic__default_profile, ActivityMain.this.mImgAvatar);
+                        ActivityMain.this.mLblMyName.setText(pNewMe.getFullName());
+                    }
+                });
             }
         });
     }
