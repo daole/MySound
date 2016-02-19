@@ -39,7 +39,9 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         if (view != null) {
             if (!this.mMediaBrowser.isConnected()) {
                 view.showNetworkProgress();
-                view.getViewContext().startService(new Intent(ServicePlayback.ACTION__MEDIA_COMMAND));
+                Intent intent = new Intent(ServicePlayback.ACTION__MEDIA_COMMAND);
+                intent.setPackage(view.getViewContext().getPackageName());
+                view.getViewContext().startService(intent);
                 this.mMediaBrowser.connect();
             }
         }
