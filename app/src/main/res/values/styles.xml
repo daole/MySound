@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
@@ -106,6 +107,11 @@
 
     <style name="ImageButton.SkipToPrevious" parent="ImageButton">
         <item name="android:src">@drawable/ic__skip_to_previous</item>
+    </style>
+
+    <style name="ImageButton.ContextMenu" parent="ImageButton">
+        <item name="android:src">@drawable/ic__context_menu</item>
+        <item name="android:layout_alignParentRight">true</item>
     </style>
 
     <style name="ImageButton.SkipToPrevious.Inline" parent="ImageButton.SkipToPrevious">

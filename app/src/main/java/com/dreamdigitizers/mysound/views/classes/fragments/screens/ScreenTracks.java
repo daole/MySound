@@ -62,10 +62,10 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
 
     @Override
     protected void createOptionsMenu(Menu pMenu, MenuInflater pInflater) {
-        pInflater.inflate(R.menu.menu__tracks, pMenu);
+        pInflater.inflate(R.menu.menu__options_tracks_screen, pMenu);
 
         SearchManager searchManager = (SearchManager) this.getContext().getSystemService(Context.SEARCH_SERVICE);
-        this.mActionSearch = pMenu.findItem(R.id.actionSearch);
+        this.mActionSearch = pMenu.findItem(R.id.option_menu_item__search);
         this.mSearchView = (SearchView) this.mActionSearch.getActionView();
         this.mSearchView.setSearchableInfo(searchManager.getSearchableInfo(this.getActivity().getComponentName()));
         this.mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -85,11 +85,11 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     public boolean onOptionsItemSelected(MenuItem pMenuItem) {
         int id = pMenuItem.getItemId();
         switch (id) {
-            case R.id.actionSearch:
+            case R.id.option_menu_item__search:
                 return true;
+            default:
+                return super.onOptionsItemSelected(pMenuItem);
         }
-
-        return super.onOptionsItemSelected(pMenuItem);
     }
 
     @Override
@@ -193,6 +193,11 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     @Override
     public void onItemClicked(MediaBrowserCompat.MediaItem pMediaItem) {
         this.mPresenter.playFromMediaId(pMediaItem);
+    }
+
+    @Override
+    public void onFavoriteContextMenuItemClicked(MediaBrowserCompat.MediaItem pMediaItem) {
+        this.mPresenter.favorite(pMediaItem);
     }
 
     protected void handleSearch(String pQuery) {

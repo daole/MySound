@@ -15,4 +15,5 @@ public interface IPresenterTracks extends IPresenterBase {
     void seekTo(int pPosition);
     void refresh();
     void loadMore();
+    void favorite(MediaBrowserCompat.MediaItem pMediaItem);
 }

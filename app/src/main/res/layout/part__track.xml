@@ -44,6 +44,10 @@
                 android:layout_toRightOf="@id/imgPlaybackCount"
                 style="@style/TextView.ListItem.Secondary.Dark.PlaybackCount" />
 
+            <ImageButton
+                android:id="@+id/btnContextMenu"
+                style="@style/ImageButton.ContextMenu" />
+
         </RelativeLayout>
 
     </RelativeLayout>

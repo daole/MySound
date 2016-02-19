@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -5,8 +6,8 @@
     tools:context=".ActivityMain" >
 
     <item
-        android:id="@+id/actionSearch"
-        android:title="@string/action__search"
+        android:id="@+id/option_menu_item__search"
+        android:title="@string/option_menu_item__search"
         android:icon="@drawable/ic__action_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />

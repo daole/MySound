@@ -119,6 +119,13 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         }
     }
 
+    @Override
+    public void favorite(MediaBrowserCompat.MediaItem pMediaItem) {
+        if (this.mTransportControls != null) {
+            this.mTransportControls.sendCustomAction(ServicePlayback.CUSTOM_ACTION__FAVORITE, pMediaItem.getDescription().getExtras());
+        }
+    }
+
     protected void load(String pMediaId) {
         this.mMediaBrowser.unsubscribe(pMediaId);
         this.mMediaBrowser.subscribe(pMediaId, this.mMediaBrowserSubscriptionCallback);

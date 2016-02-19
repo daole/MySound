@@ -38,6 +38,8 @@ import java.util.List;
 public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback {
     public static final String ERROR_CODE__MEDIA_NETWORK = "1";
 
+    public static final String CUSTOM_ACTION__FAVORITE = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.FAVORITE";
+
     //private static final int ART_WIDTH = 800;
     //private static final int ART_HEIGHT = 480;
     private static final int ICON_WIDTH = 128;
@@ -149,6 +151,26 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     protected void processPlayFromMediaIdRequest(String pMediaId, Bundle pExtras) {
         this.setPlayingQueue(this.mActiveQueue);
         super.processPlayFromMediaIdRequest(pMediaId, pExtras);
+    }
+
+    @Override
+    protected void processCustomActionRequest(String pAction, Bundle pExtras) {
+        switch (pAction) {
+            case ServicePlayback.CUSTOM_ACTION__FAVORITE:
+                this.processFavoriteRequest(pExtras);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void processFavoriteRequest(Bundle pExtras) {
+        Track track = (Track) pExtras.getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
+        if (track.getUserFavorite()) {
+            this.mPresenter.unfavorite(null, track);
+        } else {
+            this.mPresenter.favorite(null, track);
+        }
     }
 
     @Override
@@ -411,6 +433,18 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         }
     }
 
+    @Override
+    public void onRxFavoriteNext(Track pTrack) {
+        pTrack.setUserFavorite(true);
+        this.updatePlaybackState(null);
+    }
+
+    @Override
+    public void onRxUnfavoriteNext(Track pTrack) {
+        pTrack.setUserFavorite(false);
+        this.updatePlaybackState(null);
+    }
+
     private void loadChildrenRoot(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
         mediaItems.add(this.buildChildrenRootMediaItem(
@@ -507,7 +541,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private void loadChildrenPlaylists(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mPlaylistsResult = pResult;
         this.mPlaylistsResult.detach();
-        this.mPresenter.playlists(Share.getMe().getId(), null);
+        this.mPresenter.playlists(null);
     }
 
     private void loadChildrenPlaylist(Result<List<MediaBrowserCompat.MediaItem>> pResult) {

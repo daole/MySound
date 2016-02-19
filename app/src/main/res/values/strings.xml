@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title__app_name">My Sound</string>
     <string name="title__dialog">Message</string>
@@ -14,7 +15,11 @@
     <string name="drawer_item__favorites">Favorites</string>
     <string name="drawer_item__playlists">Playlists</string>
 
-    <string name="action__search">Search</string>
+    <string name="option_menu_item__search">Search</string>
+
+    <string name="context_menu_item__favorite">Favorite</string>
+    <string name="context_menu_item__unfavorite">Unfavorite</string>
+
     <string name="action__play">Play</string>
     <string name="action__pause">Pause</string>
     <string name="action__stop">Stop</string>
