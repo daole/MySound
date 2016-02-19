@@ -74,6 +74,9 @@
 
     <style name="TextView.ListItem.Secondary.Dark.Username" parent="TextView.ListItem.Secondary.Dark">
         <item name="android:layout_marginLeft">@dimen/margin</item>
+        <item name="android:layout_marginRight">@dimen/margin</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="TextView.ListItem.Secondary.Dark.Duration" parent="TextView.ListItem.Secondary.Dark">

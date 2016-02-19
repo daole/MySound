@@ -16,6 +16,7 @@
         <TextView
             android:id="@+id/lblUsername"
             android:layout_toRightOf="@id/imgAvatar"
+            android:layout_toLeftOf="@+id/lblDuration"
             style="@style/TextView.ListItem.Secondary.Dark.Username" />
 
         <TextView
