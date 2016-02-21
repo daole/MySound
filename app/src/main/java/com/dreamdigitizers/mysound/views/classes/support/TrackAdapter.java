@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.R;
+import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.utilities.UtilsImage;
 import com.dreamdigitizers.mysound.views.classes.services.support.SoundCloudMetadataBuilder;
 
@@ -82,6 +84,9 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
         Drawable drawable = null;
         if (this.mMediaMetadata != null) {
             Track currentTrack = (Track) this.mMediaMetadata.getBundle().getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
+            if (currentTrack == null && Build.VERSION.SDK_INT >= 21) {
+                currentTrack = Share.getCurrentTrack();
+            }
             if (currentTrack.getId() == track.getId()) {
                 int state = PlaybackStateCompat.STATE_PAUSED;
                 if (this.mPlaybackState != null) {

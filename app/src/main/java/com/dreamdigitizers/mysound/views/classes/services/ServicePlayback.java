@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
@@ -123,6 +124,26 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     public void onDestroy() {
         super.onDestroy();
         this.mPresenter.dispose();
+    }
+
+    @Override
+    protected void updateMetadata() {
+        if (!this.isIndexPlayable(this.getCurrentIndexOnQueue(), this.getPlayingQueue())) {
+            this.updatePlaybackState(ServiceMediaPlayer.ERROR_CODE__MEDIA_INVALID_INDEX);
+            return;
+        }
+
+        CustomQueueItem customQueueItem = this.getPlayingQueue().get(this.getCurrentIndexOnQueue());
+        MediaMetadataCompat mediaMetadata = customQueueItem.getMediaMetadata();
+        if (Build.VERSION.SDK_INT >= 21) {
+            Track track = (Track) mediaMetadata.getBundle().getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
+            Share.setCurrentTrack(track);
+        }
+        this.getMediaSession().setMetadata(mediaMetadata);
+
+        if (mediaMetadata.getDescription().getIconBitmap() == null && mediaMetadata.getDescription().getIconUri() != null) {
+            this.fetchArt(customQueueItem);
+        }
     }
 
     @Override

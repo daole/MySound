@@ -36,6 +36,8 @@ public class ActivityMain extends ActivityBase {
     private CircleImageView mImgAvatar;
     private TextView mLblMyName;
 
+    private Share.OnDataChangedListener mShareDataChangedListener;
+
     private int mCurrentSelectedMenuId;
 
     public ActivityMain() {
@@ -105,7 +107,7 @@ public class ActivityMain extends ActivityBase {
         this.setUpNavigationDrawer();
 
         ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
-        Share.registerListener(new Share.OnDataChanged() {
+        this.mShareDataChangedListener = new Share.OnDataChangedListener() {
             @Override
             public void onMeChanged(final Me pNewMe, final Me pOldMe) {
                 ActivityMain.this.runOnUiThread(new Runnable() {
@@ -116,7 +118,8 @@ public class ActivityMain extends ActivityBase {
                     }
                 });
             }
-        });
+        };
+        Share.registerListener(this.mShareDataChangedListener);
     }
 
     @Override

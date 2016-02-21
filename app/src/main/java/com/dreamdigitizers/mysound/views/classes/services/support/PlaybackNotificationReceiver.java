@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
@@ -13,6 +14,7 @@ import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMedi
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.MediaPlayerNotificationReceiver;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.R;
+import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.views.classes.activities.ActivityMain;
 
 import java.util.ArrayList;
@@ -68,6 +70,9 @@ public class PlaybackNotificationReceiver extends MediaPlayerNotificationReceive
 
         MediaDescriptionCompat mediaDescription = this.mMediaMetadata.getDescription();
         Track track = (Track) this.mMediaMetadata.getBundle().getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
+        if (track == null && Build.VERSION.SDK_INT >= 21) {
+            track = Share.getCurrentTrack();
+        }
 
         boolean isShouldFetchArt = false;
         Bitmap art = mediaDescription.getIconBitmap();

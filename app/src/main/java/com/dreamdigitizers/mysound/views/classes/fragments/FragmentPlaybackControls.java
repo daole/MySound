@@ -1,6 +1,9 @@
 package com.dreamdigitizers.mysound.views.classes.fragments;
 
 import android.graphics.drawable.Drawable;
+import android.media.MediaMetadata;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
@@ -18,8 +21,10 @@ import android.widget.TextView;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.FragmentBase;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.R;
+import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.views.classes.services.support.SoundCloudMetadataBuilder;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -180,6 +185,9 @@ public class FragmentPlaybackControls extends FragmentBase {
 
     private void updateMediaMetadata(MediaMetadataCompat pMediaMetadata) {
         Track track = (Track) pMediaMetadata.getBundle().getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
+        if (track == null && Build.VERSION.SDK_INT >= 21) {
+            track = Share.getCurrentTrack();
+        }
         int duration = track.getDuration();
 
         this.mLblTrackTitle.setText(track.getTitle());
