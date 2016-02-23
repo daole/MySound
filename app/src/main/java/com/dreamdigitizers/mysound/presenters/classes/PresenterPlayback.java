@@ -64,6 +64,7 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                                     public Charts call(List<Integer> pTrackLikes, Charts pCharts) {
                                         for (Charts.Collection collection : pCharts.getCollection()) {
                                             Track track = collection.getTrack();
+                                            track.setStreamUrl(track.getUri() + "/stream");
                                             if (pTrackLikes.contains(track.getId())) {
                                                 track.setUserFavorite(true);
                                             }
