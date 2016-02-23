@@ -5,6 +5,8 @@ public class Constants {
 
     public static final int SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING = 1;
     public static final int SOUNDCLOUD_PARAMETER__LIMIT = 20;
+    public static final String SOUNDCLOUD_PARAMETER__KIND_TOP = "top";
+    public static final String SOUNDCLOUD_PARAMETER__GENRE_ALL_MUSIC = "soundcloud:genres:all-music";
 
     public static final String SOUNDCLOUD__CLIENT_ID = "3087264eee9aea2645a592f1cf600c0d";
     public static final String SOUNDCLOUD__PROTOCOL_SCHEME = "dreamdigitizers.mysound://";

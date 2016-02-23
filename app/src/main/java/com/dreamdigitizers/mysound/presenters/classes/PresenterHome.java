@@ -4,14 +4,16 @@ import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterHome;
+import com.dreamdigitizers.mysound.views.classes.services.ServicePlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewHome;
+import com.dreamdigitizers.mysound.views.interfaces.IViewRx;
 
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-class PresenterHome extends PresenterRx<IViewHome> implements IPresenterHome {
+class PresenterHome extends PresenterTracks<IViewHome> implements IPresenterHome {
     private Subscription mSubscription;
 
     public PresenterHome(IViewHome pView) {
@@ -22,6 +24,21 @@ class PresenterHome extends PresenterRx<IViewHome> implements IPresenterHome {
     public void dispose() {
         super.dispose();
         this.unsubscribe();
+    }
+
+    @Override
+    protected String getMediaId() {
+        return ServicePlayback.MEDIA_ID__CHARTS;
+    }
+
+    @Override
+    protected String getMediaIdRefresh() {
+        return null;
+    }
+
+    @Override
+    protected String getMediaIdMore() {
+        return ServicePlayback.MEDIA_ID__CHARTS_MORE;
     }
 
     @Override
@@ -56,6 +73,27 @@ class PresenterHome extends PresenterRx<IViewHome> implements IPresenterHome {
                         PresenterHome.this.onError(pError, pRetryAction);
                     }
                 });
+    }
+
+    private void onStart() {
+        IViewRx view = this.getView();
+        if (view != null) {
+            view.onRxStart();
+        }
+    }
+
+    private void onCompleted() {
+        IViewRx view = this.getView();
+        if (view != null) {
+            view.onRxCompleted();
+        }
+    }
+
+    private void onError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
+        IViewRx view = this.getView();
+        if (view != null) {
+            view.onRxError(pError, pRetryAction);
+        }
     }
 
     private void unsubscribe() {

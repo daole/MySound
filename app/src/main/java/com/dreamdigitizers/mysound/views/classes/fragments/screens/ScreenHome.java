@@ -12,7 +12,7 @@ import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterHome;
 import com.dreamdigitizers.mysound.views.interfaces.IViewHome;
 
-public class ScreenHome extends ScreenRx<IPresenterHome> implements IViewHome {
+public class ScreenHome extends ScreenTracks<IPresenterHome> implements IViewHome {
     @Override
     protected IPresenterHome createPresenter() {
         return (IPresenterHome) PresenterFactory.createPresenter(IPresenterHome.class, this);
@@ -25,15 +25,34 @@ public class ScreenHome extends ScreenRx<IPresenterHome> implements IViewHome {
     }
 
     @Override
-    protected void retrieveScreenItems(View pView) {
-
-    }
-
-    @Override
     protected void mapInformationToScreenItems(View pView) {
+        super.mapInformationToScreenItems(pView);
+
         Me me = Share.getMe();
         if (me == null) {
             this.me();
+        }
+    }
+
+    @Override
+    public void onRxStart() {
+        this.showNetworkProgress();
+    }
+
+    @Override
+    public void onRxCompleted() {
+        this.hideNetworkProgress();
+    }
+
+    @Override
+    public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
+        pError.printStackTrace();
+        this.hideNetworkProgress();
+        if (pRetryAction != null) {
+            this.showRetryableError(
+                    R.string.error__retryable_network,
+                    false,
+                    pRetryAction);
         }
     }
 

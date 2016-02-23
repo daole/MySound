@@ -3,9 +3,12 @@ package com.dreamdigitizers.mysound.presenters.classes;
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.core.IApi;
+import com.dreamdigitizers.androidsoundcloudapi.core.IApiV2;
 import com.dreamdigitizers.androidsoundcloudapi.models.Collection;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
+import com.dreamdigitizers.androidsoundcloudapi.models.v2.Charts;
+import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
@@ -17,6 +20,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenterPlayback {
@@ -30,6 +34,73 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
     public void dispose() {
         super.dispose();
         this.unsubscribe();
+    }
+
+    @Override
+    public void charts(final UtilsDialog.IRetryAction pRetryAction, final int pLinkedPartitioning, final int pLimit, final int pOffset) {
+        this.unsubscribe();
+        final IApi api = ApiFactory.getApiInstance();
+        final IApiV2 apiV2 = ApiFactory.getApiV2Instance();
+        this.mSubscription = Observable.just(Share.getMe())
+                .flatMap(new Func1<Me, Observable<Me>>() {
+                    @Override
+                    public Observable<Me> call(Me pMe) {
+                        if (pMe != null) {
+                            return Observable.just(pMe);
+                        } else {
+                            return api.meRx(Share.getAccessToken());
+                        }
+                    }
+                })
+                .flatMap(new Func1<Me, Observable<Charts>>() {
+                    @Override
+                    public Observable<Charts> call(Me pMe) {
+                        Share.setMe(pMe);
+                        return Observable.zip(
+                                api.trackLikesRx(),
+                                apiV2.chartsRx(pLinkedPartitioning, pLimit, pOffset, Constants.SOUNDCLOUD_PARAMETER__KIND_TOP, Constants.SOUNDCLOUD_PARAMETER__GENRE_ALL_MUSIC),
+                                new Func2<List<Integer>, Charts, Charts>() {
+                                    @Override
+                                    public Charts call(List<Integer> pTrackLikes, Charts pCharts) {
+                                        for (Charts.Collection collection : pCharts.getCollection()) {
+                                            Track track = collection.getTrack();
+                                            if (pTrackLikes.contains(track.getId())) {
+                                                track.setUserFavorite(true);
+                                            }
+                                        }
+                                        return pCharts;
+                                    }
+                                }
+                        );
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Charts>() {
+                    @Override
+                    public void onStart() {
+                        PresenterPlayback.this.onStart();
+                    }
+
+                    @Override
+                    public void onNext(Charts pCharts) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxChartsNext(pCharts);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
+                    }
+                });
     }
 
     @Override

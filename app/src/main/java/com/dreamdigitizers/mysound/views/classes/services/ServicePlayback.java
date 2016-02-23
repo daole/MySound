@@ -23,6 +23,7 @@ import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.models.Collection;
 import com.dreamdigitizers.androidsoundcloudapi.models.Playlist;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
+import com.dreamdigitizers.androidsoundcloudapi.models.v2.Charts;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.Share;
@@ -46,12 +47,15 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private static final int ICON_WIDTH = 128;
     private static final int ICON_HEIGHT = 128;
 
-    private static final int ACTIVE_MODE__SOUNDS = 1;
-    private static final int ACTIVE_MODE__SOUNDS_SEARCH = 2;
-    private static final int ACTIVE_MODE__FAVORITES = 3;
-    private static final int ACTIVE_MODE__PLAYLIST = 4;
+    private static final int ACTIVE_MODE__CHARTS = 1;
+    private static final int ACTIVE_MODE__SOUNDS = 2;
+    private static final int ACTIVE_MODE__SOUNDS_SEARCH = 3;
+    private static final int ACTIVE_MODE__FAVORITES = 4;
+    private static final int ACTIVE_MODE__PLAYLIST = 5;
 
     public static final String MEDIA_ID__ROOT = "__ROOT__";
+    public static final String MEDIA_ID__CHARTS = "__CHARTS__";
+    public static final String MEDIA_ID__CHARTS_MORE = "__CHARTS_MORE__";
     public static final String MEDIA_ID__SOUNDS = "__SOUNDS__";
     public static final String MEDIA_ID__SOUNDS_REFRESH = "__SOUNDS_REFRESH__";
     public static final String MEDIA_ID__SOUNDS_MORE = "__SOUNDS_MORE__";
@@ -71,6 +75,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
 
     private IPresenterPlayback mPresenter;
 
+    private Result mChartsResult;
     private Result mSoundsResult;
     private Result mSoundsSearchResult;
     private Result mFavoritesResult;
@@ -78,21 +83,25 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     private Result mPlaylistResult;
 
     private List<CustomQueueItem> mActiveQueue;
+    private List<CustomQueueItem> mChartsQueue;
     private List<CustomQueueItem> mSoundsQueue;
     private List<CustomQueueItem> mSoundsSearchQueue;
     private List<CustomQueueItem> mFavoritesQueue;
     private List<CustomQueueItem> mPlaylistQueue;
 
+    private List<MediaBrowserCompat.MediaItem> mChartsMediaItems;
     private List<MediaBrowserCompat.MediaItem> mSoundsMediaItems;
     private List<MediaBrowserCompat.MediaItem> mSoundsSearchMediaItems;
     private List<MediaBrowserCompat.MediaItem> mFavoritesMediaItems;
     private List<MediaBrowserCompat.MediaItem> mPlayListMediaItems;
 
+    private int mChartsOffset;
     private int mSoundsOffset;
     private int mSoundsSearchOffset;
     private String mFavoritesOffset;
     private int mPlayListOffset;
 
+    private boolean mIsChartsMore;
     private boolean mIsSoundsMore;
     private boolean mIsSoundsSearchMore;
     private boolean mIsFavoritesMore;
@@ -103,14 +112,17 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     @Override
     public void onCreate() {
         super.onCreate();
+        this.mChartsQueue = new ArrayList<>();
         this.mSoundsQueue = new ArrayList<>();
         this.mSoundsSearchQueue = new ArrayList<>();
         this.mFavoritesQueue = new ArrayList<>();
 
+        this.mChartsMediaItems = new ArrayList<>();
         this.mSoundsMediaItems = new ArrayList<>();
         this.mSoundsSearchMediaItems = new ArrayList<>();
         this.mFavoritesMediaItems = new ArrayList<>();
 
+        this.mIsChartsMore = true;
         this.mIsSoundsMore = true;
         this.mIsSoundsSearchMore = true;
         this.mIsFavoritesMore = true;
@@ -210,6 +222,12 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         switch (pParentId) {
             case ServicePlayback.MEDIA_ID__ROOT:
                 this.loadChildrenRoot(pResult);
+                break;
+            case ServicePlayback.MEDIA_ID__CHARTS:
+                this.loadChildrenCharts(pResult);
+                break;
+            case ServicePlayback.MEDIA_ID__CHARTS_MORE:
+                this.loadChildrenChartsMore(pResult);
                 break;
             case ServicePlayback.MEDIA_ID__SOUNDS:
                 this.loadChildrenSounds(pResult);
@@ -333,6 +351,35 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
         this.mPlaylistResult = null;
         this.updatePlaybackState(ServicePlayback.ERROR_CODE__MEDIA_NETWORK);
         pError.printStackTrace();
+    }
+
+    @Override
+    public void onRxChartsNext(Charts pCharts) {
+        if (this.mChartsResult != null) {
+            String nextHref = pCharts.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsChartsMore) {
+                    this.mChartsResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mChartsResult = null;
+                    return;
+                }
+                this.mIsChartsMore = false;
+            } else {
+                this.mChartsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
+                this.mIsChartsMore = true;
+            }
+            List<Track> tracks = new ArrayList<>();
+            for (Charts.Collection collection : pCharts.getCollection()) {
+                tracks.add(collection.getTrack());
+            }
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mChartsQueue, false);
+            this.mChartsMediaItems.addAll(mediaItems);
+            this.mChartsResult.sendResult(mediaItems);
+            this.mChartsResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__CHARTS) {
+                this.mActiveQueue = this.mChartsQueue;
+            }
+        }
     }
 
     @Override
@@ -487,6 +534,22 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
                 R.string.media_description_subtitle__playlist));
 
         pResult.sendResult(mediaItems);
+    }
+
+    private void loadChildrenCharts(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        this.mActiveMode = ServicePlayback.ACTIVE_MODE__CHARTS;
+        if (this.mChartsMediaItems.size() > 0) {
+            pResult.sendResult(this.mChartsMediaItems);
+            this.mActiveQueue = this.mChartsQueue;
+            return;
+        }
+        this.loadChildrenChartsMore(pResult);
+    }
+
+    private void loadChildrenChartsMore(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        this.mChartsResult = pResult;
+        this.mChartsResult.detach();
+        this.mPresenter.charts(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mChartsOffset);
     }
 
     private void loadChildrenSounds(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
