@@ -8,7 +8,7 @@
         <item
             android:id="@+id/drawer_item__home"
             android:checked="false"
-            android:icon="@drawable/ic__home"
+            android:icon="@drawable/ic__trending_up"
             android:title="@string/drawer_item__home" />
 
         <item
