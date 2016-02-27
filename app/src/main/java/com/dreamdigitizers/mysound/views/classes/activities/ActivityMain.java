@@ -121,7 +121,10 @@ public class ActivityMain extends ActivityBase {
     protected void mapInformationToItems() {
         this.setSupportActionBar(this.mToolbar);
         this.setUpNavigationDrawer();
-
+        Me me = Share.getMe();
+        if (me != null) {
+            this.showMe(me);
+        }
         ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
         this.mShareDataChangedListener = new Share.OnDataChangedListener() {
             @Override
@@ -129,8 +132,7 @@ public class ActivityMain extends ActivityBase {
                 ActivityMain.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        UtilsImage.loadBitmap(ActivityMain.this, pNewMe.getAvatarUrl(), R.drawable.ic__default_profile, ActivityMain.this.mImgAvatar);
-                        ActivityMain.this.mLblMyName.setText(pNewMe.getFullName());
+                        ActivityMain.this.showMe(pNewMe);
                     }
                 });
             }
@@ -218,6 +220,11 @@ public class ActivityMain extends ActivityBase {
         return true;
     }
 
+    private void showMe(Me pMe) {
+        UtilsImage.loadBitmap(ActivityMain.this, pMe.getAvatarUrl(), R.drawable.ic__default_profile, ActivityMain.this.mImgAvatar);
+        ActivityMain.this.mLblMyName.setText(pMe.getFullName());
+    }
+
     private void logout() {
         this.mPresenter.stopMediaPlayer();
         this.mPresenter.deleteAccessToken();
@@ -225,16 +232,16 @@ public class ActivityMain extends ActivityBase {
         this.goToInitializationActivity();
     }
 
+    private void goToInitializationActivity() {
+        Intent intent = new Intent(this, ActivityInitialization.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.changeActivity(intent, true);
+    }
+
     private class ViewMain extends IViewBase.ViewBase implements IViewMain {
         @Override
         public Context getViewContext() {
             return ActivityMain.this;
         }
-    }
-
-    private void goToInitializationActivity() {
-        Intent intent = new Intent(this, ActivityInitialization.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        this.changeActivity(intent, true);
     }
 }

@@ -27,11 +27,12 @@ public class ScreenHome extends ScreenTracks<IPresenterHome> implements IViewHom
     @Override
     protected void mapInformationToScreenItems(View pView) {
         super.mapInformationToScreenItems(pView);
-
+        /*
         Me me = Share.getMe();
         if (me == null) {
             this.me();
         }
+        */
     }
 
     @Override
