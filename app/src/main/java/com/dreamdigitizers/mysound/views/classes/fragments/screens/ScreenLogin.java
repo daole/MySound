@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
@@ -39,9 +41,12 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
 
     @Override
     protected void mapInformationToScreenItems(View pView) {
-        this.mWbvLogin.getSettings().setJavaScriptEnabled(true);
+        WebSettings webSettings = this.mWbvLogin.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setSaveFormData(false);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(false);
         this.mWbvLogin.setWebViewClient(new SoundCloudWebViewClient(
-                this.getActivity(),
                 Constants.SOUNDCLOUD__PROTOCOL_SCHEME,
                 this));
         this.mWbvLogin.loadUrl(ApiFactory.getConnectionString(

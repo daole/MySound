@@ -10,7 +10,7 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 
-import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer;
+import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaBrowser;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.MediaPlayerNotificationReceiver;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.R;
@@ -23,7 +23,7 @@ import java.util.List;
 public class PlaybackNotificationReceiver extends MediaPlayerNotificationReceiver {
     private static final int REQUEST_CODE = 0;
 
-    public PlaybackNotificationReceiver(ServiceMediaPlayer pService) {
+    public PlaybackNotificationReceiver(ServiceMediaBrowser pService) {
         super(pService);
     }
 

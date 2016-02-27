@@ -14,6 +14,7 @@
     <string name="drawer_item__sounds">New<!--Sounds--></string>
     <string name="drawer_item__favorites">Favorites</string>
     <string name="drawer_item__playlists">Playlists</string>
+    <string name="drawer_item__logout">Logout</string>
 
     <string name="option_menu_item__search">Search</string>
 

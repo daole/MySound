@@ -6,7 +6,6 @@ import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterHome;
 import com.dreamdigitizers.mysound.views.classes.services.ServicePlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewHome;
-import com.dreamdigitizers.mysound.views.interfaces.IViewRx;
 
 import rx.Subscriber;
 import rx.Subscription;
@@ -76,21 +75,21 @@ class PresenterHome extends PresenterTracks<IViewHome> implements IPresenterHome
     }
 
     private void onStart() {
-        IViewRx view = this.getView();
+        IViewHome view = this.getView();
         if (view != null) {
             view.onRxStart();
         }
     }
 
     private void onCompleted() {
-        IViewRx view = this.getView();
+        IViewHome view = this.getView();
         if (view != null) {
             view.onRxCompleted();
         }
     }
 
     private void onError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
-        IViewRx view = this.getView();
+        IViewHome view = this.getView();
         if (view != null) {
             view.onRxError(pError, pRetryAction);
         }

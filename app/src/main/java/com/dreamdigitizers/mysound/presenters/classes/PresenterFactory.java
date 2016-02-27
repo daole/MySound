@@ -5,6 +5,7 @@ import com.dreamdigitizers.androidbaselibrary.views.interfaces.IViewBase;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterFavorites;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterHome;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
+import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterMain;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSoundsSearch;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSplash;
@@ -12,6 +13,7 @@ import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSounds;
 import com.dreamdigitizers.mysound.views.interfaces.IViewFavorites;
 import com.dreamdigitizers.mysound.views.interfaces.IViewHome;
 import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
+import com.dreamdigitizers.mysound.views.interfaces.IViewMain;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSoundsSearch;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSplash;
@@ -21,6 +23,10 @@ public class PresenterFactory {
     private static final String ERROR_MESSAGE__PRESENTER_NOT_FOUND = "There is no such Presenter class.";
 
     public static IPresenterBase createPresenter(Class pPresenterClass, IViewBase pView) {
+        if(pPresenterClass.isAssignableFrom(IPresenterMain.class)) {
+            return new PresenterMain((IViewMain) pView);
+        }
+
         if(pPresenterClass.isAssignableFrom(IPresenterPlayback.class)) {
             return new PresenterPlayback((IViewPlayback) pView);
         }

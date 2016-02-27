@@ -29,6 +29,12 @@
             android:icon="@drawable/ic__playlist"
             android:title="@string/drawer_item__playlists" />-->
 
+        <item
+            android:id="@+id/drawer_item__logout"
+            android:checked="false"
+            android:icon="@drawable/ic__logout"
+            android:title="@string/drawer_item__logout" />
+
     </group>
 
 </menu>

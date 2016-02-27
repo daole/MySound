@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsBitmap;
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
-import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaPlayer;
+import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMediaBrowser;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.CustomQueueItem;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.MediaPlayerNotificationReceiver;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
@@ -37,7 +37,7 @@ import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback {
+public class ServicePlayback extends ServiceMediaBrowser implements IViewPlayback {
     public static final String ERROR_CODE__MEDIA_NETWORK = "1";
 
     public static final String CUSTOM_ACTION__FAVORITE = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.FAVORITE";
@@ -141,7 +141,7 @@ public class ServicePlayback extends ServiceMediaPlayer implements IViewPlayback
     @Override
     protected void updateMetadata() {
         if (!this.isIndexPlayable(this.getCurrentIndexOnQueue(), this.getPlayingQueue())) {
-            this.updatePlaybackState(ServiceMediaPlayer.ERROR_CODE__MEDIA_INVALID_INDEX);
+            this.updatePlaybackState(ServiceMediaBrowser.ERROR_CODE__MEDIA_INVALID_INDEX);
             return;
         }
 

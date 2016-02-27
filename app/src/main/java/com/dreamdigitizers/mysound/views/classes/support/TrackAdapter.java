@@ -87,7 +87,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
             if (currentTrack == null && Build.VERSION.SDK_INT >= 21) {
                 currentTrack = Share.getCurrentTrack();
             }
-            if (currentTrack.getId() == track.getId()) {
+            if (currentTrack != null && currentTrack.getId() == track.getId()) {
                 int state = PlaybackStateCompat.STATE_PAUSED;
                 if (this.mPlaybackState != null) {
                     switch (this.mPlaybackState.getState()) {

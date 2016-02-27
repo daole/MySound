@@ -1,5 +1,7 @@
 package com.dreamdigitizers.mysound.views.classes.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -13,15 +15,19 @@ import android.widget.TextView;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
+import com.dreamdigitizers.androidbaselibrary.views.interfaces.IViewBase;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.Share;
+import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
+import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterMain;
 import com.dreamdigitizers.mysound.utilities.UtilsImage;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenFavorites;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenSounds;
+import com.dreamdigitizers.mysound.views.interfaces.IViewMain;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,6 +41,9 @@ public class ActivityMain extends ActivityBase {
     private NavigationView mNavigationView;
     private CircleImageView mImgAvatar;
     private TextView mLblMyName;
+
+    private ViewMain mView;
+    private IPresenterMain mPresenter;
 
     private Share.OnDataChangedListener mShareDataChangedListener;
 
@@ -51,6 +60,13 @@ public class ActivityMain extends ActivityBase {
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onCreate(Bundle pSavedInstanceState) {
+        super.onCreate(pSavedInstanceState);
+        this.mView = new ViewMain();
+        this.mPresenter = (IPresenterMain) PresenterFactory.createPresenter(IPresenterMain.class, this.mView);
     }
 
     @Override
@@ -188,6 +204,9 @@ public class ActivityMain extends ActivityBase {
             case R.id.drawer_item__playlists:
                 break;
             */
+            case R.id.drawer_item__logout:
+                this.logout();
+                break;
             default:
                 break;
         }
@@ -197,5 +216,25 @@ public class ActivityMain extends ActivityBase {
         }
 
         return true;
+    }
+
+    private void logout() {
+        this.mPresenter.stopMediaPlayer();
+        this.mPresenter.deleteAccessToken();
+        Share.dispose();
+        this.goToInitializationActivity();
+    }
+
+    private class ViewMain extends IViewBase.ViewBase implements IViewMain {
+        @Override
+        public Context getViewContext() {
+            return ActivityMain.this;
+        }
+    }
+
+    private void goToInitializationActivity() {
+        Intent intent = new Intent(this, ActivityInitialization.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.changeActivity(intent, true);
     }
 }

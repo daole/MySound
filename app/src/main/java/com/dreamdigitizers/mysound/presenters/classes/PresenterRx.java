@@ -5,7 +5,7 @@ import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterRx;
 import com.dreamdigitizers.mysound.views.interfaces.IViewRx;
 
-class PresenterRx<V extends IViewRx> extends PresenterBase<V> implements IPresenterRx {
+abstract class PresenterRx<V extends IViewRx> extends PresenterBase<V> implements IPresenterRx {
     public PresenterRx(V pView) {
         super(pView);
     }
