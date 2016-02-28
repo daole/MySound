@@ -2,6 +2,8 @@ package com.dreamdigitizers.mysound.presenters.classes;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -10,14 +12,19 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.dreamdigitizers.androidbaselibrary.presenters.classes.PresenterBase;
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
+import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterTracks;
 import com.dreamdigitizers.mysound.views.classes.services.ServicePlayback;
+import com.dreamdigitizers.mysound.views.classes.services.support.SoundCloudMetadataBuilder;
 import com.dreamdigitizers.mysound.views.interfaces.IViewTracks;
 
+import java.util.HashMap;
 import java.util.List;
 
 abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> implements IPresenterTracks {
+    private HashMap<String, HashMap<Integer, Object>> mTransactionActions;
+
     private MediaBrowserConnectionCallback mMediaBrowserConnectionCallback;
     private MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
     private MediaControllerCallback mMediaControllerCallback;
@@ -27,6 +34,9 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
 
     public PresenterTracks(V pView) {
         super(pView);
+        this.mTransactionActions = new HashMap<>();
+        this.mTransactionActions.put(ServicePlayback.CUSTOM_ACTION__FAVORITE, new HashMap<Integer, Object>());
+
         this.mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
         this.mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
         this.mMediaControllerCallback = new MediaControllerCallback();
@@ -122,7 +132,10 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     @Override
     public void favorite(MediaBrowserCompat.MediaItem pMediaItem) {
         if (this.mTransportControls != null) {
-            this.mTransportControls.sendCustomAction(ServicePlayback.CUSTOM_ACTION__FAVORITE, pMediaItem.getDescription().getExtras());
+            Bundle bundle =  pMediaItem.getDescription().getExtras();
+            Track track = (Track) bundle.getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
+            this.mTransactionActions.get(ServicePlayback.CUSTOM_ACTION__FAVORITE).put(track.getId(), track);
+            this.mTransportControls.sendCustomAction(ServicePlayback.CUSTOM_ACTION__FAVORITE, bundle);
         }
     }
 
@@ -237,6 +250,31 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         }
     }
 
+    private void onSessionEvent(String pEvent, Bundle pExtras) {
+        Uri uri = Uri.parse(pEvent);
+        String action = uri.getQueryParameter("action");
+        switch (action) {
+            case ServicePlayback.CUSTOM_ACTION__FAVORITE:
+                this.handleFavoriteEvent(uri);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void handleFavoriteEvent(Uri pUri) {
+        int trackId = Integer.parseInt(pUri.getQueryParameter("trackId"));
+        boolean userFavorite = Boolean.parseBoolean(pUri.getQueryParameter("userFavorite"));
+        HashMap transactions = this.mTransactionActions.get(ServicePlayback.CUSTOM_ACTION__FAVORITE);
+        Track track = (Track) transactions.get(trackId);
+        track.setUserFavorite(userFavorite);
+        transactions.remove(trackId);
+        V view = this.getView();
+        if (view != null) {
+            view.updateState();
+        }
+    }
+
     protected abstract String getMediaId();
     protected abstract String getMediaIdRefresh();
     protected abstract String getMediaIdMore();
@@ -273,6 +311,11 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
             if (pMediaMetadata != null) {
                 PresenterTracks.this.onMetadataChanged(pMediaMetadata);
             }
+        }
+
+        @Override
+        public void onSessionEvent(String pEvent, Bundle pExtras) {
+            PresenterTracks.this.onSessionEvent(pEvent, pExtras);
         }
     }
 }

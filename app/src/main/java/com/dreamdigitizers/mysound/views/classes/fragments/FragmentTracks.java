@@ -120,6 +120,10 @@ public class FragmentTracks extends FragmentBase {
         this.mFragmentPlaybackControls.onMetadataChanged(pMediaMetadata);
     }
 
+    public void updateState() {
+        this.mTrackAdapter.notifyDataSetChanged();
+    }
+
     public void showLoadMoreProgress() {
         this.mPgbLoading.setVisibility(View.VISIBLE);
     }

@@ -42,6 +42,8 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
 
     public static final String CUSTOM_ACTION__FAVORITE = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.FAVORITE";
 
+    public static final String EVENT_URI = "media://serviceplayback?action=%s&trackId=%s&userFavorite=%s";
+
     //private static final int ART_WIDTH = 800;
     //private static final int ART_HEIGHT = 480;
     private static final int ICON_WIDTH = 128;
@@ -194,15 +196,6 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
                 break;
             default:
                 break;
-        }
-    }
-
-    private void processFavoriteRequest(Bundle pExtras) {
-        Track track = (Track) pExtras.getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
-        if (track.getUserFavorite()) {
-            this.mPresenter.unfavorite(null, track);
-        } else {
-            this.mPresenter.favorite(null, track);
         }
     }
 
@@ -504,13 +497,15 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     @Override
     public void onRxFavoriteNext(Track pTrack) {
         pTrack.setUserFavorite(true);
-        this.updatePlaybackState(null);
+        //this.updatePlaybackState(null);
+        this.sendFavoriteActionResult(pTrack);
     }
 
     @Override
     public void onRxUnfavoriteNext(Track pTrack) {
         pTrack.setUserFavorite(false);
-        this.updatePlaybackState(null);
+        //this.updatePlaybackState(null);
+        this.sendFavoriteActionResult(pTrack);
     }
 
     private void loadChildrenRoot(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
@@ -606,13 +601,15 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     }
 
     private void loadChildrenFavorites(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        /*
         this.mActiveMode = ServicePlayback.ACTIVE_MODE__FAVORITES;
         if (this.mFavoritesMediaItems.size() > 0) {
             pResult.sendResult(this.mFavoritesMediaItems);
             this.mActiveQueue = this.mFavoritesQueue;
             return;
         }
-
+        */
+        this.mFavoritesOffset = null;
         this.loadChildrenFavoritesMore(pResult);
     }
 
@@ -699,5 +696,19 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
                 this.getMediaSession().setMetadata(mediaMetadata);
             }
         }
+    }
+
+    private void processFavoriteRequest(Bundle pExtras) {
+        Track track = (Track) pExtras.getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
+        if (track.getUserFavorite()) {
+            this.mPresenter.unfavorite(null, track);
+        } else {
+            this.mPresenter.favorite(null, track);
+        }
+    }
+
+    private void sendFavoriteActionResult(Track pTrack) {
+        String eventAction = String.format(ServicePlayback.EVENT_URI, ServicePlayback.CUSTOM_ACTION__FAVORITE, pTrack.getId(), pTrack.getUserFavorite());
+        this.getMediaSession().sendSessionEvent(eventAction, null);
     }
 }

@@ -101,6 +101,10 @@
         <item name="android:src">@drawable/ic__default_profile</item>
     </style>
 
+    <style name="ImageView.Favorite" parent="ImageView">
+        <item name="android:src">@drawable/ic__favorite</item>
+    </style>
+
     <style name="ImageView.PlaybackCount" parent="ImageView">
         <item name="android:src">@drawable/ic__play</item>
     </style>

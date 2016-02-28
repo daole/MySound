@@ -79,6 +79,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
         pHolder.mLblDuration.setText(DateUtils.formatElapsedTime(track.getDuration() / 1000));
         pHolder.mLblTitle.setText(track.getTitle());
         pHolder.mLblPlaybackCount.setText(NumberFormat.getInstance().format(track.getPlaybackCount()));
+        pHolder.mImgFavorite.setVisibility(track.getUserFavorite() ? View.VISIBLE : View.GONE);
         pHolder.mMediaItem = mediaItem;
 
         Drawable drawable = null;
@@ -153,6 +154,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
         TextView mLblTitle;
         ImageView mImgPlaybackCount;
         TextView mLblPlaybackCount;
+        ImageView mImgFavorite;
         ImageButton mBtnContextMenu;
         MediaBrowserCompat.MediaItem mMediaItem;
 
@@ -164,6 +166,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
             this.mLblTitle = (TextView) pItemView.findViewById(R.id.lblTitle);
             this.mImgPlaybackCount = (ImageView) pItemView.findViewById(R.id.imgPlaybackCount);
             this.mLblPlaybackCount = (TextView) pItemView.findViewById(R.id.lblPlaybackCount);
+            this.mImgFavorite = (ImageView) pItemView.findViewById(R.id.imgFavorite);
             this.mBtnContextMenu = (ImageButton) pItemView.findViewById(R.id.btnContextMenu);
             pItemView.setOnClickListener(new View.OnClickListener() {
                 @Override

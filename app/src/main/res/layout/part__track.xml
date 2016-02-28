@@ -44,6 +44,11 @@
                 android:layout_toRightOf="@id/imgPlaybackCount"
                 style="@style/TextView.ListItem.Secondary.Dark.PlaybackCount" />
 
+            <ImageView
+                android:id="@+id/imgFavorite"
+                android:layout_toLeftOf="@+id/btnContextMenu"
+                style="@style/ImageView.Favorite" />
+
             <ImageButton
                 android:id="@+id/btnContextMenu"
                 style="@style/ImageButton.ContextMenu" />

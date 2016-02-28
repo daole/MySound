@@ -161,6 +161,11 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     }
 
     @Override
+    public void updateState() {
+        this.mFragmentTracks.updateState();
+    }
+
+    @Override
     public void onScrollEnd() {
         this.mPresenter.loadMore();
     }

@@ -16,4 +16,5 @@ public interface IViewTracks extends IViewBase {
     void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop);
     void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState);
     void onMetadataChanged(MediaMetadataCompat pMediaMetadata);
+    void updateState();
 }
