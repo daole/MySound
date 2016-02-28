@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="drawer_item__playlists">プレイリスト</string>
+    <string name="action__fast_forward">早送り</string>
+    <string name="action__pause">ポーズ</string>
+    <string name="action__play">プレイ</string>
+    <string name="action__rewind">巻き戻し</string>
+    <string name="action__skip_to_next">次</string>
+    <string name="action__skip_to_previous">前</string>
+    <string name="action__stop">ストップ</string>
+    <string name="context_menu_item__favorite">お気に入り</string>
+    <string name="context_menu_item__unfavorite">お気に入りません</string>
+    <string name="desc__navigation_drawer_close">メニュを閉じる</string>
+    <string name="desc__navigation_drawer_open">メニュを開く</string>
+    <string name="drawer_item__favorites">お気に入り</string>
+    <string name="drawer_item__home">トレンディング</string>
+    <string name="drawer_item__logout">ログアウト</string>
+    <string name="drawer_item__sounds">新しい</string>
+    <string name="error__media_network">ネットワークエラーが発生しました。</string>
+    <string name="hint__track_search">タイトル</string>
+    <string name="media_description_subtitle__favorite">お気に入り</string>
+    <string name="media_description_subtitle__new">新しい</string>
+    <string name="media_description_subtitle__playlist">プレイリスト</string>
+    <string name="media_description_title__favorite">お気に入り</string>
+    <string name="media_description_title__new">新しい</string>
+    <string name="media_description_title__playlist">プレイリスト</string>
+    <string name="message__no_data_to_load">データがありません。</string>
+    <string name="option_menu_item__search">検索</string>
+    <string name="title__app_name">マイサウンド</string>
+    <string name="title__dialog">メッセージ</string>
+    <string name="title__screen_favorites">お気に入り</string>
+    <string name="title__screen_home">トレンディング</string>
+    <string name="title__screen_playlists">プレイリスト</string>
+    <string name="title__screen_sounds">新しい</string>
+    <string name="title__screen_sounds_search">結果</string>
+</resources>

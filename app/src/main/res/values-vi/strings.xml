@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="drawer_item__playlists">Danh sách</string>
+    <string name="action__fast_forward">Tua nhanh</string>
+    <string name="action__pause">Tạm Ngưng</string>
+    <string name="action__play">Chơi</string>
+    <string name="action__rewind">Tua ngược</string>
+    <string name="action__skip_to_next">Kế</string>
+    <string name="action__skip_to_previous">Trước</string>
+    <string name="action__stop">Dừng</string>
+    <string name="context_menu_item__favorite">Thích</string>
+    <string name="context_menu_item__unfavorite">Bỏ thích</string>
+    <string name="desc__navigation_drawer_close">Đóng menu</string>
+    <string name="desc__navigation_drawer_open">Mở menu</string>
+    <string name="drawer_item__favorites">Thích</string>
+    <string name="drawer_item__home">Nổi bật</string>
+    <string name="drawer_item__logout">Thoát</string>
+    <string name="drawer_item__sounds">Mới</string>
+    <string name="error__media_network">Đã xảy ra lỗi kết nối.</string>
+    <string name="hint__track_search">Tên</string>
+    <string name="media_description_subtitle__favorite">Thích</string>
+    <string name="media_description_subtitle__new">Mới</string>
+    <string name="media_description_subtitle__playlist">Tất cả danh sách</string>
+    <string name="media_description_title__favorite">Thích</string>
+    <string name="media_description_title__new">Mới</string>
+    <string name="media_description_title__playlist">Danh sách</string>
+    <string name="message__no_data_to_load">Không có dữ liệu.</string>
+    <string name="option_menu_item__search">Tìm kiếm</string>
+    <string name="title__app_name">My sound</string>
+    <string name="title__dialog">Thông báo</string>
+    <string name="title__screen_favorites">Thích</string>
+    <string name="title__screen_home">Nổi trội</string>
+    <string name="title__screen_playlists">Tất cả danh sách</string>
+    <string name="title__screen_sounds">Mới</string>
+    <string name="title__screen_sounds_search">Kết quả</string>
+</resources>
