@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="ad_unit_id__main_activity">ca-app-pub-2332044383249316/5430173984</string>
+
     <string name="title__app_name">My Sound</string>
     <string name="title__dialog">Message</string>
     <string name="title__screen_home">Trending<!--Home--></string>

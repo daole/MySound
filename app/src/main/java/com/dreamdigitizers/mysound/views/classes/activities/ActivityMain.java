@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
+import com.dreamdigitizers.androidbaselibrary.views.classes.support.AdListener;
 import com.dreamdigitizers.androidbaselibrary.views.interfaces.IViewBase;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
@@ -28,6 +29,7 @@ import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenFavorit
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenSounds;
 import com.dreamdigitizers.mysound.views.interfaces.IViewMain;
+import com.google.android.gms.ads.AdView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,6 +43,7 @@ public class ActivityMain extends ActivityBase {
     private NavigationView mNavigationView;
     private CircleImageView mImgAvatar;
     private TextView mLblMyName;
+    private AdView mAdView;
 
     private ViewMain mView;
     private IPresenterMain mPresenter;
@@ -115,10 +118,12 @@ public class ActivityMain extends ActivityBase {
         this.mNavigationView = (NavigationView) this.findViewById(R.id.navigationView);
         this.mImgAvatar = (CircleImageView) this.mNavigationView.getHeaderView(0).findViewById(R.id.imgAvatar);
         this.mLblMyName = (TextView) this.mNavigationView.getHeaderView(0).findViewById(R.id.lblMyName);
+        this.mAdView = (AdView) this.findViewById(R.id.adView);
     }
 
     @Override
     protected void mapInformationToItems() {
+        this.mAdView.setAdListener(new AdListener(this.mAdView));
         this.setSupportActionBar(this.mToolbar);
         this.setUpNavigationDrawer();
         Me me = Share.getMe();
