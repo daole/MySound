@@ -19,9 +19,11 @@ import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
 import com.dreamdigitizers.mysound.views.classes.activities.ActivityMain;
 import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
+import com.squareup.okhttp.internal.Util;
 
 public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLogin, SoundCloudWebViewClient.IOnLoginActionsListener {
     private WebView mWbvLogin;
+    private boolean mIsSoundCloudProblemMessageShown;
 
     @Override
     protected IPresenterLogin createPresenter() {
@@ -79,6 +81,17 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
     @Override
     public void onPageFinished(WebView pWebView, String pUrl) {
         UtilsDialog.hideNetworkProgressDialog();
+        if (!this.mIsSoundCloudProblemMessageShown) {
+            this.mIsSoundCloudProblemMessageShown = true;
+            UtilsDialog.showDialog(
+                    this.getActivity(),
+                    this.getString(R.string.title__dialog),
+                    this.getString(R.string.message__soundcloud_problem),
+                    false,
+                    this.getString(R.string.btn__ok),
+                    null,
+                    null);
+        }
     }
 
     @Override

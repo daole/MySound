@@ -25,6 +25,7 @@
     <string name="media_description_title__new">Mới</string>
     <string name="media_description_title__playlist">Danh sách</string>
     <string name="message__no_data_to_load">Không có dữ liệu.</string>
+    <string name="message__soundcloud_problem">Hiện tại đang có vấn đề sử dụng tài khoản Facebook hoặc Google để đăng nhập SoundCloud. Chúng tôi rất xin lỗi vì sự bất tiện này nhưng bạn hãy sử dụng tài khoản SoundCloud để đăng nhập. Chúng tôi cũng đang chờ SoundCloud khắc phục lỗi trên.</string>
     <string name="option_menu_item__search">Tìm kiếm</string>
     <string name="title__app_name">My sound</string>
     <string name="title__dialog">Thông báo</string>

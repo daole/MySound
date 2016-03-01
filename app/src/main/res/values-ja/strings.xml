@@ -25,6 +25,7 @@
     <string name="media_description_title__new">新しい</string>
     <string name="media_description_title__playlist">プレイリスト</string>
     <string name="message__no_data_to_load">データがありません。</string>
+    <string name="message__soundcloud_problem">SoundCloudのバグのため、FacebookかGoogleのアカウントでログインすることができません。この不具合で申し訳ありませんが、ご自分のSoundCloudのアカウントでログインしてください。私たちもSoundCloudがこのバグを修正することを待っております。</string>
     <string name="option_menu_item__search">検索</string>
     <string name="title__app_name">マイサウンド</string>
     <string name="title__dialog">メッセージ</string>

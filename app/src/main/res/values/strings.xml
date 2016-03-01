@@ -9,6 +9,7 @@
     <string name="title__screen_playlists">Playlists</string>
 
     <string name="message__no_data_to_load">There is no more data to load.</string>
+    <string name="message__soundcloud_problem">There is a problem logging into SoundCloud using Facebook\'s or Google\'s account. So, please using your SoundCloud account instead. We apologize for this inconvenience and expect SoundCloud to fix it soon.</string>
 
     <string name="drawer_item__home">Trending<!--Home--></string>
     <string name="drawer_item__sounds">New<!--Sounds--></string>
