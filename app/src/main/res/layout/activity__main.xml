@@ -7,6 +7,7 @@
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawerLayout"
+        android:layout_above="@+id/adView"
         style="@style/Root.DrawerLayout" >
 
         <android.support.design.widget.CoordinatorLayout
@@ -43,7 +44,7 @@
     </android.support.v4.widget.DrawerLayout>
 
     <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
+        android:id="@id/adView"
         ads:adSize="BANNER"
         ads:adUnitId="@string/ad_unit_id__main_activity"
         style="@style/AdView" />
