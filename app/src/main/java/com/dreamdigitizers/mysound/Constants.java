@@ -16,9 +16,10 @@ public class Constants {
     public static final String SOUNDCLOUD__DISPLAY = "popup";
     public static final String SOUNDCLOUD__STATE = "";
 
-    public static final String BUNDLE_KEY__SELECTED_MENU_ID = "selected_menu_id";
     public static final String BUNDLE_KEY__MEDIA_ITEMS = "media_items";
+    public static final String BUNDLE_KEY__SELECTED_MENU_ID = "selected_menu_id";
     public static final String BUNDLE_KEY__QUERY = "query";
+    public static final String BUNDLE_KEY__IS_LOGOUT = "is_logout";
 
     public static final String SHARED_PREFERENCES_KEY__ACCESS_TOKEN = "access_token";
 }

@@ -234,12 +234,14 @@ public class ActivityMain extends ActivityBase {
         this.mPresenter.stopMediaPlayer();
         this.mPresenter.deleteAccessToken();
         Share.dispose();
+        ApiFactory.dispose();
         this.goToInitializationActivity();
     }
 
     private void goToInitializationActivity() {
         Intent intent = new Intent(this, ActivityInitialization.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.BUNDLE_KEY__IS_LOGOUT, true);
         this.changeActivity(intent, true);
     }
 

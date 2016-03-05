@@ -610,6 +610,7 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
         }
         */
         this.mFavoritesOffset = null;
+        this.mIsFavoritesMore = true;
         this.loadChildrenFavoritesMore(pResult);
     }
 
