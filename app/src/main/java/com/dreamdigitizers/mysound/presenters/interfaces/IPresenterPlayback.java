@@ -1,6 +1,7 @@
 package com.dreamdigitizers.mysound.presenters.interfaces;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
+import com.dreamdigitizers.androidsoundcloudapi.models.Playlist;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 
 public interface IPresenterPlayback extends IPresenterRx {
@@ -11,7 +12,8 @@ public interface IPresenterPlayback extends IPresenterRx {
     //void userFavorites(UtilsDialog.IRetryAction pRetryAction);
     void userFavorites(UtilsDialog.IRetryAction pRetryAction, int pLinkedPartitioning, int pLimit, String pOffset);
     void userPlaylists(UtilsDialog.IRetryAction pRetryAction, int pLinkedPartitioning, int pLimit, int pOffset);
-    void playlist(UtilsDialog.IRetryAction pRetryAction, int pLinkedPartitioning, int pLimit, int pOffset);
+    //void playlist(UtilsDialog.IRetryAction pRetryAction, int pLinkedPartitioning, int pLimit, int pOffset);
     void favorite(UtilsDialog.IRetryAction pRetryAction, Track pTrack);
     void unfavorite(UtilsDialog.IRetryAction pRetryAction, Track pTrack);
+    void deletePlaylist(UtilsDialog.IRetryAction pRetryAction, Playlist pPlaylist);
 }

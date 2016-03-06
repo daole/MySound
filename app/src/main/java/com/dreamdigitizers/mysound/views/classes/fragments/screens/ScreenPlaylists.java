@@ -18,18 +18,6 @@ import com.dreamdigitizers.mysound.views.interfaces.IViewPlaylists;
 
 public class ScreenPlaylists extends ScreenMediaItems<IPresenterPlaylists> implements IViewPlaylists, PlaylistAdapter.IOnItemClickListener {
     @Override
-    public void onStart() {
-        super.onStart();
-        this.mFragmentMediaItems.setOnItemClickListener(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        this.mFragmentMediaItems.setOnItemClickListener(null);
-    }
-
-    @Override
     protected IPresenterPlaylists createPresenter() {
         return (IPresenterPlaylists) PresenterFactory.createPresenter(IPresenterPlaylists.class, this);
     }
@@ -66,5 +54,6 @@ public class ScreenPlaylists extends ScreenMediaItems<IPresenterPlaylists> imple
 
     @Override
     public void onDeleteContextMenuItemClicked(MediaBrowserCompat.MediaItem pMediaItem) {
+        this.mPresenter.deletePlaylist(pMediaItem);
     }
 }

@@ -19,4 +19,5 @@ public interface IViewPlayback extends IViewRx {
     void onRxPlaylistNext(List<Track> pTracks);
     void onRxFavoriteNext(Track pTrack);
     void onRxUnfavoriteNext(Track pTrack);
+    void onRxDeletePlaylistNext(Playlist pPlaylist);
 }

@@ -21,11 +21,9 @@ public abstract class ScreenRx<P extends IPresenterRx> extends ScreenBase<P> imp
     public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
         pError.printStackTrace();
         this.hideNetworkProgress();
-        if (pRetryAction != null) {
-            this.showRetryableError(
-                    R.string.error__retryable_network,
-                    false,
-                    pRetryAction);
-        }
+        this.showRetryableError(
+                R.string.error__retryable_network,
+                false,
+                pRetryAction);
     }
 }

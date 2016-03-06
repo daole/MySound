@@ -41,8 +41,11 @@ public class ServicePlayback extends ServiceMediaBrowser {
     public static final String ERROR_CODE__MEDIA_NETWORK = "1";
 
     public static final String CUSTOM_ACTION__FAVORITE = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.FAVORITE";
+    public static final String CUSTOM_ACTION__DELETE_PLAYLIST = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.DELETE_PLAYLIST";
 
-    public static final String EVENT_URI = "media://serviceplayback?action=%s&trackId=%s&userFavorite=%s";
+    private static final String EVENT_URI__ROOT = "media://serviceplayback?action=%s";
+    private static final String EVENT_URI__FAVORITE = ServicePlayback.EVENT_URI__ROOT + "&trackId=%s&userFavorite=%s";
+    private static final String EVENT_URI__DELETE_PLAYLIST = ServicePlayback.EVENT_URI__ROOT + "&playlistId=%s";
 
     //private static final int ART_WIDTH = 800;
     //private static final int ART_HEIGHT = 480;
@@ -209,6 +212,9 @@ public class ServicePlayback extends ServiceMediaBrowser {
         switch (pAction) {
             case ServicePlayback.CUSTOM_ACTION__FAVORITE:
                 this.processFavoriteRequest(pExtras);
+                break;
+            case ServicePlayback.CUSTOM_ACTION__DELETE_PLAYLIST:
+                this.processDeletePlaylistRequest(pExtras);
                 break;
             default:
                 break;
@@ -624,6 +630,10 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.sendFavoriteActionResult(pTrack);
     }
 
+    public void onRxDeletePlaylistNext(Playlist pPlaylist) {
+        this.sendDeletePlaylistActionResult(pPlaylist);
+    }
+
     public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
         this.mSoundsResult = null;
         this.mSoundsSearchResult = null;
@@ -716,8 +726,18 @@ public class ServicePlayback extends ServiceMediaBrowser {
         }
     }
 
+    private void processDeletePlaylistRequest(Bundle pExtras) {
+        Playlist playlist = (Playlist) pExtras.getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__PLAYLIST);
+        this.mPresenter.deletePlaylist(null, playlist);
+    }
+
     private void sendFavoriteActionResult(Track pTrack) {
-        String eventAction = String.format(ServicePlayback.EVENT_URI, ServicePlayback.CUSTOM_ACTION__FAVORITE, pTrack.getId(), pTrack.getUserFavorite());
+        String eventAction = String.format(ServicePlayback.EVENT_URI__FAVORITE, ServicePlayback.CUSTOM_ACTION__FAVORITE, pTrack.getId(), pTrack.getUserFavorite());
+        this.getMediaSession().sendSessionEvent(eventAction, null);
+    }
+
+    private void sendDeletePlaylistActionResult(Playlist pPlaylist) {
+        String eventAction = String.format(ServicePlayback.EVENT_URI__DELETE_PLAYLIST, ServicePlayback.CUSTOM_ACTION__DELETE_PLAYLIST, pPlaylist.getId());
         this.getMediaSession().sendSessionEvent(eventAction, null);
     }
 
@@ -765,6 +785,11 @@ public class ServicePlayback extends ServiceMediaBrowser {
         @Override
         public void onRxUnfavoriteNext(Track pTrack) {
             ServicePlayback.this.onRxUnfavoriteNext(pTrack);
+        }
+
+        @Override
+        public void onRxDeletePlaylistNext(Playlist pPlaylist) {
+            ServicePlayback.this.onRxDeletePlaylistNext(pPlaylist);
         }
 
         @Override

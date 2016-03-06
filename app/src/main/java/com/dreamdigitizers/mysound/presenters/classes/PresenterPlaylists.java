@@ -1,5 +1,7 @@
 package com.dreamdigitizers.mysound.presenters.classes;
 
+import android.support.v4.media.MediaBrowserCompat;
+
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlaylists;
 import com.dreamdigitizers.mysound.views.classes.services.ServicePlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlaylists;
@@ -22,5 +24,10 @@ class PresenterPlaylists extends PresenterMediaItems<IViewPlaylists> implements 
     @Override
     protected String getMediaIdMore() {
         return ServicePlayback.MEDIA_ID__PLAYLISTS_MORE;
+    }
+
+    @Override
+    public void deletePlaylist(MediaBrowserCompat.MediaItem pMediaItem) {
+
     }
 }

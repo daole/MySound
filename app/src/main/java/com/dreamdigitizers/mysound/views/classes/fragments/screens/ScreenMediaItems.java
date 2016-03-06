@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -17,11 +19,17 @@ import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterMediaItems;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentMediaItems;
+import com.dreamdigitizers.mysound.views.classes.fragments.FragmentPlaybackControls;
+import com.dreamdigitizers.mysound.views.classes.support.MediaItemAdapter;
 import com.dreamdigitizers.mysound.views.interfaces.IViewMediaItems;
 
 import java.util.List;
 
-public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends ScreenBase<P> implements IViewMediaItems, FragmentMediaItems.IOnScrollEndListener {
+public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends ScreenBase<P>
+        implements IViewMediaItems,
+        FragmentMediaItems.IOnScrollEndListener,
+        MediaItemAdapter.IOnItemClickListener,
+        FragmentPlaybackControls.IPlaybackControlListener {
     private static final String ERROR_MESSAGE__MISSING_MEDIA_ITEMS_PLACE_HOLDER = "Missing FrameLayout with id \"placeHolderTracks\" in layout.";
 
     protected MenuItem mActionSearch;
@@ -33,12 +41,16 @@ public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends S
     @Override
     public void onStart() {
         super.onStart();
+        this.mFragmentMediaItems.setOnItemClickListener(this);
+        this.mFragmentMediaItems.setPlaybackControlListener(this);
         this.mPresenter.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        this.mFragmentMediaItems.setOnItemClickListener(null);
+        this.mFragmentMediaItems.setPlaybackControlListener(null);
         this.mPresenter.disconnect();
     }
 
@@ -136,6 +148,21 @@ public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends S
     }
 
     @Override
+    public void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {
+        this.mFragmentMediaItems.onPlaybackStateChanged(pPlaybackState);
+    }
+
+    @Override
+    public void onMetadataChanged(MediaMetadataCompat pMediaMetadata) {
+        this.mFragmentMediaItems.onMetadataChanged(pMediaMetadata);
+    }
+
+    @Override
+    public void updateState() {
+        this.mFragmentMediaItems.updateState();
+    }
+
+    @Override
     public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop) {
         this.mFragmentMediaItems.addMediaItems(pMediaItems, pIsAddToTop);
     }
@@ -143,6 +170,31 @@ public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends S
     @Override
     public void onScrollEnd() {
         this.mPresenter.loadMore();
+    }
+
+    @Override
+    public void skipToPrevious() {
+        this.mPresenter.skipToPrevious();
+    }
+
+    @Override
+    public void play() {
+        this.mPresenter.play();
+    }
+
+    @Override
+    public void pause() {
+        this.mPresenter.pause();
+    }
+
+    @Override
+    public void skipToNext() {
+        this.mPresenter.skipToNext();
+    }
+
+    @Override
+    public void seekTo(int pPosition) {
+        this.mPresenter.seekTo(pPosition);
     }
 
     protected void handleSearch(String pQuery) {

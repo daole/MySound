@@ -7,4 +7,9 @@ public interface IPresenterMediaItems extends IPresenterBase {
     void disconnect();
     void refresh();
     void loadMore();
+    void skipToPrevious();
+    void play();
+    void pause();
+    void skipToNext();
+    void seekTo(int pPosition);
 }

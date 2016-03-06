@@ -4,6 +4,7 @@ import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.core.IApi;
 import com.dreamdigitizers.androidsoundcloudapi.core.IApiV2;
+import com.dreamdigitizers.androidsoundcloudapi.models.Playlist;
 import com.dreamdigitizers.androidsoundcloudapi.models.Playlists;
 import com.dreamdigitizers.androidsoundcloudapi.models.Tracks;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
@@ -407,10 +408,9 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                 });
     }
 
-    @Override
+    /*@Override
     public void playlist(final UtilsDialog.IRetryAction pRetryAction, final int pLinkedPartitioning, final int pLimit, final int pOffset) {
-
-    }
+    }*/
 
     @Override
     public void favorite(final UtilsDialog.IRetryAction pRetryAction, final Track pTrack) {
@@ -465,6 +465,40 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         IViewPlayback view = PresenterPlayback.this.getView();
                         if (view != null) {
                             view.onRxUnfavoriteNext(pTrack);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
+                    }
+                });
+    }
+
+    @Override
+    public void deletePlaylist(final UtilsDialog.IRetryAction pRetryAction, final Playlist pPlaylist) {
+        this.unsubscribe();
+        final IApi api = ApiFactory.getApiInstance();
+        this.mSubscription = api.deletePlaylistRx(pPlaylist.getId())
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onStart() {
+                        PresenterPlayback.this.onStart();
+                    }
+
+                    @Override
+                    public void onNext(Void pVoid) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxDeletePlaylistNext(pPlaylist);
                         }
                     }
 
