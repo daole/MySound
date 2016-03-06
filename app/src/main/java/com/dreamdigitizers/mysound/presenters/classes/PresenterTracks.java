@@ -123,9 +123,7 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         V view = this.getView();
         if (view != null) {
             view.showLoadMoreProgress();
-            String mediaId = this.getMediaIdMore();
-            this.mMediaBrowser.unsubscribe(mediaId);
-            this.mMediaBrowser.subscribe(mediaId, this.mMediaBrowserSubscriptionCallback);
+            this.load(this.getMediaIdMore());
         }
     }
 

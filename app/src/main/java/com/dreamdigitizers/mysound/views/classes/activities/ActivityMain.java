@@ -27,6 +27,7 @@ import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterMain;
 import com.dreamdigitizers.mysound.utilities.UtilsImage;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenFavorites;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenHome;
+import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenPlaylists;
 import com.dreamdigitizers.mysound.views.classes.fragments.screens.ScreenSounds;
 import com.dreamdigitizers.mysound.views.interfaces.IViewMain;
 import com.google.android.gms.ads.AdView;
@@ -207,10 +208,11 @@ public class ActivityMain extends ActivityBase {
                     screenBase = new ScreenFavorites();
                 }
                 break;
-            /*
             case R.id.drawer_item__playlists:
+                if (!(this.mCurrentScreen instanceof ScreenPlaylists)) {
+                    screenBase = new ScreenPlaylists();
+                }
                 break;
-            */
             case R.id.drawer_item__logout:
                 this.logout();
                 break;

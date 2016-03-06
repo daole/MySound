@@ -4,8 +4,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -17,37 +15,30 @@ import android.widget.FrameLayout;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
-import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterTracks;
-import com.dreamdigitizers.mysound.views.classes.fragments.FragmentPlaybackControls;
-import com.dreamdigitizers.mysound.views.classes.fragments.FragmentTracks;
-import com.dreamdigitizers.mysound.views.classes.support.TrackAdapter;
-import com.dreamdigitizers.mysound.views.interfaces.IViewTracks;
+import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterMediaItems;
+import com.dreamdigitizers.mysound.views.classes.fragments.FragmentMediaItems;
+import com.dreamdigitizers.mysound.views.interfaces.IViewMediaItems;
 
 import java.util.List;
 
-public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBase<P>
-        implements IViewTracks, FragmentTracks.IOnScrollEndListener, FragmentPlaybackControls.IPlaybackControlListener, TrackAdapter.IOnItemClickListener {
-    private static final String ERROR_MESSAGE__MISSING_TRACKS_PLACE_HOLDER = "Missing FrameLayout with id \"placeHolderTracks\" in layout.";
+public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends ScreenBase<P> implements IViewMediaItems, FragmentMediaItems.IOnScrollEndListener {
+    private static final String ERROR_MESSAGE__MISSING_MEDIA_ITEMS_PLACE_HOLDER = "Missing FrameLayout with id \"placeHolderTracks\" in layout.";
 
     protected MenuItem mActionSearch;
     protected SearchView mSearchView;
     protected SwipeRefreshLayout mSfrRefresh;
     protected FrameLayout mPlaceHolderTracks;
-    protected FragmentTracks mFragmentTracks;
+    protected FragmentMediaItems mFragmentMediaItems;
 
     @Override
     public void onStart() {
         super.onStart();
-        this.mFragmentTracks.setPlaybackControlListener(this);
-        this.mFragmentTracks.setOnItemClickListener(this);
         this.mPresenter.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        this.mFragmentTracks.setPlaybackControlListener(null);
-        this.mFragmentTracks.setOnItemClickListener(null);
         this.mPresenter.disconnect();
     }
 
@@ -56,14 +47,13 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
         super.onDestroyView();
         this.getChildFragmentManager()
                 .beginTransaction()
-                .remove(this.mFragmentTracks)
+                .remove(this.mFragmentMediaItems)
                 .commitAllowingStateLoss();
     }
 
     @Override
     protected void createOptionsMenu(Menu pMenu, MenuInflater pInflater) {
         pInflater.inflate(R.menu.menu__options_media_items_screen, pMenu);
-
         SearchManager searchManager = (SearchManager) this.getContext().getSystemService(Context.SEARCH_SERVICE);
         this.mActionSearch = pMenu.findItem(R.id.option_menu_item__search);
         this.mSearchView = (SearchView) this.mActionSearch.getActionView();
@@ -71,12 +61,12 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
         this.mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String pQuery) {
-                return ScreenTracks.this.onSearchViewQueryTextSubmitted(pQuery);
+                return ScreenMediaItems.this.onSearchViewQueryTextSubmitted(pQuery);
             }
 
             @Override
             public boolean onQueryTextChange(String pNewText) {
-                return ScreenTracks.this.onSearchViewQueryTextChanged(pNewText);
+                return ScreenMediaItems.this.onSearchViewQueryTextChanged(pNewText);
             }
         });
     }
@@ -97,7 +87,7 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
         this.mSfrRefresh = (SwipeRefreshLayout) pView.findViewById(R.id.sfrRefresh);
         this.mPlaceHolderTracks = (FrameLayout) pView.findViewById(R.id.placeHolderTracks);
         if (this.mPlaceHolderTracks == null) {
-            throw new NullPointerException(ScreenTracks.ERROR_MESSAGE__MISSING_TRACKS_PLACE_HOLDER);
+            throw new NullPointerException(ScreenMediaItems.ERROR_MESSAGE__MISSING_MEDIA_ITEMS_PLACE_HOLDER);
         }
     }
 
@@ -108,16 +98,16 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
             this.mSfrRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    ScreenTracks.this.refresh();
+                    ScreenMediaItems.this.refresh();
                 }
             });
         }
 
-        this.mFragmentTracks = new FragmentTracks();
-        this.mFragmentTracks.setOnScrollEndListener(this);
+        this.mFragmentMediaItems = this.createFragmentMediaItems();
+        this.mFragmentMediaItems.setOnScrollEndListener(this);
         this.getChildFragmentManager()
                 .beginTransaction()
-                .add(R.id.placeHolderTracks, this.mFragmentTracks)
+                .add(R.id.placeHolderTracks, this.mFragmentMediaItems)
                 .commit();
     }
 
@@ -136,73 +126,23 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     }
 
     @Override
-     public void showLoadMoreProgress() {
-        this.mFragmentTracks.showLoadMoreProgress();
+    public void showLoadMoreProgress() {
+        this.mFragmentMediaItems.showLoadMoreProgress();
     }
 
     @Override
     public void hideLoadMoreProgress() {
-        this.mFragmentTracks.hideLoadMoreProgress();
+        this.mFragmentMediaItems.hideLoadMoreProgress();
     }
 
     @Override
     public void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop) {
-        this.mFragmentTracks.addMediaItems(pMediaItems, pIsAddToTop);
-    }
-
-    @Override
-    public void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState) {
-        this.mFragmentTracks.onPlaybackStateChanged(pPlaybackState);
-    }
-
-    @Override
-    public void onMetadataChanged(MediaMetadataCompat pMediaMetadata) {
-        this.mFragmentTracks.onMetadataChanged(pMediaMetadata);
-    }
-
-    @Override
-    public void updateState() {
-        this.mFragmentTracks.updateState();
+        this.mFragmentMediaItems.addMediaItems(pMediaItems, pIsAddToTop);
     }
 
     @Override
     public void onScrollEnd() {
         this.mPresenter.loadMore();
-    }
-
-    @Override
-    public void skipToPrevious() {
-        this.mPresenter.skipToPrevious();
-    }
-
-    @Override
-    public void play() {
-        this.mPresenter.play();
-    }
-
-    @Override
-    public void pause() {
-        this.mPresenter.pause();
-    }
-
-    @Override
-    public void skipToNext() {
-        this.mPresenter.skipToNext();
-    }
-
-    @Override
-    public void seekTo(int pPosition) {
-        this.mPresenter.seekTo(pPosition);
-    }
-
-    @Override
-    public void onItemClicked(MediaBrowserCompat.MediaItem pMediaItem) {
-        this.mPresenter.playFromMediaId(pMediaItem);
-    }
-
-    @Override
-    public void onFavoriteContextMenuItemClicked(MediaBrowserCompat.MediaItem pMediaItem) {
-        this.mPresenter.favorite(pMediaItem);
     }
 
     protected void handleSearch(String pQuery) {
@@ -215,11 +155,12 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     private boolean onSearchViewQueryTextSubmitted(String pQuery) {
         //MenuItemCompat.collapseActionView(this.mActionSearch);
         this.mSearchView.clearFocus();
-        if (this instanceof ScreenSoundsSearch) {
+        /*if (this instanceof ScreenSoundsSearch) {
             this.handleSearch(pQuery);
         } else {
             this.goToSoundsSearchScreen(pQuery);
-        }
+        }*/
+        this.goToSoundsSearchScreen(pQuery);
         return true;
     }
 
@@ -228,10 +169,12 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenBas
     }
 
     private void goToSoundsSearchScreen(String pQuery) {
-        ScreenBase screenBase = new ScreenSoundsSearch();
         Bundle arguments = new Bundle();
         arguments.putString(Constants.BUNDLE_KEY__QUERY, pQuery);
+        ScreenBase screenBase = new ScreenSoundsSearch();
         screenBase.setArguments(arguments);
         this.mScreenActionsListener.onChangeScreen(screenBase);
     }
+
+    protected abstract FragmentMediaItems createFragmentMediaItems();
 }

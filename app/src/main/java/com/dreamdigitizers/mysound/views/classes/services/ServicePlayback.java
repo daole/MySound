@@ -1,6 +1,5 @@
 package com.dreamdigitizers.mysound.views.classes.services;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -10,8 +9,6 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.view.View;
-import android.widget.Toast;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsBitmap;
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
@@ -20,7 +17,8 @@ import com.dreamdigitizers.androidbaselibrary.views.classes.services.ServiceMedi
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.CustomQueueItem;
 import com.dreamdigitizers.androidbaselibrary.views.classes.services.support.MediaPlayerNotificationReceiver;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
-import com.dreamdigitizers.androidsoundcloudapi.models.Collection;
+import com.dreamdigitizers.androidsoundcloudapi.models.Playlists;
+import com.dreamdigitizers.androidsoundcloudapi.models.Tracks;
 import com.dreamdigitizers.androidsoundcloudapi.models.Playlist;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.androidsoundcloudapi.models.v2.Charts;
@@ -33,11 +31,12 @@ import com.dreamdigitizers.mysound.utilities.UtilsImage;
 import com.dreamdigitizers.mysound.views.classes.services.support.PlaybackNotificationReceiver;
 import com.dreamdigitizers.mysound.views.classes.services.support.SoundCloudMetadataBuilder;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
+import com.dreamdigitizers.mysound.views.interfaces.IViewRx;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServicePlayback extends ServiceMediaBrowser implements IViewPlayback {
+public class ServicePlayback extends ServiceMediaBrowser {
     public static final String ERROR_CODE__MEDIA_NETWORK = "1";
 
     public static final String CUSTOM_ACTION__FAVORITE = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.FAVORITE";
@@ -53,7 +52,8 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     private static final int ACTIVE_MODE__SOUNDS = 2;
     private static final int ACTIVE_MODE__SOUNDS_SEARCH = 3;
     private static final int ACTIVE_MODE__FAVORITES = 4;
-    private static final int ACTIVE_MODE__PLAYLIST = 5;
+    private static final int ACTIVE_MODE__PLAYLISTS = 5;
+    private static final int ACTIVE_MODE__PLAYLIST = 6;
 
     public static final String MEDIA_ID__ROOT = "__ROOT__";
     public static final String MEDIA_ID__CHARTS = "__CHARTS__";
@@ -66,15 +66,16 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     public static final String MEDIA_ID__FAVORITES = "__FAVORITES__";
     public static final String MEDIA_ID__FAVORITES_MORE = "__FAVORITES_MORE__";
     public static final String MEDIA_ID__PLAYLISTS = "__PLAYLISTS__";
-    public static final String MEDIA_ID__PLAYLISTS_REFRESH = "__PLAYLISTS_REFRESH__";
+    public static final String MEDIA_ID__PLAYLISTS_MORE = "__PLAYLISTS_MORE__";
     public static final String MEDIA_ID__PLAYLIST = "__PLAYLIST__";
-    public static final String MEDIA_ID__PLAYLIST_REFRESH = "__PLAYLIST_REFRESH__";
+    public static final String MEDIA_ID__PLAYLIST_MORE = "__PLAYLIST_MORE__";
 
     private static final String URI__DRAWABLE = "android.resource://com.dreamdigitizers.mysound/drawable/";
     private static final String URI__DRAWABLE_ICON_NEW = ServicePlayback.URI__DRAWABLE + "ic__sound";
     private static final String URI__DRAWABLE_ICON_FAVORITE =  ServicePlayback.URI__DRAWABLE + "ic__favorite";
     private static final String URI__DRAWABLE_ICON_PLAYLIST =  ServicePlayback.URI__DRAWABLE + "ic__playlist";
 
+    private ViewPlayback mView;
     private IPresenterPlayback mPresenter;
 
     private Result mChartsResult;
@@ -95,18 +96,22 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     private List<MediaBrowserCompat.MediaItem> mSoundsMediaItems;
     private List<MediaBrowserCompat.MediaItem> mSoundsSearchMediaItems;
     private List<MediaBrowserCompat.MediaItem> mFavoritesMediaItems;
+    private List<MediaBrowserCompat.MediaItem> mPlaylistsMediaItems;
     private List<MediaBrowserCompat.MediaItem> mPlayListMediaItems;
 
     private int mChartsOffset;
     private int mSoundsOffset;
     private int mSoundsSearchOffset;
     private String mFavoritesOffset;
+    private int mPlaylistsOffset;
     private int mPlayListOffset;
 
     private boolean mIsChartsMore;
     private boolean mIsSoundsMore;
     private boolean mIsSoundsSearchMore;
     private boolean mIsFavoritesMore;
+    private boolean mIsPlaylistsMore;
+    private boolean mIsPlaylistMore;
 
     private int mActiveMode;
     private String mQuery;
@@ -123,13 +128,17 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
         this.mSoundsMediaItems = new ArrayList<>();
         this.mSoundsSearchMediaItems = new ArrayList<>();
         this.mFavoritesMediaItems = new ArrayList<>();
+        this.mPlaylistsMediaItems = new ArrayList<>();
 
         this.mIsChartsMore = true;
         this.mIsSoundsMore = true;
         this.mIsSoundsSearchMore = true;
         this.mIsFavoritesMore = true;
+        this.mIsPlaylistsMore = true;
+        this.mIsPlaylistMore = true;
 
-        this.mPresenter = (IPresenterPlayback) PresenterFactory.createPresenter(IPresenterPlayback.class, this);
+        this.mView = new ViewPlayback();
+        this.mPresenter = (IPresenterPlayback) PresenterFactory.createPresenter(IPresenterPlayback.class, this.mView);
 
         ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
     }
@@ -243,13 +252,13 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
             case ServicePlayback.MEDIA_ID__PLAYLISTS:
                 this.loadChildrenPlaylists(pResult);
                 break;
-            case ServicePlayback.MEDIA_ID__PLAYLISTS_REFRESH:
-                //this.loadChildrenPlaylistsRefresh(pResult);
+            case ServicePlayback.MEDIA_ID__PLAYLISTS_MORE:
+                this.loadChildrenPlaylistsMore(pResult);
                 break;
             case ServicePlayback.MEDIA_ID__PLAYLIST:
                 this.loadChildrenPlaylist(pResult);
                 break;
-            case ServicePlayback.MEDIA_ID__PLAYLIST_REFRESH:
+            case ServicePlayback.MEDIA_ID__PLAYLIST_MORE:
                 this.loadChildrenPlaylistRefresh(pResult);
                 break;
             default:
@@ -265,247 +274,6 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     @Override
     protected MediaPlayerNotificationReceiver createMediaPlayerNotificationReceiver() {
         return new PlaybackNotificationReceiver(this);
-    }
-
-    @Override
-    public Context getViewContext() {
-        return this;
-    }
-
-    @Override
-    public Object getViewSystemService(String pName) {
-        return this.getSystemService(pName);
-    }
-
-    @Override
-    public void showMessage(int pMessageResourceId) {
-        this.showMessage(this.getString(pMessageResourceId));
-    }
-
-    @Override
-    public void showMessage(String pMessage) {
-        Toast.makeText(this, pMessage, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showMessage(int pMessageResourceId, int pActionResourceId, View.OnClickListener pActionListener) {
-    }
-
-    @Override
-    public void showMessage(String pMessage, String pAction, View.OnClickListener pActionListener) {
-    }
-
-    @Override
-    public void showConfirmation(int pMessageResourceId, UtilsDialog.IOnDialogButtonClickListener pListener) {
-    }
-
-    @Override
-    public void showConfirmation(String pMessage, UtilsDialog.IOnDialogButtonClickListener pListener) {
-    }
-
-    @Override
-    public void showError(int pMessageResourceId) {
-    }
-
-    @Override
-    public void showError(String pMessage) {
-    }
-
-    @Override
-    public void showRetryableError(int pMessageResourceId, boolean pIsEndActivity, UtilsDialog.IRetryAction pRetryAction) {
-    }
-
-    @Override
-    public void showRetryableError(String pMessage, boolean pIsEndActivity, UtilsDialog.IRetryAction pRetryAction) {
-    }
-
-    @Override
-    public void showNetworkProgress() {
-    }
-
-    @Override
-    public void hideNetworkProgress() {
-    }
-
-    @Override
-    public void onRxStart() {
-    }
-
-    @Override
-    public void onRxCompleted() {
-    }
-
-    @Override
-    public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
-        this.mSoundsResult = null;
-        this.mSoundsSearchResult = null;
-        this.mFavoritesResult = null;
-        this.mPlaylistsResult = null;
-        this.mPlaylistResult = null;
-        this.updatePlaybackState(ServicePlayback.ERROR_CODE__MEDIA_NETWORK);
-        pError.printStackTrace();
-    }
-
-    @Override
-    public void onRxChartsNext(Charts pCharts) {
-        if (this.mChartsResult != null) {
-            String nextHref = pCharts.getNextHref();
-            if (UtilsString.isEmpty(nextHref)) {
-                if (!this.mIsChartsMore) {
-                    this.mChartsResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
-                    this.mChartsResult = null;
-                    return;
-                }
-                this.mIsChartsMore = false;
-            } else {
-                this.mChartsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
-                this.mIsChartsMore = true;
-            }
-            List<Track> tracks = new ArrayList<>();
-            for (Charts.Collection collection : pCharts.getCollection()) {
-                tracks.add(collection.getTrack());
-            }
-            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mChartsQueue, false);
-            this.mChartsMediaItems.addAll(mediaItems);
-            this.mChartsResult.sendResult(mediaItems);
-            this.mChartsResult = null;
-            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__CHARTS) {
-                this.mActiveQueue = this.mChartsQueue;
-            }
-        }
-    }
-
-    @Override
-    public void onRxSoundsNext(List<Track> pTracks) {
-        if (this.mSoundsResult != null) {
-            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks, this.mSoundsQueue, true);
-            this.mSoundsMediaItems.addAll(0, mediaItems);
-            this.mSoundsResult.sendResult(mediaItems);
-            this.mSoundsResult = null;
-            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS) {
-                this.mActiveQueue = this.mSoundsQueue;
-            }
-        }
-    }
-
-    @Override
-    public void onRxSoundsNext(Collection pCollection) {
-        if (this.mSoundsResult != null) {
-            String nextHref = pCollection.getNextHref();
-            if (UtilsString.isEmpty(nextHref)) {
-                if (!this.mIsSoundsMore) {
-                    this.mSoundsResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
-                    this.mSoundsResult = null;
-                    return;
-                }
-                this.mIsSoundsMore = false;
-            } else {
-                this.mSoundsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
-                this.mIsSoundsMore = true;
-            }
-            List<Track> tracks = pCollection.getCollection();
-            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mSoundsQueue, false);
-            this.mSoundsMediaItems.addAll(mediaItems);
-            this.mSoundsResult.sendResult(mediaItems);
-            this.mSoundsResult = null;
-            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS) {
-                this.mActiveQueue = this.mSoundsQueue;
-            }
-        }
-    }
-
-    @Override
-    public void onRxSoundsSearchNext(Collection pCollection) {
-        if (this.mSoundsSearchResult != null) {
-            String nextHref = pCollection.getNextHref();
-            if (UtilsString.isEmpty(nextHref)) {
-                if (!this.mIsSoundsSearchMore) {
-                    this.mSoundsSearchResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
-                    this.mSoundsSearchResult = null;
-                    return;
-                }
-                this.mIsSoundsSearchMore = false;
-            } else {
-                this.mSoundsSearchOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
-                this.mIsSoundsSearchMore = true;
-            }
-            List<Track> tracks = pCollection.getCollection();
-            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mSoundsSearchQueue, false);
-            this.mSoundsSearchMediaItems.addAll(mediaItems);
-            this.mSoundsSearchResult.sendResult(mediaItems);
-            this.mSoundsSearchResult = null;
-            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS_SEARCH) {
-                this.mActiveQueue = this.mSoundsSearchQueue;
-            }
-        }
-    }
-
-    @Override
-    public void onRxFavoritesNext(List<Track> pTracks) {
-        if (this.mFavoritesResult != null) {
-            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks, this.mFavoritesQueue, true);
-            this.mFavoritesMediaItems.addAll(0, mediaItems);
-            this.mFavoritesResult.sendResult(mediaItems);
-            this.mFavoritesResult = null;
-            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__FAVORITES) {
-                this.mActiveQueue = this.mFavoritesQueue;
-            }
-        }
-    }
-
-    @Override
-    public void onRxFavoritesNext(Collection pCollection) {
-        if (this.mFavoritesResult != null) {
-            String nextHref = pCollection.getNextHref();
-            if (UtilsString.isEmpty(nextHref)) {
-                if (!this.mIsFavoritesMore) {
-                    this.mFavoritesResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
-                    this.mFavoritesResult = null;
-                    return;
-                }
-                this.mIsFavoritesMore = false;
-            } else {
-                Uri uri = Uri.parse(nextHref);
-                this.mFavoritesOffset = uri.getQueryParameter("cursor");
-                this.mIsFavoritesMore = true;
-            }
-            List<Track> tracks = pCollection.getCollection();
-            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mFavoritesQueue, false);
-            this.mFavoritesMediaItems.addAll(mediaItems);
-            this.mFavoritesResult.sendResult(mediaItems);
-            this.mFavoritesResult = null;
-            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__FAVORITES) {
-                this.mActiveQueue = this.mFavoritesQueue;
-            }
-        }
-    }
-
-    @Override
-    public void onRxPlaylistsNext(List<Playlist> pTracks) {
-        if (this.mPlaylistsResult != null) {
-            this.mPlaylistsResult = null;
-        }
-    }
-
-    @Override
-    public void onRxPlaylistNext(List<Track> pTracks) {
-        if (this.mPlaylistResult != null) {
-            this.mPlaylistResult = null;
-        }
-    }
-
-    @Override
-    public void onRxFavoriteNext(Track pTrack) {
-        pTrack.setUserFavorite(true);
-        //this.updatePlaybackState(null);
-        this.sendFavoriteActionResult(pTrack);
-    }
-
-    @Override
-    public void onRxUnfavoriteNext(Track pTrack) {
-        pTrack.setUserFavorite(false);
-        //this.updatePlaybackState(null);
-        this.sendFavoriteActionResult(pTrack);
     }
 
     private void loadChildrenRoot(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
@@ -609,6 +377,7 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
             return;
         }
         */
+        this.mActiveMode = ServicePlayback.ACTIVE_MODE__FAVORITES;
         this.mFavoritesOffset = null;
         this.mIsFavoritesMore = true;
         this.loadChildrenFavoritesMore(pResult);
@@ -621,9 +390,21 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     }
 
     private void loadChildrenPlaylists(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        this.mActiveMode = ServicePlayback.ACTIVE_MODE__PLAYLISTS;
+        if (this.mPlaylistsMediaItems.size() > 0) {
+            pResult.sendResult(this.mPlaylistsMediaItems);
+            return;
+        }
+        //this.mActiveMode = ServicePlayback.ACTIVE_MODE__PLAYLISTS;
+        //this.mPlaylistsOffset = 0;
+        //this.mIsPlaylistsMore = true;
+        this.loadChildrenPlaylistsMore(pResult);
+    }
+
+    private void loadChildrenPlaylistsMore(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mPlaylistsResult = pResult;
         this.mPlaylistsResult.detach();
-        this.mPresenter.playlists(null);
+        this.mPresenter.userPlaylists(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mPlaylistsOffset);
     }
 
     private void loadChildrenPlaylist(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
@@ -638,6 +419,185 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     private void loadChildrenPlaylistRefresh(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mPlaylistResult = pResult;
         this.mPlaylistResult.detach();
+    }
+
+    public void onRxChartsNext(Charts pCharts) {
+        if (this.mChartsResult != null) {
+            String nextHref = pCharts.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsChartsMore) {
+                    this.mChartsResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mChartsResult = null;
+                    return;
+                }
+                this.mIsChartsMore = false;
+            } else {
+                this.mChartsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
+                this.mIsChartsMore = true;
+            }
+            List<Track> tracks = new ArrayList<>();
+            for (Charts.Collection collection : pCharts.getCollection()) {
+                tracks.add(collection.getTrack());
+            }
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mChartsQueue, false);
+            this.mChartsMediaItems.addAll(mediaItems);
+            this.mChartsResult.sendResult(mediaItems);
+            this.mChartsResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__CHARTS) {
+                this.mActiveQueue = this.mChartsQueue;
+            }
+        }
+    }
+
+    public void onRxSoundsNext(List<Track> pTracks) {
+        if (this.mSoundsResult != null) {
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks, this.mSoundsQueue, true);
+            this.mSoundsMediaItems.addAll(0, mediaItems);
+            this.mSoundsResult.sendResult(mediaItems);
+            this.mSoundsResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS) {
+                this.mActiveQueue = this.mSoundsQueue;
+            }
+        }
+    }
+
+    public void onRxSoundsNext(Tracks pTracks) {
+        if (this.mSoundsResult != null) {
+            String nextHref = pTracks.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsSoundsMore) {
+                    this.mSoundsResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mSoundsResult = null;
+                    return;
+                }
+                this.mIsSoundsMore = false;
+            } else {
+                this.mSoundsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
+                this.mIsSoundsMore = true;
+            }
+            List<Track> tracks = pTracks.getCollection();
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mSoundsQueue, false);
+            this.mSoundsMediaItems.addAll(mediaItems);
+            this.mSoundsResult.sendResult(mediaItems);
+            this.mSoundsResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS) {
+                this.mActiveQueue = this.mSoundsQueue;
+            }
+        }
+    }
+
+    public void onRxSoundsSearchNext(Tracks pTracks) {
+        if (this.mSoundsSearchResult != null) {
+            String nextHref = pTracks.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsSoundsSearchMore) {
+                    this.mSoundsSearchResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mSoundsSearchResult = null;
+                    return;
+                }
+                this.mIsSoundsSearchMore = false;
+            } else {
+                this.mSoundsSearchOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
+                this.mIsSoundsSearchMore = true;
+            }
+            List<Track> tracks = pTracks.getCollection();
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mSoundsSearchQueue, false);
+            this.mSoundsSearchMediaItems.addAll(mediaItems);
+            this.mSoundsSearchResult.sendResult(mediaItems);
+            this.mSoundsSearchResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__SOUNDS_SEARCH) {
+                this.mActiveQueue = this.mSoundsSearchQueue;
+            }
+        }
+    }
+
+    /*
+    public void onRxFavoritesNext(List<Track> pTracks) {
+        if (this.mFavoritesResult != null) {
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks, this.mFavoritesQueue, true);
+            this.mFavoritesMediaItems.addAll(0, mediaItems);
+            this.mFavoritesResult.sendResult(mediaItems);
+            this.mFavoritesResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__FAVORITES) {
+                this.mActiveQueue = this.mFavoritesQueue;
+            }
+        }
+    }
+    */
+
+    public void onRxFavoritesNext(Tracks pTracks) {
+        if (this.mFavoritesResult != null) {
+            String nextHref = pTracks.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsFavoritesMore) {
+                    this.mFavoritesResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mFavoritesResult = null;
+                    return;
+                }
+                this.mIsFavoritesMore = false;
+            } else {
+                Uri uri = Uri.parse(nextHref);
+                this.mFavoritesOffset = uri.getQueryParameter("cursor");
+                this.mIsFavoritesMore = true;
+            }
+            List<Track> tracks = pTracks.getCollection();
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, this.mFavoritesQueue, false);
+            this.mFavoritesMediaItems.addAll(mediaItems);
+            this.mFavoritesResult.sendResult(mediaItems);
+            this.mFavoritesResult = null;
+            if (this.mActiveMode == ServicePlayback.ACTIVE_MODE__FAVORITES) {
+                this.mActiveQueue = this.mFavoritesQueue;
+            }
+        }
+    }
+
+    public void onRxPlaylistsNext(Playlists pPlaylists) {
+        if (this.mPlaylistsResult != null) {
+            String nextHref = pPlaylists.getNextHref();
+            if (UtilsString.isEmpty(nextHref)) {
+                if (!this.mIsPlaylistsMore) {
+                    this.mPlaylistsResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+                    this.mPlaylistsResult = null;
+                    return;
+                }
+                this.mIsPlaylistsMore = false;
+            } else {
+                this.mPlaylistsOffset += Constants.SOUNDCLOUD_PARAMETER__LIMIT;
+                this.mIsPlaylistsMore = true;
+            }
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylists(pPlaylists);
+            this.mPlaylistsMediaItems.addAll(mediaItems);
+            this.mPlaylistsResult.sendResult(mediaItems);
+            this.mPlaylistsResult = null;
+        }
+    }
+
+    public void onRxPlaylistNext(List<Track> pTracks) {
+        if (this.mPlaylistResult != null) {
+            this.mPlaylistResult = null;
+        }
+    }
+
+    public void onRxFavoriteNext(Track pTrack) {
+        pTrack.setUserFavorite(true);
+        //this.updatePlaybackState(null);
+        this.sendFavoriteActionResult(pTrack);
+    }
+
+    public void onRxUnfavoriteNext(Track pTrack) {
+        pTrack.setUserFavorite(false);
+        //this.updatePlaybackState(null);
+        this.sendFavoriteActionResult(pTrack);
+    }
+
+    public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
+        this.mSoundsResult = null;
+        this.mSoundsSearchResult = null;
+        this.mFavoritesResult = null;
+        this.mPlaylistsResult = null;
+        this.mPlaylistResult = null;
+        this.updatePlaybackState(ServicePlayback.ERROR_CODE__MEDIA_NETWORK);
+        pError.printStackTrace();
     }
 
     private MediaBrowserCompat.MediaItem buildChildrenRootMediaItem(String pMediaId, int pTitleStringId, String pUri, int pSubtitleStringId) {
@@ -676,6 +636,20 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
         return mediaItems;
     }
 
+    private List<MediaBrowserCompat.MediaItem> buildPlaylists(Playlists pPlaylists) {
+        List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
+
+        for (Playlist playlist : pPlaylists.getCollection()) {
+            MediaMetadataCompat mediaMetadata = SoundCloudMetadataBuilder.build(playlist);
+            MediaDescriptionCompat mediaDescription = SoundCloudMetadataBuilder.build(mediaMetadata);
+
+            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(mediaDescription, MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
+            mediaItems.add(mediaItem);
+        }
+
+        return  mediaItems;
+    }
+
     private String buildStreamUrl(String pStreamUrl) {
         return pStreamUrl + "?client_id=" + Constants.SOUNDCLOUD__CLIENT_ID;
     }
@@ -711,5 +685,57 @@ public class ServicePlayback extends ServiceMediaBrowser implements IViewPlaybac
     private void sendFavoriteActionResult(Track pTrack) {
         String eventAction = String.format(ServicePlayback.EVENT_URI, ServicePlayback.CUSTOM_ACTION__FAVORITE, pTrack.getId(), pTrack.getUserFavorite());
         this.getMediaSession().sendSessionEvent(eventAction, null);
+    }
+
+    private class ViewPlayback extends IViewRx.ViewRx implements IViewPlayback {
+        @Override
+        public void onRxChartsNext(Charts pCharts) {
+            ServicePlayback.this.onRxChartsNext(pCharts);
+        }
+
+        @Override
+        public void onRxSoundsNext(List<Track> pTracks) {
+            ServicePlayback.this.onRxSoundsNext(pTracks);
+        }
+
+        @Override
+        public void onRxSoundsNext(Tracks pCollection) {
+            ServicePlayback.this.onRxSoundsNext(pCollection);
+        }
+
+        @Override
+        public void onRxSoundsSearchNext(Tracks pCollection) {
+            ServicePlayback.this.onRxSoundsSearchNext(pCollection);
+        }
+
+        @Override
+        public void onRxFavoritesNext(Tracks pCollection) {
+            ServicePlayback.this.onRxFavoritesNext(pCollection);
+        }
+
+        @Override
+        public void onRxPlaylistsNext(Playlists pPlaylists) {
+            ServicePlayback.this.onRxPlaylistsNext(pPlaylists);
+        }
+
+        @Override
+        public void onRxPlaylistNext(List<Track> pTracks) {
+            ServicePlayback.this.onRxPlaylistNext(pTracks);
+        }
+
+        @Override
+        public void onRxFavoriteNext(Track pTrack) {
+            ServicePlayback.this.onRxFavoriteNext(pTrack);
+        }
+
+        @Override
+        public void onRxUnfavoriteNext(Track pTrack) {
+            ServicePlayback.this.onRxUnfavoriteNext(pTrack);
+        }
+
+        @Override
+        public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
+            ServicePlayback.this.onRxError(pError, pRetryAction);
+        }
     }
 }

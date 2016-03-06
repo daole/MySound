@@ -7,6 +7,7 @@ import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterHome;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterLogin;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterMain;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
+import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlaylists;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSoundsSearch;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSplash;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterSounds;
@@ -15,6 +16,7 @@ import com.dreamdigitizers.mysound.views.interfaces.IViewHome;
 import com.dreamdigitizers.mysound.views.interfaces.IViewLogin;
 import com.dreamdigitizers.mysound.views.interfaces.IViewMain;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
+import com.dreamdigitizers.mysound.views.interfaces.IViewPlaylists;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSoundsSearch;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSplash;
 import com.dreamdigitizers.mysound.views.interfaces.IViewSounds;
@@ -53,6 +55,10 @@ public class PresenterFactory {
 
         if(pPresenterClass.isAssignableFrom(IPresenterFavorites.class)) {
             return new PresenterFavorites((IViewFavorites) pView);
+        }
+
+        if(pPresenterClass.isAssignableFrom(IPresenterPlaylists.class)) {
+            return new PresenterPlaylists((IViewPlaylists) pView);
         }
 
         throw new RuntimeException(PresenterFactory.ERROR_MESSAGE__PRESENTER_NOT_FOUND);

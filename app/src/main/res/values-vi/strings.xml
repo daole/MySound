@@ -8,6 +8,7 @@
     <string name="action__skip_to_next">Kế</string>
     <string name="action__skip_to_previous">Trước</string>
     <string name="action__stop">Dừng</string>
+    <string name="context_menu_item__delete">Xóa</string>
     <string name="context_menu_item__favorite">Thích</string>
     <string name="context_menu_item__unfavorite">Bỏ thích</string>
     <string name="desc__navigation_drawer_close">Đóng menu</string>

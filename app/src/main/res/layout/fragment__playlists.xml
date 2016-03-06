@@ -5,23 +5,18 @@
     style="@style/Container.Full" >
 
     <RelativeLayout
-        android:layout_above="@+id/placeHolderPlaybackControls"
         style="@style/Container.Full" >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/lstMediaItems"
             android:layout_above="@+id/pgbLoading"
             style="@style/Container.Full"
-            tools:listitem="@layout/part__track" />
+            tools:listitem="@layout/part__playlist" />
 
         <ProgressBar
             android:id="@id/pgbLoading"
             style="@style/ProgressBar.Inline.LoadMore" />
 
     </RelativeLayout>
-
-    <FrameLayout
-        android:id="@id/placeHolderPlaybackControls"
-        style="@style/PlaceHolder.PlaybackControls" />
 
 </RelativeLayout>

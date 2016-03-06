@@ -4,7 +4,8 @@ import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.core.IApi;
 import com.dreamdigitizers.androidsoundcloudapi.core.IApiV2;
-import com.dreamdigitizers.androidsoundcloudapi.models.Collection;
+import com.dreamdigitizers.androidsoundcloudapi.models.Playlists;
+import com.dreamdigitizers.androidsoundcloudapi.models.Tracks;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.androidsoundcloudapi.models.v2.Charts;
@@ -169,26 +170,26 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         }
                     }
                 })
-                .flatMap(new Func1<Me, Observable<Collection>>() {
+                .flatMap(new Func1<Me, Observable<Tracks>>() {
                     @Override
-                    public Observable<Collection> call(Me pMe) {
+                    public Observable<Tracks> call(Me pMe) {
                         Share.setMe(pMe);
                         return api.tracksRx(pLinkedPartitioning, pLimit, pOffset);
                     }
                 }).subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Collection>() {
+                .subscribe(new Subscriber<Tracks>() {
                     @Override
                     public void onStart() {
                         PresenterPlayback.this.onStart();
                     }
 
                     @Override
-                    public void onNext(Collection pCollection) {
+                    public void onNext(Tracks pTracks) {
                         IViewPlayback view = PresenterPlayback.this.getView();
                         if (view != null) {
-                            view.onRxSoundsNext(pCollection);
+                            view.onRxSoundsNext(pTracks);
                         }
                     }
 
@@ -219,26 +220,26 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         }
                     }
                 })
-                .flatMap(new Func1<Me, Observable<Collection>>() {
+                .flatMap(new Func1<Me, Observable<Tracks>>() {
                     @Override
-                    public Observable<Collection> call(Me pMe) {
+                    public Observable<Tracks> call(Me pMe) {
                         Share.setMe(pMe);
                         return api.tracksRx(pLinkedPartitioning, pLimit, pOffset, pQ);
                     }
                 }).subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Collection>() {
+                .subscribe(new Subscriber<Tracks>() {
                     @Override
                     public void onStart() {
                         PresenterPlayback.this.onStart();
                     }
 
                     @Override
-                    public void onNext(Collection pCollection) {
+                    public void onNext(Tracks pTracks) {
                         IViewPlayback view = PresenterPlayback.this.getView();
                         if (view != null) {
-                            view.onRxSoundsSearchNext(pCollection);
+                            view.onRxSoundsSearchNext(pTracks);
                         }
                     }
 
@@ -254,6 +255,7 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                 });
     }
 
+    /*
     @Override
     public void userFavorites(final UtilsDialog.IRetryAction pRetryAction) {
         this.unsubscribe();
@@ -303,6 +305,7 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                     }
                 });
     }
+    */
 
     @Override
     public void userFavorites(final UtilsDialog.IRetryAction pRetryAction, final int pLinkedPartitioning, final int pLimit, final String pOffset) {
@@ -319,26 +322,26 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         }
                     }
                 })
-                .flatMap(new Func1<Me, Observable<Collection>>() {
+                .flatMap(new Func1<Me, Observable<Tracks>>() {
                     @Override
-                    public Observable<Collection> call(Me pMe) {
+                    public Observable<Tracks> call(Me pMe) {
                         Share.setMe(pMe);
                         return api.userFavoritesRx(pMe.getId(), pLinkedPartitioning, pLimit, pOffset);
                     }
                 }).subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Collection>() {
+                .subscribe(new Subscriber<Tracks>() {
                     @Override
                     public void onStart() {
                         PresenterPlayback.this.onStart();
                     }
 
                     @Override
-                    public void onNext(Collection pCollection) {
+                    public void onNext(Tracks pTracks) {
                         IViewPlayback view = PresenterPlayback.this.getView();
                         if (view != null) {
-                            view.onRxFavoritesNext(pCollection);
+                            view.onRxFavoritesNext(pTracks);
                         }
                     }
 
@@ -355,12 +358,57 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
     }
 
     @Override
-    public void playlists(final UtilsDialog.IRetryAction pRetryAction) {
+    public void userPlaylists(final UtilsDialog.IRetryAction pRetryAction, final int pLinkedPartitioning, final int pLimit, final int pOffset) {
+        this.unsubscribe();
+        final IApi api = ApiFactory.getApiInstance();
+        this.mSubscription = Observable.just(Share.getMe())
+                .flatMap(new Func1<Me, Observable<Me>>() {
+                    @Override
+                    public Observable<Me> call(Me pMe) {
+                        if (pMe != null) {
+                            return Observable.just(pMe);
+                        } else {
+                            return api.meRx(Share.getAccessToken());
+                        }
+                    }
+                })
+                .flatMap(new Func1<Me, Observable<Playlists>>() {
+                    @Override
+                    public Observable<Playlists> call(Me pMe) {
+                        Share.setMe(pMe);
+                        return api.userPlaylistsRx(pMe.getId(), pLinkedPartitioning, pLimit, pOffset);
+                    }
+                }).subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Playlists>() {
+                    @Override
+                    public void onStart() {
+                        PresenterPlayback.this.onStart();
+                    }
 
+                    @Override
+                    public void onNext(Playlists pPlaylists) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxPlaylistsNext(pPlaylists);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
+                    }
+                });
     }
 
     @Override
-    public void playlist(final UtilsDialog.IRetryAction pRetryAction) {
+    public void playlist(final UtilsDialog.IRetryAction pRetryAction, final int pLinkedPartitioning, final int pLimit, final int pOffset) {
 
     }
 

@@ -21,6 +21,7 @@
 
     <string name="option_menu_item__search">Search</string>
 
+    <string name="context_menu_item__delete">Delete</string>
     <string name="context_menu_item__favorite">Favorite</string>
     <string name="context_menu_item__unfavorite">Unfavorite</string>
 

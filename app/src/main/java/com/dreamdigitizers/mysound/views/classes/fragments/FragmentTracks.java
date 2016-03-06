@@ -53,7 +53,7 @@ public class FragmentTracks extends FragmentBase {
 
     @Override
     protected void retrieveScreenItems(View pView) {
-        this.mLstTracks = (RecyclerView) pView.findViewById(R.id.lstTracks);
+        this.mLstTracks = (RecyclerView) pView.findViewById(R.id.lstMediaItems);
         this.mPgbLoading = (ProgressBar) pView.findViewById(R.id.pgbLoading);
         this.mPlaceHolderPlaybackControls = (FrameLayout) pView.findViewById(R.id.placeHolderPlaybackControls);
     }
