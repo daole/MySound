@@ -1,4 +1,4 @@
-package com.dreamdigitizers.mysound.views.classes.fragments.screens;
+package com.dreamdigitizers.mysound.views.classes.fragments;
 
 import android.view.LayoutInflater;
 import android.view.View;

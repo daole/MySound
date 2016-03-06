@@ -8,6 +8,7 @@ import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlaylists;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentMediaItems;
+import com.dreamdigitizers.mysound.views.classes.fragments.FragmentPlaylists;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlaylists;
 
 public class ScreenPlaylists extends ScreenMediaItems<IPresenterPlaylists> implements IViewPlaylists {
