@@ -13,7 +13,7 @@ import com.dreamdigitizers.mysound.views.interfaces.IViewMediaItems;
 
 import java.util.List;
 
-public abstract class PresenterMediaItems <V extends IViewMediaItems> extends PresenterBase<V> implements IPresenterMediaItems {
+abstract class PresenterMediaItems <V extends IViewMediaItems> extends PresenterBase<V> implements IPresenterMediaItems {
     protected MediaBrowserConnectionCallback mMediaBrowserConnectionCallback;
     protected MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
     protected MediaBrowserCompat mMediaBrowser;
@@ -76,10 +76,6 @@ public abstract class PresenterMediaItems <V extends IViewMediaItems> extends Pr
         this.mMediaBrowser.subscribe(pMediaId, this.mMediaBrowserSubscriptionCallback);
     }
 
-    protected void onConnected() {
-
-    }
-
     protected void onChildrenLoaded(String pParentId, List<MediaBrowserCompat.MediaItem> pChildren) {
         V view = this.getView();
         if (view != null) {
@@ -109,6 +105,9 @@ public abstract class PresenterMediaItems <V extends IViewMediaItems> extends Pr
         if (view != null) {
             view.showError(R.string.error__unknown);
         }
+    }
+
+    protected void onConnected() {
     }
 
     protected abstract String getMediaId();

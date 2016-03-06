@@ -155,12 +155,11 @@ public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends S
     private boolean onSearchViewQueryTextSubmitted(String pQuery) {
         //MenuItemCompat.collapseActionView(this.mActionSearch);
         this.mSearchView.clearFocus();
-        /*if (this instanceof ScreenSoundsSearch) {
+        if (this instanceof ScreenSoundsSearch) {
             this.handleSearch(pQuery);
         } else {
             this.goToSoundsSearchScreen(pQuery);
-        }*/
-        this.goToSoundsSearchScreen(pQuery);
+        }
         return true;
     }
 

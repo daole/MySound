@@ -4,16 +4,12 @@ import android.support.v4.media.MediaBrowserCompat;
 
 import com.dreamdigitizers.androidbaselibrary.presenters.interfaces.IPresenterBase;
 
-public interface IPresenterTracks extends IPresenterBase {
-    void connect();
-    void disconnect();
+public interface IPresenterTracks extends IPresenterMediaItems {
     void skipToPrevious();
     void playFromMediaId(MediaBrowserCompat.MediaItem pMediaItem);
     void play();
     void pause();
     void skipToNext();
     void seekTo(int pPosition);
-    void refresh();
-    void loadMore();
     void favorite(MediaBrowserCompat.MediaItem pMediaItem);
 }

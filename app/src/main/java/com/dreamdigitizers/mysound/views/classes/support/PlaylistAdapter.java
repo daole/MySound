@@ -34,7 +34,7 @@ public class PlaylistAdapter extends MediaItemAdapter<PlaylistAdapter.PlaylistVi
         this(pContext, pMediaItems, null);
     }
 
-    public PlaylistAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, IOnItemClickListener pListener) {
+    public PlaylistAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, MediaItemAdapter.IOnItemClickListener pListener) {
         super(pContext, pMediaItems, pListener);
     }
 
@@ -62,7 +62,7 @@ public class PlaylistAdapter extends MediaItemAdapter<PlaylistAdapter.PlaylistVi
         pHolder.mMediaItem = mediaItem;
     }
 
-    public class PlaylistViewHolder extends MediaItemAdapter.MediaItemViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+    protected class PlaylistViewHolder extends MediaItemAdapter.MediaItemViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         protected CircleImageView mImgAvatar;
         protected TextView mLblUsername;
         protected TextView mLblDuration;
@@ -108,7 +108,7 @@ public class PlaylistAdapter extends MediaItemAdapter<PlaylistAdapter.PlaylistVi
             }
         }
 
-        private void contextMenuButtonClicked() {
+        protected void contextMenuButtonClicked() {
             ((Activity) PlaylistAdapter.this.mContext).openContextMenu(this.mBtnContextMenu);
         }
     }

@@ -8,12 +8,7 @@ import com.dreamdigitizers.androidbaselibrary.views.interfaces.IViewBase;
 
 import java.util.List;
 
-public interface IViewTracks extends IViewBase {
-    void showRefreshProgress();
-    void hideRefreshProgress();
-    void showLoadMoreProgress();
-    void hideLoadMoreProgress();
-    void addMediaItems(List<MediaBrowserCompat.MediaItem> pMediaItems, boolean pIsAddToTop);
+public interface IViewTracks extends IViewMediaItems {
     void onPlaybackStateChanged(PlaybackStateCompat pPlaybackState);
     void onMetadataChanged(MediaMetadataCompat pMediaMetadata);
     void updateState();

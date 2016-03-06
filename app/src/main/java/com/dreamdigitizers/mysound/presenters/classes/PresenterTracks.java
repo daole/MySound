@@ -1,7 +1,5 @@
 package com.dreamdigitizers.mysound.presenters.classes;
 
-import android.content.ComponentName;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -10,8 +8,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
-import com.dreamdigitizers.androidbaselibrary.presenters.classes.PresenterBase;
-import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterTracks;
@@ -20,15 +16,11 @@ import com.dreamdigitizers.mysound.views.classes.services.support.SoundCloudMeta
 import com.dreamdigitizers.mysound.views.interfaces.IViewTracks;
 
 import java.util.HashMap;
-import java.util.List;
 
-abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> implements IPresenterTracks {
+abstract class PresenterTracks<V extends IViewTracks> extends PresenterMediaItems<V> implements IPresenterTracks {
     private HashMap<String, HashMap<Integer, Object>> mTransactionActions;
 
-    private MediaBrowserConnectionCallback mMediaBrowserConnectionCallback;
-    private MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
     private MediaControllerCallback mMediaControllerCallback;
-    private MediaBrowserCompat mMediaBrowser;
     private MediaControllerCompat mMediaController;
     private MediaControllerCompat.TransportControls mTransportControls;
 
@@ -36,39 +28,38 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         super(pView);
         this.mTransactionActions = new HashMap<>();
         this.mTransactionActions.put(ServicePlayback.CUSTOM_ACTION__FAVORITE, new HashMap<Integer, Object>());
-
-        this.mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
-        this.mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
         this.mMediaControllerCallback = new MediaControllerCallback();
-        this.mMediaBrowser = new MediaBrowserCompat(this.getView().getViewContext(), new ComponentName(this.getView().getViewContext(), ServicePlayback.class), this.mMediaBrowserConnectionCallback, null);
-    }
-
-    @Override
-    public void connect() {
-        V view = this.getView();
-        if (view != null) {
-            if (!this.mMediaBrowser.isConnected()) {
-                view.showNetworkProgress();
-                this.load(this.getMediaId());
-                Intent intent = new Intent(ServicePlayback.ACTION__MEDIA_COMMAND);
-                intent.setPackage(view.getViewContext().getPackageName());
-                view.getViewContext().startService(intent);
-                this.mMediaBrowser.connect();
-            }
-        }
     }
 
     @Override
     public void disconnect() {
         if (this.mMediaBrowser.isConnected()) {
-            String mediaIdRefresh = this.getMediaIdRefresh();
-            if (mediaIdRefresh != null) {
-                this.mMediaBrowser.unsubscribe(mediaIdRefresh);
-            }
-            this.mMediaBrowser.unsubscribe(this.getMediaId());
-            this.mMediaBrowser.unsubscribe(this.getMediaIdMore());
-            this.mMediaBrowser.disconnect();
             this.mMediaController.unregisterCallback(this.mMediaControllerCallback);
+        }
+        super.disconnect();
+    }
+
+    @Override
+    protected void onConnected() {
+        V view = this.getView();
+        if (view != null) {
+            try {
+                this.mMediaController = new MediaControllerCompat(view.getViewContext(), this.mMediaBrowser.getSessionToken());
+                this.mTransportControls = this.mMediaController.getTransportControls();
+                this.mMediaController.registerCallback(this.mMediaControllerCallback);
+
+                MediaMetadataCompat mediaMetadata = this.mMediaController.getMetadata();
+                if (mediaMetadata != null) {
+                    view.onMetadataChanged(mediaMetadata);
+                }
+
+                PlaybackStateCompat playbackState = this.mMediaController.getPlaybackState();
+                if (playbackState != null) {
+                    view.onPlaybackStateChanged(playbackState);
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -115,89 +106,12 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     }
 
     @Override
-    public void refresh() {
-        V view = this.getView();
-        if (view != null) {
-            view.showRefreshProgress();
-            this.load(this.getMediaIdRefresh());
-        }
-    }
-
-    @Override
-    public void loadMore() {
-        V view = this.getView();
-        if (view != null) {
-            view.showLoadMoreProgress();
-            this.load(this.getMediaIdMore());
-        }
-    }
-
-    @Override
     public void favorite(MediaBrowserCompat.MediaItem pMediaItem) {
         if (this.mTransportControls != null) {
             Bundle bundle =  pMediaItem.getDescription().getExtras();
             Track track = (Track) bundle.getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
             this.mTransactionActions.get(ServicePlayback.CUSTOM_ACTION__FAVORITE).put(track.getId(), track);
             this.mTransportControls.sendCustomAction(ServicePlayback.CUSTOM_ACTION__FAVORITE, bundle);
-        }
-    }
-
-    protected void load(String pMediaId) {
-        this.mMediaBrowser.unsubscribe(pMediaId);
-        this.mMediaBrowser.subscribe(pMediaId, this.mMediaBrowserSubscriptionCallback);
-    }
-
-    private void onConnected() {
-        V view = this.getView();
-        if (view != null) {
-            try {
-                this.mMediaController = new MediaControllerCompat(view.getViewContext(), this.mMediaBrowser.getSessionToken());
-                this.mTransportControls = this.mMediaController.getTransportControls();
-                this.mMediaController.registerCallback(this.mMediaControllerCallback);
-
-                MediaMetadataCompat mediaMetadata = this.mMediaController.getMetadata();
-                if (mediaMetadata != null) {
-                    view.onMetadataChanged(mediaMetadata);
-                }
-
-                PlaybackStateCompat playbackState = this.mMediaController.getPlaybackState();
-                if (playbackState != null) {
-                    view.onPlaybackStateChanged(playbackState);
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void onChildrenLoaded(String pParentId, List<MediaBrowserCompat.MediaItem> pChildren) {
-        V view = this.getView();
-        if (view != null) {
-            if (pChildren.size() <= 0) {
-                view.showMessage(R.string.message__no_data_to_load, R.string.blank, null);
-            }
-            if (UtilsString.equals(pParentId, this.getMediaIdMore())) {
-                view.addMediaItems(pChildren, false);
-            } else {
-                view.addMediaItems(pChildren, true);
-            }
-
-            if (UtilsString.equals(pParentId, this.getMediaId())) {
-                view.hideNetworkProgress();
-            }
-            if (UtilsString.equals(pParentId, this.getMediaIdRefresh())) {
-                view.hideRefreshProgress();
-            }
-            if (UtilsString.equals(pParentId, this.getMediaIdMore())) {
-                view.hideLoadMoreProgress();
-            }
-        }
-    }
-
-    private void onError(String pParentId) {
-        V view = this.getView();
-        if (view != null) {
-            view.showError(R.string.error__unknown);
         }
     }
 
@@ -273,29 +187,6 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         V view = this.getView();
         if (view != null) {
             view.updateState();
-        }
-    }
-
-    protected abstract String getMediaId();
-    protected abstract String getMediaIdRefresh();
-    protected abstract String getMediaIdMore();
-
-    private class MediaBrowserConnectionCallback extends MediaBrowserCompat.ConnectionCallback {
-        @Override
-        public void onConnected() {
-            PresenterTracks.this.onConnected();
-        }
-    }
-
-    private class MediaBrowserSubscriptionCallback extends MediaBrowserCompat.SubscriptionCallback {
-        @Override
-        public void onChildrenLoaded(String pParentId, List<MediaBrowserCompat.MediaItem> pChildren) {
-            PresenterTracks.this.onChildrenLoaded(pParentId, pChildren);
-        }
-
-        @Override
-        public void onError(String pParentId) {
-            PresenterTracks.this.onError(pParentId);
         }
     }
 

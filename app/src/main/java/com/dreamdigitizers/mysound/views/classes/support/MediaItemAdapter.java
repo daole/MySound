@@ -51,7 +51,7 @@ public abstract class MediaItemAdapter<V extends MediaItemAdapter.MediaItemViewH
         this.notifyDataSetChanged();
     }
 
-    public abstract class MediaItemViewHolder extends RecyclerView.ViewHolder {
+    protected abstract class MediaItemViewHolder extends RecyclerView.ViewHolder {
         protected MediaBrowserCompat.MediaItem mMediaItem;
 
         public MediaItemViewHolder(View pItemView) {
