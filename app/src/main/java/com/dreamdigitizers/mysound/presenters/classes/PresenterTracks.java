@@ -49,6 +49,7 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
         if (view != null) {
             if (!this.mMediaBrowser.isConnected()) {
                 view.showNetworkProgress();
+                this.load(this.getMediaId());
                 Intent intent = new Intent(ServicePlayback.ACTION__MEDIA_COMMAND);
                 intent.setPackage(view.getViewContext().getPackageName());
                 view.getViewContext().startService(intent);
@@ -60,8 +61,12 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     @Override
     public void disconnect() {
         if (this.mMediaBrowser.isConnected()) {
-            String mediaId = this.getMediaId();
-            this.mMediaBrowser.unsubscribe(mediaId);
+            String mediaIdRefresh = this.getMediaIdRefresh();
+            if (mediaIdRefresh != null) {
+                this.mMediaBrowser.unsubscribe(mediaIdRefresh);
+            }
+            this.mMediaBrowser.unsubscribe(this.getMediaId());
+            this.mMediaBrowser.unsubscribe(this.getMediaIdMore());
             this.mMediaBrowser.disconnect();
             this.mMediaController.unregisterCallback(this.mMediaControllerCallback);
         }
@@ -143,8 +148,6 @@ abstract class PresenterTracks<V extends IViewTracks> extends PresenterBase<V> i
     }
 
     private void onConnected() {
-        this.load(this.getMediaId());
-
         V view = this.getView();
         if (view != null) {
             try {

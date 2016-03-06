@@ -380,6 +380,7 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.mActiveMode = ServicePlayback.ACTIVE_MODE__FAVORITES;
         this.mFavoritesOffset = null;
         this.mIsFavoritesMore = true;
+        this.mFavoritesMediaItems.clear();
         this.loadChildrenFavoritesMore(pResult);
     }
 

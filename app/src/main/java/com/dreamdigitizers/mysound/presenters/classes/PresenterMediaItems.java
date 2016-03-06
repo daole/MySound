@@ -31,6 +31,7 @@ public abstract class PresenterMediaItems <V extends IViewMediaItems> extends Pr
         if (view != null) {
             if (!this.mMediaBrowser.isConnected()) {
                 view.showNetworkProgress();
+                this.load(this.getMediaId());
                 Intent intent = new Intent(ServicePlayback.ACTION__MEDIA_COMMAND);
                 intent.setPackage(view.getViewContext().getPackageName());
                 view.getViewContext().startService(intent);
@@ -42,8 +43,12 @@ public abstract class PresenterMediaItems <V extends IViewMediaItems> extends Pr
     @Override
     public void disconnect() {
         if (this.mMediaBrowser.isConnected()) {
-            String mediaId = this.getMediaId();
-            this.mMediaBrowser.unsubscribe(mediaId);
+            String mediaIdRefresh = this.getMediaIdRefresh();
+            if (mediaIdRefresh != null) {
+                this.mMediaBrowser.unsubscribe(mediaIdRefresh);
+            }
+            this.mMediaBrowser.unsubscribe(this.getMediaId());
+            this.mMediaBrowser.unsubscribe(this.getMediaIdMore());
             this.mMediaBrowser.disconnect();
         }
     }
@@ -72,7 +77,7 @@ public abstract class PresenterMediaItems <V extends IViewMediaItems> extends Pr
     }
 
     protected void onConnected() {
-        this.load(this.getMediaId());
+
     }
 
     protected void onChildrenLoaded(String pParentId, List<MediaBrowserCompat.MediaItem> pChildren) {
