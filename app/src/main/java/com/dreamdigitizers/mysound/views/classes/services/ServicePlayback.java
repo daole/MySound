@@ -450,8 +450,8 @@ public class ServicePlayback extends ServiceMediaBrowser {
                 List<Track> tracks = playlist.getTracks();
                 List<CustomQueueItem> playlistQueue = new ArrayList<>();
                 List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, playlistQueue, false);
-                this.mPlaylistMediaItems.put(pPlaylistId, mediaItems);
                 this.mPlaylistQueues.put(pPlaylistId, playlistQueue);
+                this.mPlaylistMediaItems.put(pPlaylistId, mediaItems);
                 pResult.sendResult(mediaItems);
                 this.mActiveQueue = playlistQueue;
                 return;
@@ -631,6 +631,21 @@ public class ServicePlayback extends ServiceMediaBrowser {
     }
 
     public void onRxDeletePlaylistNext(Playlist pPlaylist) {
+        int playlistId = pPlaylist.getId();
+        List<Playlist> playlists = this.mPlaylists.getCollection();
+        for (Playlist playlist : playlists) {
+            if (playlist.getId() == playlistId) {
+                playlists.remove(playlist);
+                break;
+            }
+        }
+        for (MediaBrowserCompat.MediaItem mediaItem : this.mPlaylistsMediaItems) {
+            if (Integer.parseInt(mediaItem.getMediaId()) == playlistId) {
+                this.mPlaylistsMediaItems.remove(mediaItem);
+            }
+        }
+        this.mPlaylistMediaItems.remove(playlistId);
+        this.mPlaylistQueues.remove(playlistId);
         this.sendDeletePlaylistActionResult(pPlaylist);
     }
 

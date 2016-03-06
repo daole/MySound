@@ -43,6 +43,7 @@ public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends S
         super.onStart();
         this.mFragmentMediaItems.setOnItemClickListener(this);
         this.mFragmentMediaItems.setPlaybackControlListener(this);
+        this.mFragmentMediaItems.clearMediaItems();
         this.mPresenter.connect();
     }
 

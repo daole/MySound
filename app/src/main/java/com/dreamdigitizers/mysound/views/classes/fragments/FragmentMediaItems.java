@@ -131,6 +131,10 @@ public abstract class FragmentMediaItems extends FragmentBase {
         this.mMediaItemAdapter.notifyDataSetChanged();
     }
 
+    public void removeMediaItem(MediaBrowserCompat.MediaItem pMediaItem) {
+        this.mMediaItemAdapter.removeMediaItem(pMediaItem);
+    }
+
     protected boolean isShowPlaybackControls(PlaybackStateCompat pPlaybackState) {
         switch (pPlaybackState.getState()) {
             case PlaybackStateCompat.STATE_NONE:

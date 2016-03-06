@@ -44,6 +44,11 @@ public class ScreenPlaylists extends ScreenMediaItems<IPresenterPlaylists> imple
     }
 
     @Override
+    public void removeMediaItem(MediaBrowserCompat.MediaItem pMediaItem) {
+        this.mFragmentMediaItems.removeMediaItem(pMediaItem);
+    }
+
+    @Override
     public void onItemClicked(MediaBrowserCompat.MediaItem pMediaItem) {
         Bundle arguments = new Bundle();
         arguments.putParcelable(Constants.BUNDLE_KEY__MEDIA_ITEM, pMediaItem);
