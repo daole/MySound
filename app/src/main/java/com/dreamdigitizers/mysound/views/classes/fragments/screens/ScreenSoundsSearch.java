@@ -49,16 +49,6 @@ public class ScreenSoundsSearch extends ScreenTracks<IPresenterSoundsSearch> imp
     }
 
     @Override
-    protected void retrieveScreenItems(View pView) {
-        super.retrieveScreenItems(pView);
-    }
-
-    @Override
-    protected void mapInformationToScreenItems(View pView) {
-        super.mapInformationToScreenItems(pView);
-    }
-
-    @Override
     protected int getTitle() {
         return R.string.title__screen_sounds_search;
     }

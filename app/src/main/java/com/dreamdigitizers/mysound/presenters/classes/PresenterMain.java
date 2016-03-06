@@ -11,7 +11,7 @@ import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterMain;
 import com.dreamdigitizers.mysound.views.classes.services.ServicePlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewMain;
 
-public class PresenterMain extends PresenterBase<IViewMain> implements IPresenterMain {
+class PresenterMain extends PresenterBase<IViewMain> implements IPresenterMain {
     private SharedPreferences mSharedPreferences;
 
     public PresenterMain(IViewMain pView) {

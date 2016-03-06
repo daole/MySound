@@ -1,10 +1,13 @@
 package com.dreamdigitizers.mysound.views.classes.fragments.screens;
 
+import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
+import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlaylists;
@@ -54,6 +57,11 @@ public class ScreenPlaylists extends ScreenMediaItems<IPresenterPlaylists> imple
 
     @Override
     public void onItemClicked(MediaBrowserCompat.MediaItem pMediaItem) {
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(Constants.BUNDLE_KEY__MEDIA_ITEM, pMediaItem);
+        ScreenBase screenBase = new ScreenPlaylist();
+        screenBase.setArguments(arguments);
+        this.mScreenActionsListener.onChangeScreen(screenBase);
     }
 
     @Override

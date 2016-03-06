@@ -34,6 +34,7 @@ import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewRx;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ServicePlayback extends ServiceMediaBrowser {
@@ -90,30 +91,34 @@ public class ServicePlayback extends ServiceMediaBrowser {
     private List<CustomQueueItem> mSoundsQueue;
     private List<CustomQueueItem> mSoundsSearchQueue;
     private List<CustomQueueItem> mFavoritesQueue;
-    private List<CustomQueueItem> mPlaylistQueue;
+    private Playlists mPlaylists;
+    private HashMap<Integer, List<CustomQueueItem>> mPlaylistQueues;
+    //private List<CustomQueueItem> mPlaylistQueue;
 
     private List<MediaBrowserCompat.MediaItem> mChartsMediaItems;
     private List<MediaBrowserCompat.MediaItem> mSoundsMediaItems;
     private List<MediaBrowserCompat.MediaItem> mSoundsSearchMediaItems;
     private List<MediaBrowserCompat.MediaItem> mFavoritesMediaItems;
     private List<MediaBrowserCompat.MediaItem> mPlaylistsMediaItems;
-    private List<MediaBrowserCompat.MediaItem> mPlayListMediaItems;
+    private HashMap<Integer, List<MediaBrowserCompat.MediaItem>> mPlaylistMediaItems;
+    //private List<MediaBrowserCompat.MediaItem> mPlaylistMediaItems;
 
     private int mChartsOffset;
     private int mSoundsOffset;
     private int mSoundsSearchOffset;
     private String mFavoritesOffset;
     private int mPlaylistsOffset;
-    private int mPlayListOffset;
+    //private int mPlaylistOffset;
 
     private boolean mIsChartsMore;
     private boolean mIsSoundsMore;
     private boolean mIsSoundsSearchMore;
     private boolean mIsFavoritesMore;
     private boolean mIsPlaylistsMore;
-    private boolean mIsPlaylistMore;
+    //private boolean mIsPlaylistMore;
 
     private int mActiveMode;
+    private int mPlaylistId;
     private String mQuery;
 
     @Override
@@ -123,19 +128,21 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.mSoundsQueue = new ArrayList<>();
         this.mSoundsSearchQueue = new ArrayList<>();
         this.mFavoritesQueue = new ArrayList<>();
+        this.mPlaylistQueues = new HashMap<>();
 
         this.mChartsMediaItems = new ArrayList<>();
         this.mSoundsMediaItems = new ArrayList<>();
         this.mSoundsSearchMediaItems = new ArrayList<>();
         this.mFavoritesMediaItems = new ArrayList<>();
         this.mPlaylistsMediaItems = new ArrayList<>();
+        this.mPlaylistMediaItems = new HashMap<>();
 
         this.mIsChartsMore = true;
         this.mIsSoundsMore = true;
         this.mIsSoundsSearchMore = true;
         this.mIsFavoritesMore = true;
         this.mIsPlaylistsMore = true;
-        this.mIsPlaylistMore = true;
+        //this.mIsPlaylistMore = true;
 
         this.mView = new ViewPlayback();
         this.mPresenter = (IPresenterPlayback) PresenterFactory.createPresenter(IPresenterPlayback.class, this.mView);
@@ -221,6 +228,12 @@ public class ServicePlayback extends ServiceMediaBrowser {
             return;
         }
 
+        if (pParentId.startsWith(ServicePlayback.MEDIA_ID__PLAYLIST)) {
+            String playlistId = pParentId.substring(ServicePlayback.MEDIA_ID__PLAYLIST.length());
+            this.loadChildrenPlaylist(playlistId, pResult);
+            return;
+        }
+
         switch (pParentId) {
             case ServicePlayback.MEDIA_ID__ROOT:
                 this.loadChildrenRoot(pResult);
@@ -255,11 +268,8 @@ public class ServicePlayback extends ServiceMediaBrowser {
             case ServicePlayback.MEDIA_ID__PLAYLISTS_MORE:
                 this.loadChildrenPlaylistsMore(pResult);
                 break;
-            case ServicePlayback.MEDIA_ID__PLAYLIST:
-                this.loadChildrenPlaylist(pResult);
-                break;
             case ServicePlayback.MEDIA_ID__PLAYLIST_MORE:
-                this.loadChildrenPlaylistRefresh(pResult);
+                this.loadChildrenPlaylistMore(pResult);
                 break;
             default:
                 break;
@@ -408,18 +418,40 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.mPresenter.userPlaylists(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mPlaylistsOffset);
     }
 
-    private void loadChildrenPlaylist(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
-        if (this.mPlayListMediaItems != null && this.mPlayListMediaItems.size() > 0) {
-            pResult.sendResult(this.mPlayListMediaItems);
-            return;
-        }
+    private void loadChildrenPlaylist(String pPlaylistId, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        try {
+            int playlistId = Integer.parseInt(pPlaylistId);
+            if (this.mPlaylistMediaItems.containsKey(playlistId)) {
+                pResult.sendResult(this.mPlaylistMediaItems.get(playlistId));
+                this.mActiveQueue = this.mPlaylistQueues.get(pPlaylistId);
+                return;
+            }
 
-        this.loadChildrenPlaylistRefresh(pResult);
+            this.loadChildrenPlaylistMore(playlistId, pResult);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            this.loadChildrenPlaylists(pResult);
+        }
     }
 
-    private void loadChildrenPlaylistRefresh(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
-        this.mPlaylistResult = pResult;
-        this.mPlaylistResult.detach();
+    private void loadChildrenPlaylistMore(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        this.loadChildrenPlaylistMore(this.mPlaylistId, pResult);
+    }
+
+    private void loadChildrenPlaylistMore(int pPlaylistId, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        for (Playlist playlist : this.mPlaylists.getCollection()) {
+            if (playlist.getId() == pPlaylistId) {
+                List<Track> tracks = playlist.getTracks();
+                List<CustomQueueItem> playlistQueue = new ArrayList<>();
+                List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(tracks, playlistQueue, false);
+                this.mPlaylistMediaItems.put(pPlaylistId, mediaItems);
+                this.mPlaylistQueues.put(pPlaylistId, playlistQueue);
+                pResult.sendResult(mediaItems);
+                this.mActiveQueue = playlistQueue;
+                return;
+            }
+        }
+        pResult.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
     }
 
     public void onRxChartsNext(Charts pCharts) {
@@ -553,6 +585,7 @@ public class ServicePlayback extends ServiceMediaBrowser {
     }
 
     public void onRxPlaylistsNext(Playlists pPlaylists) {
+        this.mPlaylists = pPlaylists;
         if (this.mPlaylistsResult != null) {
             String nextHref = pPlaylists.getNextHref();
             if (UtilsString.isEmpty(nextHref)) {
