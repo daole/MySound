@@ -1,5 +1,6 @@
 package com.dreamdigitizers.mysound.views.classes.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.support.AdListener;
@@ -214,7 +216,7 @@ public class ActivityMain extends ActivityBase {
                 }
                 break;
             case R.id.drawer_item__logout:
-                this.logout();
+                this.confirmLogout();
                 break;
             default:
                 break;
@@ -230,6 +232,19 @@ public class ActivityMain extends ActivityBase {
     private void showMe(Me pMe) {
         UtilsImage.loadBitmap(ActivityMain.this, pMe.getAvatarUrl(), R.drawable.ic__default_profile, ActivityMain.this.mImgAvatar);
         ActivityMain.this.mLblMyName.setText(pMe.getFullName());
+    }
+
+    private void confirmLogout() {
+        this.mView.showConfirmation(R.string.confirmation__logout, new UtilsDialog.IOnDialogButtonClickListener() {
+            @Override
+            public void onPositiveButtonClick(Activity pActivity, String pTitle, String pMessage, boolean pIsTwoButtons, String pPositiveButtonText, String pNegativeButtonText) {
+                ActivityMain.this.logout();
+            }
+
+            @Override
+            public void onNegativeButtonClick(Activity pActivity, String pTitle, String pMessage, boolean pIsTwoButtons, String pPositiveButtonText, String pNegativeButtonText) {
+            }
+        });
     }
 
     private void logout() {
@@ -251,6 +266,19 @@ public class ActivityMain extends ActivityBase {
         @Override
         public Context getViewContext() {
             return ActivityMain.this;
+        }
+
+        @Override
+        public void showConfirmation(int pMessageResourceId, UtilsDialog.IOnDialogButtonClickListener pListener) {
+            this.showConfirmation(ActivityMain.this.getString(pMessageResourceId), pListener);
+        }
+
+        @Override
+        public void showConfirmation(String pMessage, UtilsDialog.IOnDialogButtonClickListener pListener) {
+            String title = ActivityMain.this.getString(com.dreamdigitizers.androidbaselibrary.R.string.title__dialog);
+            String positiveButtonText = ActivityMain.this.getString(com.dreamdigitizers.androidbaselibrary.R.string.btn__yes);
+            String negativeButtonText = ActivityMain.this.getString(com.dreamdigitizers.androidbaselibrary.R.string.btn__no);
+            UtilsDialog.showDialog(ActivityMain.this, title, pMessage, true, positiveButtonText, negativeButtonText, pListener);
         }
     }
 }

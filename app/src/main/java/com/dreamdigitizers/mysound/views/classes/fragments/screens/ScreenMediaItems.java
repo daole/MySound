@@ -42,14 +42,14 @@ public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends S
         this.mPresenter.disconnect();
     }
 
-    @Override
+    /*@Override
     public void onDestroyView() {
         super.onDestroyView();
         this.getChildFragmentManager()
                 .beginTransaction()
                 .remove(this.mFragmentMediaItems)
                 .commitAllowingStateLoss();
-    }
+    }*/
 
     @Override
     protected void createOptionsMenu(Menu pMenu, MenuInflater pInflater) {

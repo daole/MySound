@@ -15,14 +15,14 @@ public class FragmentTracks extends FragmentMediaItems {
     protected FrameLayout mPlaceHolderPlaybackControls;
     protected FragmentPlaybackControls mFragmentPlaybackControls;
 
-    @Override
+    /*@Override
     public void onDestroyView() {
         super.onDestroyView();
         this.getChildFragmentManager()
                 .beginTransaction()
                 .remove(this.mFragmentPlaybackControls)
                 .commitAllowingStateLoss();
-    }
+    }*/
 
     @Override
     protected void retrieveScreenItems(View pView) {
