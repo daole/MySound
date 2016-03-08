@@ -132,6 +132,7 @@ public class TrackAdapter extends PlaylistAdapter {
 
             MediaDescriptionCompat mediaDescription = this.mMediaItem.getDescription();
             Track track = (Track) mediaDescription.getExtras().getSerializable(SoundCloudMetadataBuilder.BUNDLE_KEY__TRACK);
+
             MenuItem menuItem = pContextMenu.getItem(0);
             menuItem.setOnMenuItemClickListener(this);
             if (track.getUserFavorite()) {
@@ -139,6 +140,9 @@ public class TrackAdapter extends PlaylistAdapter {
             } else {
                 menuItem.setTitle(TrackAdapter.this.mContext.getString(R.string.context_menu_item__favorite));
             }
+
+            menuItem = pContextMenu.getItem(1);
+            menuItem.setOnMenuItemClickListener(this);
         }
 
         @Override
@@ -150,6 +154,11 @@ public class TrackAdapter extends PlaylistAdapter {
                         ((IOnItemClickListener) TrackAdapter.this.mListener).onFavoriteContextMenuItemClicked(this.mMediaItem);
                     }
                     return true;
+                case R.id.context_menu_item__playlist:
+                    if(TrackAdapter.this.mListener != null && TrackAdapter.this.mListener instanceof IOnItemClickListener) {
+                        ((IOnItemClickListener) TrackAdapter.this.mListener).onPlaylistContextMenuItemClicked(this.mMediaItem);
+                    }
+                    return true;
                 default:
                     return false;
             }
@@ -158,5 +167,6 @@ public class TrackAdapter extends PlaylistAdapter {
 
     public interface IOnItemClickListener extends MediaItemAdapter.IOnItemClickListener {
         void onFavoriteContextMenuItemClicked(MediaBrowserCompat.MediaItem pMediaItem);
+        void onPlaylistContextMenuItemClicked(MediaBrowserCompat.MediaItem pMediaItem);
     }
 }

@@ -11,6 +11,7 @@
     <string name="context_menu_item__delete">削除する</string>
     <string name="context_menu_item__favorite">お気に入り</string>
     <string name="context_menu_item__unfavorite">お気に入りません</string>
+    <string name="context_menu_item__playlist">プレイリストに追加</string>
     <string name="desc__navigation_drawer_close">メニュを閉じる</string>
     <string name="desc__navigation_drawer_open">メニュを開く</string>
     <string name="drawer_item__favorites">お気に入り</string>
@@ -19,6 +20,7 @@
     <string name="drawer_item__sounds">新しい</string>
     <string name="error__media_network">ネットワークエラーが発生しました。</string>
     <string name="hint__track_search">タイトル</string>
+    <string name="hint_playlist_title">タイトル</string>
     <string name="media_description_subtitle__favorite">お気に入り</string>
     <string name="media_description_subtitle__new">新しい</string>
     <string name="media_description_subtitle__playlist">プレイリスト</string>
@@ -30,8 +32,13 @@
     <string name="confirmation__logout">ログアウトしますか？</string>
     <string name="confirmation__delete_playlist">このプレイリストを削除しますか？</string>
     <string name="option_menu_item__search">検索</string>
+    <string name="rad__public">公開する</string>
+    <string name="rad__private">公開しない</string>
+    <string name="tab__add_to_playlist">追加</string>
+    <string name="tab__create_new_playlist">新規</string>
     <string name="title__app_name">マイサウンド</string>
     <string name="title__dialog">メッセージ</string>
+    <string name="title__dialog_playlist">プレイリスト</string>
     <string name="title__screen_favorites">お気に入り</string>
     <string name="title__screen_home">トレンディング</string>
     <string name="title__screen_playlists">プレイリスト</string>

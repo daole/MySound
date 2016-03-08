@@ -5,4 +5,7 @@
     <item android:id="@+id/context_menu_item__favorite"
         android:title="@string/context_menu_item__favorite" />
 
+    <item android:id="@+id/context_menu_item__playlist"
+        android:title="@string/context_menu_item__playlist" />
+
 </menu>

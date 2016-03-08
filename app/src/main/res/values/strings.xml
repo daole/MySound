@@ -4,11 +4,18 @@
 
     <string name="title__app_name">My Sound</string>
     <string name="title__dialog">Message</string>
+    <string name="title__dialog_playlist">Playlist</string>
     <string name="title__screen_home">Trending<!--Home--></string>
     <string name="title__screen_sounds">New<!--Sounds--></string>
     <string name="title__screen_sounds_search">Result</string>
     <string name="title__screen_favorites">Favorites</string>
     <string name="title__screen_playlists">Playlists</string>
+
+    <string name="rad__public">Public</string>
+    <string name="rad__private">Private</string>
+
+    <string name="tab__add_to_playlist">Add</string>
+    <string name="tab__create_new_playlist">Create</string>
 
     <string name="message__no_data_to_load">There is no more data to load.</string>
     <string name="message__soundcloud_problem">There is a problem logging into SoundCloud using Facebook\'s or Google\'s account. So, please using your SoundCloud account instead. We apologize for this inconvenience and expect SoundCloud to fix it soon.</string>
@@ -27,6 +34,7 @@
     <string name="context_menu_item__delete">Delete</string>
     <string name="context_menu_item__favorite">Favorite</string>
     <string name="context_menu_item__unfavorite">Unfavorite</string>
+    <string name="context_menu_item__playlist">Add to playlist</string>
 
     <string name="action__play">Play</string>
     <string name="action__pause">Pause</string>
@@ -48,6 +56,7 @@
     <string name="desc__navigation_drawer_close">Close navigation drawer</string>
 
     <string name="hint__track_search">Sound title</string>
+    <string name="hint_playlist_title">Title</string>
 
     <string name="error__media_network">A network-related error has occurred.</string>
 </resources>

@@ -88,6 +88,33 @@
         <item name="android:layout_centerVertical">true</item>
     </style>
 
+    <style name="EditText.PlaylistTitle" parent="EditText">
+        <item name="android:layout_marginTop">@dimen/margin</item>
+        <item name="android:layout_marginBottom">@dimen/margin</item>
+        <item name="android:hint">@string/hint_playlist_title</item>
+    </style>
+
+    <style name="Button.BorderLess.Dialog" parent="Button.BorderLess">
+        <item name="android:textColor">@color/color_primary_dark</item>
+    </style>
+
+    <style name="Button.BorderLess.Dialog.Cancel" parent="Button.BorderLess.Dialog">
+        <item name="android:text">@string/btn__cancel</item>
+    </style>
+
+    <style name="Button.BorderLess.Dialog.OK" parent="Button.BorderLess.Dialog">
+        <item name="android:text">@string/btn__ok</item>
+    </style>
+
+    <style name="RadioButton.Public" parent="RadioButton">
+        <item name="android:checked">true</item>
+        <item name="android:text">@string/rad__public</item>
+    </style>
+
+    <style name="RadioButton.Private" parent="RadioButton">
+        <item name="android:text">@string/rad__private</item>
+    </style>
+
     <style name="ImageView.Logo" parent="ImageView">
         <item name="android:layout_centerInParent">true</item>
         <item name="android:src">@drawable/ic__my_music</item>
@@ -159,5 +186,10 @@
 
     <style name="PlaceHolder.PlaybackControls" parent="Container.WrapContent">
         <item name="android:layout_alignParentBottom">true</item>
+    </style>
+
+    <style name="PlaceHolder.PlaylistActions" parent="Container.WrapContent.Vertical">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
     </style>
 </resources>

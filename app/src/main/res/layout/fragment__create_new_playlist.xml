@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Container.WrapContent.Vertical.OrientationVertical" >
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/Container.WrapContent.Vertical" >
+
+        <EditText
+            android:id="@+id/txtPlaylistTitle"
+            style="@style/EditText.PlaylistTitle" />
+
+    </android.support.design.widget.TextInputLayout >
+    
+    <RadioGroup
+        style="@style/Container.WrapContent.Vertical.OrientationHorizontal">
+
+        <RadioButton
+            android:id="@+id/radPublic"
+            style="@style/RadioButton.Public" />
+
+        <RadioButton
+            android:id="@+id/radPrivate"
+            style="@style/RadioButton.Private" />
+
+    </RadioGroup>
+
+</LinearLayout>

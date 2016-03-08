@@ -11,6 +11,7 @@
     <string name="context_menu_item__delete">Xóa</string>
     <string name="context_menu_item__favorite">Thích</string>
     <string name="context_menu_item__unfavorite">Bỏ thích</string>
+    <string name="context_menu_item__playlist">Thêm vào danh sách</string>
     <string name="desc__navigation_drawer_close">Đóng menu</string>
     <string name="desc__navigation_drawer_open">Mở menu</string>
     <string name="drawer_item__favorites">Thích</string>
@@ -19,6 +20,7 @@
     <string name="drawer_item__sounds">Mới</string>
     <string name="error__media_network">Đã xảy ra lỗi kết nối.</string>
     <string name="hint__track_search">Tên</string>
+    <string name="hint_playlist_title">Tiêu đề</string>
     <string name="media_description_subtitle__favorite">Thích</string>
     <string name="media_description_subtitle__new">Mới</string>
     <string name="media_description_subtitle__playlist">Tất cả danh sách</string>
@@ -30,8 +32,13 @@
     <string name="confirmation__logout">Bạn có chắc là bạn muốn đăng xuất?</string>
     <string name="confirmation__delete_playlist">Bạn có chắc là bạn muốn xóa danh sách này?</string>
     <string name="option_menu_item__search">Tìm kiếm</string>
+    <string name="rad__public">Chia sẽ</string>
+    <string name="rad__private">Riêng tư</string>
+    <string name="tab__add_to_playlist">Thêm</string>
+    <string name="tab__create_new_playlist">Tạo mới</string>
     <string name="title__app_name">My sound</string>
     <string name="title__dialog">Thông báo</string>
+    <string name="title__dialog_playlist">Danh sách</string>
     <string name="title__screen_favorites">Thích</string>
     <string name="title__screen_home">Nổi trội</string>
     <string name="title__screen_playlists">Tất cả danh sách</string>
