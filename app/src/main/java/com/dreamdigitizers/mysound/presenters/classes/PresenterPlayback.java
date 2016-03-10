@@ -9,12 +9,14 @@ import com.dreamdigitizers.androidsoundcloudapi.models.Playlists;
 import com.dreamdigitizers.androidsoundcloudapi.models.Tracks;
 import com.dreamdigitizers.androidsoundcloudapi.models.Me;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
+import com.dreamdigitizers.androidsoundcloudapi.models.parameters.ParameterAddTrackToPlaylist;
 import com.dreamdigitizers.androidsoundcloudapi.models.v2.Charts;
 import com.dreamdigitizers.mysound.Constants;
 import com.dreamdigitizers.mysound.Share;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlayback;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlayback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -359,6 +361,56 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
     }
 
     @Override
+    public void userPlaylists(final UtilsDialog.IRetryAction pRetryAction) {
+        this.unsubscribe();
+        final IApi api = ApiFactory.getApiInstance();
+        this.mSubscription = Observable.just(Share.getMe())
+                .flatMap(new Func1<Me, Observable<Me>>() {
+                    @Override
+                    public Observable<Me> call(Me pMe) {
+                        if (pMe != null) {
+                            return Observable.just(pMe);
+                        } else {
+                            return api.meRx(Share.getAccessToken());
+                        }
+                    }
+                })
+                .flatMap(new Func1<Me, Observable<List<Playlist>>>() {
+                    @Override
+                    public Observable<List<Playlist>> call(Me pMe) {
+                        Share.setMe(pMe);
+                        return api.userPlaylistsRx(pMe.getId());
+                    }
+                }).subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Playlist>>() {
+                    @Override
+                    public void onStart() {
+                        PresenterPlayback.this.onStart();
+                    }
+
+                    @Override
+                    public void onNext(List<Playlist> pPlaylists) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxPlaylistsNext(pPlaylists);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
+                    }
+                });
+    }
+
+    @Override
     public void userPlaylists(final UtilsDialog.IRetryAction pRetryAction, final int pLinkedPartitioning, final int pLimit, final int pOffset) {
         this.unsubscribe();
         final IApi api = ApiFactory.getApiInstance();
@@ -512,6 +564,105 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         PresenterPlayback.this.onError(pError, pRetryAction);
                     }
                 });
+    }
+
+    @Override
+    public void addToPlaylist(final UtilsDialog.IRetryAction pRetryAction, final Track pTrack, final Playlist pPlaylist) {
+        this.unsubscribe();
+
+        pPlaylist.getTracks().add(pTrack);
+        List<ParameterAddTrackToPlaylist.Playlist.Track> parameterTracks = new ArrayList<>();
+        for (Track track : pPlaylist.getTracks()) {
+            ParameterAddTrackToPlaylist.Playlist.Track parameterTrack = new ParameterAddTrackToPlaylist.Playlist.Track();
+            parameterTrack.setId(track.getId());
+            parameterTracks.add(parameterTrack);
+        }
+        ParameterAddTrackToPlaylist.Playlist parameterPlaylist = new ParameterAddTrackToPlaylist.Playlist();
+        parameterPlaylist.setTracks(parameterTracks);
+        ParameterAddTrackToPlaylist parameter = new ParameterAddTrackToPlaylist();
+        parameter.setPlaylist(parameterPlaylist);
+
+        final IApi api = ApiFactory.getApiInstance();
+        this.mSubscription = api.playlistRx(pPlaylist.getId(), parameter)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Playlist>() {
+                    @Override
+                    public void onStart() {
+                        PresenterPlayback.this.onStart();
+                    }
+
+                    @Override
+                    public void onNext(Playlist pPlaylist) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxAddToPlaylistNext(pTrack, pPlaylist);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
+                    }
+                });
+    }
+
+    @Override
+    public void removeFromPlaylist(final UtilsDialog.IRetryAction pRetryAction, final Track pTrack, final Playlist pPlaylist) {
+        this.unsubscribe();
+
+        pPlaylist.getTracks().remove(pTrack);
+        List<ParameterAddTrackToPlaylist.Playlist.Track> parameterTracks = new ArrayList<>();
+        for (Track track : pPlaylist.getTracks()) {
+            ParameterAddTrackToPlaylist.Playlist.Track parameterTrack = new ParameterAddTrackToPlaylist.Playlist.Track();
+            parameterTrack.setId(track.getId());
+            parameterTracks.add(parameterTrack);
+        }
+        ParameterAddTrackToPlaylist.Playlist parameterPlaylist = new ParameterAddTrackToPlaylist.Playlist();
+        parameterPlaylist.setTracks(parameterTracks);
+        ParameterAddTrackToPlaylist parameter = new ParameterAddTrackToPlaylist();
+        parameter.setPlaylist(parameterPlaylist);
+
+        final IApi api = ApiFactory.getApiInstance();
+        this.mSubscription = api.playlistRx(pPlaylist.getId(), parameter)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Playlist>() {
+                    @Override
+                    public void onStart() {
+                        PresenterPlayback.this.onStart();
+                    }
+
+                    @Override
+                    public void onNext(Playlist pPlaylist) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxRemoveFromPlaylistNext(pTrack, pPlaylist);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
+                    }
+                });
+    }
+
+    @Override
+    public void createPlaylist(UtilsDialog.IRetryAction pRetryAction, Track pTrack, String pPlaylistTitle, boolean pIsPublic) {
+
     }
 
     private void unsubscribe() {

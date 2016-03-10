@@ -25,4 +25,8 @@
 
     </RadioGroup>
 
+    <Button
+        android:id="@+id/btnOK"
+        style="@style/Button.BorderLess.Dialog.OK" />
+
 </LinearLayout>

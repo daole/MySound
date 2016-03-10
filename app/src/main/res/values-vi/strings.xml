@@ -19,6 +19,7 @@
     <string name="drawer_item__logout">Thoát</string>
     <string name="drawer_item__sounds">Mới</string>
     <string name="error__media_network">Đã xảy ra lỗi kết nối.</string>
+    <string name="error__blank_playlist_title">Xin hãy nhập tiêu đề cho danh sách.</string>
     <string name="hint__track_search">Tên</string>
     <string name="hint_playlist_title">Tiêu đề</string>
     <string name="media_description_subtitle__favorite">Thích</string>

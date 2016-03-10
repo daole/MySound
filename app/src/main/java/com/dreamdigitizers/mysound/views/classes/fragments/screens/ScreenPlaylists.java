@@ -13,10 +13,10 @@ import com.dreamdigitizers.mysound.presenters.classes.PresenterFactory;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterPlaylists;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentMediaItems;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentPlaylists;
-import com.dreamdigitizers.mysound.views.classes.support.PlaylistAdapter;
+import com.dreamdigitizers.mysound.views.classes.support.AdapterPlaylist;
 import com.dreamdigitizers.mysound.views.interfaces.IViewPlaylists;
 
-public class ScreenPlaylists extends ScreenMediaItems<IPresenterPlaylists> implements IViewPlaylists, PlaylistAdapter.IOnItemClickListener {
+public class ScreenPlaylists extends ScreenMediaItems<IPresenterPlaylists> implements IViewPlaylists, AdapterPlaylist.IOnItemClickListener {
     @Override
     protected IPresenterPlaylists createPresenter() {
         return (IPresenterPlaylists) PresenterFactory.createPresenter(IPresenterPlaylists.class, this);

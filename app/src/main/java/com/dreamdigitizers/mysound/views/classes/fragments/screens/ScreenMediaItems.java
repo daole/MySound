@@ -20,7 +20,7 @@ import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterMediaItems;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentMediaItems;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentPlaybackControls;
-import com.dreamdigitizers.mysound.views.classes.support.MediaItemAdapter;
+import com.dreamdigitizers.mysound.views.classes.support.AdapterMediaItem;
 import com.dreamdigitizers.mysound.views.interfaces.IViewMediaItems;
 
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
 public abstract class ScreenMediaItems<P extends IPresenterMediaItems> extends ScreenBase<P>
         implements IViewMediaItems,
         FragmentMediaItems.IOnScrollEndListener,
-        MediaItemAdapter.IOnItemClickListener,
+        AdapterMediaItem.IOnItemClickListener,
         FragmentPlaybackControls.IPlaybackControlListener {
     private static final String ERROR_MESSAGE__MISSING_MEDIA_ITEMS_PLACE_HOLDER = "Missing FrameLayout with id \"placeHolderTracks\" in layout.";
 

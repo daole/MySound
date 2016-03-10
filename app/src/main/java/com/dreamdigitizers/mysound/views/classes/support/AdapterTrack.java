@@ -30,19 +30,19 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrackAdapter extends PlaylistAdapter {
+public class AdapterTrack extends AdapterPlaylist {
     private PlaybackStateCompat mPlaybackState;
     private MediaMetadataCompat mMediaMetadata;
 
-    public TrackAdapter(Context pContext) {
+    public AdapterTrack(Context pContext) {
         this(pContext, new ArrayList<MediaBrowserCompat.MediaItem>());
     }
 
-    public TrackAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems) {
+    public AdapterTrack(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems) {
         this(pContext, pMediaItems, null);
     }
 
-    public TrackAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, MediaItemAdapter.IOnItemClickListener pListener) {
+    public AdapterTrack(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, AdapterMediaItem.IOnItemClickListener pListener) {
         super(pContext, pMediaItems, pListener);
     }
 
@@ -113,7 +113,7 @@ public class TrackAdapter extends PlaylistAdapter {
         this.notifyDataSetChanged();
     }
 
-    protected class TrackViewHolder extends PlaylistAdapter.PlaylistViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+    protected class TrackViewHolder extends AdapterPlaylist.PlaylistViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         protected ImageView mImgPlaybackCount;
         protected TextView mLblPlaybackCount;
         protected ImageView mImgFavorite;
@@ -127,7 +127,7 @@ public class TrackAdapter extends PlaylistAdapter {
 
         @Override
         public void onCreateContextMenu(ContextMenu pContextMenu, View pView, ContextMenu.ContextMenuInfo pMenuInfo) {
-            MenuInflater menuInflater = new MenuInflater(TrackAdapter.this.mContext);
+            MenuInflater menuInflater = new MenuInflater(AdapterTrack.this.mContext);
             menuInflater.inflate(R.menu.menu__context_track_list, pContextMenu);
 
             MediaDescriptionCompat mediaDescription = this.mMediaItem.getDescription();
@@ -136,9 +136,9 @@ public class TrackAdapter extends PlaylistAdapter {
             MenuItem menuItem = pContextMenu.getItem(0);
             menuItem.setOnMenuItemClickListener(this);
             if (track.getUserFavorite()) {
-                menuItem.setTitle(TrackAdapter.this.mContext.getString(R.string.context_menu_item__unfavorite));
+                menuItem.setTitle(AdapterTrack.this.mContext.getString(R.string.context_menu_item__unfavorite));
             } else {
-                menuItem.setTitle(TrackAdapter.this.mContext.getString(R.string.context_menu_item__favorite));
+                menuItem.setTitle(AdapterTrack.this.mContext.getString(R.string.context_menu_item__favorite));
             }
 
             menuItem = pContextMenu.getItem(1);
@@ -150,13 +150,13 @@ public class TrackAdapter extends PlaylistAdapter {
             int id = pMenuItem.getItemId();
             switch (id) {
                 case R.id.context_menu_item__favorite:
-                    if(TrackAdapter.this.mListener != null && TrackAdapter.this.mListener instanceof IOnItemClickListener) {
-                        ((IOnItemClickListener) TrackAdapter.this.mListener).onFavoriteContextMenuItemClicked(this.mMediaItem);
+                    if(AdapterTrack.this.mListener != null && AdapterTrack.this.mListener instanceof IOnItemClickListener) {
+                        ((IOnItemClickListener) AdapterTrack.this.mListener).onFavoriteContextMenuItemClicked(this.mMediaItem);
                     }
                     return true;
                 case R.id.context_menu_item__playlist:
-                    if(TrackAdapter.this.mListener != null && TrackAdapter.this.mListener instanceof IOnItemClickListener) {
-                        ((IOnItemClickListener) TrackAdapter.this.mListener).onPlaylistContextMenuItemClicked(this.mMediaItem);
+                    if(AdapterTrack.this.mListener != null && AdapterTrack.this.mListener instanceof IOnItemClickListener) {
+                        ((IOnItemClickListener) AdapterTrack.this.mListener).onPlaylistContextMenuItemClicked(this.mMediaItem);
                     }
                     return true;
                 default:
@@ -165,7 +165,7 @@ public class TrackAdapter extends PlaylistAdapter {
         }
     }
 
-    public interface IOnItemClickListener extends MediaItemAdapter.IOnItemClickListener {
+    public interface IOnItemClickListener extends AdapterMediaItem.IOnItemClickListener {
         void onFavoriteContextMenuItemClicked(MediaBrowserCompat.MediaItem pMediaItem);
         void onPlaylistContextMenuItemClicked(MediaBrowserCompat.MediaItem pMediaItem);
     }

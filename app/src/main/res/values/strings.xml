@@ -59,4 +59,5 @@
     <string name="hint_playlist_title">Title</string>
 
     <string name="error__media_network">A network-related error has occurred.</string>
+    <string name="error__blank_playlist_title">Please enter title for new playlist.</string>
 </resources>

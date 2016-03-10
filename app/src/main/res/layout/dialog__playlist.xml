@@ -23,10 +23,6 @@
             android:id="@+id/btnCancel"
             android:layout_toLeftOf="@+id/btnOK"
             style="@style/Button.BorderLess.Dialog.Cancel" />
-
-        <Button
-            android:id="@+id/btnOK"
-            style="@style/Button.BorderLess.Dialog.OK" />
         
     </LinearLayout>
 

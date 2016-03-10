@@ -8,21 +8,21 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MediaItemAdapter<V extends MediaItemAdapter.MediaItemViewHolder> extends RecyclerView.Adapter<V> {
+public abstract class AdapterMediaItem<V extends AdapterMediaItem.MediaItemViewHolder> extends RecyclerView.Adapter<V> {
     protected Context mContext;
     protected List<MediaBrowserCompat.MediaItem> mMediaItems;
 
     protected IOnItemClickListener mListener;
 
-    public MediaItemAdapter(Context pContext) {
+    public AdapterMediaItem(Context pContext) {
         this(pContext, new ArrayList<MediaBrowserCompat.MediaItem>());
     }
 
-    public MediaItemAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems) {
+    public AdapterMediaItem(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems) {
         this(pContext, pMediaItems, null);
     }
 
-    public MediaItemAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, IOnItemClickListener pListener) {
+    public AdapterMediaItem(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, IOnItemClickListener pListener) {
         this.mContext = pContext;
         this.mMediaItems = pMediaItems;
         this.mListener = pListener;
@@ -70,8 +70,8 @@ public abstract class MediaItemAdapter<V extends MediaItemAdapter.MediaItemViewH
         }
 
         protected void clicked() {
-            if(MediaItemAdapter.this.mListener != null) {
-                MediaItemAdapter.this.mListener.onItemClicked(this.mMediaItem);
+            if(AdapterMediaItem.this.mListener != null) {
+                AdapterMediaItem.this.mListener.onItemClicked(this.mMediaItem);
             }
         }
     }

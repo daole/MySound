@@ -69,6 +69,16 @@
         <item name="android:textColor">@color/text_color_primary_dark</item>
     </style>
 
+    <style name="TextView.ListItem.Primary.Dark.Center" parent="TextView.ListItem.Primary.Dark">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_marginLeft">@dimen/margin</item>
+        <item name="android:layout_marginRight">@dimen/margin</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="TextView.ListItem.Secondary.Dark" parent="TextView.ListItem.Secondary">
         <item name="android:textColor">@color/text_color_secondary_dark</item>
     </style>
@@ -103,7 +113,15 @@
     </style>
 
     <style name="Button.BorderLess.Dialog.OK" parent="Button.BorderLess.Dialog">
+        <item name="android:layout_marginRight">@dimen/margin</item>
+        <item name="android:layout_gravity">right</item>
         <item name="android:text">@string/btn__ok</item>
+    </style>
+
+    <style name="Button.BorderLess.Dialog.AddToRemoveFromPlaylist" parent="Button.BorderLess.Dialog">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:text">@string/btn__add</item>
     </style>
 
     <style name="RadioButton.Public" parent="RadioButton">

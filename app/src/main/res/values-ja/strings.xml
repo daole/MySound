@@ -19,6 +19,7 @@
     <string name="drawer_item__logout">ログアウト</string>
     <string name="drawer_item__sounds">新しい</string>
     <string name="error__media_network">ネットワークエラーが発生しました。</string>
+    <string name="error__blank_playlist_title">タイトルを入力してください。</string>
     <string name="hint__track_search">タイトル</string>
     <string name="hint_playlist_title">タイトル</string>
     <string name="media_description_subtitle__favorite">お気に入り</string>

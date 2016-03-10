@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.FragmentBase;
 import com.dreamdigitizers.mysound.R;
-import com.dreamdigitizers.mysound.views.classes.support.MediaItemAdapter;
+import com.dreamdigitizers.mysound.views.classes.support.AdapterMediaItem;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public abstract class FragmentMediaItems extends FragmentBase {
     protected FragmentPlaybackControls mFragmentPlaybackControls;
 
     protected LinearLayoutManager mLinearLayoutManager;
-    protected MediaItemAdapter mMediaItemAdapter;
+    protected AdapterMediaItem mMediaItemAdapter;
 
     protected IOnScrollEndListener mListener;
 
@@ -93,7 +93,7 @@ public abstract class FragmentMediaItems extends FragmentBase {
         this.mListener = pListener;
     }
 
-    public void setOnItemClickListener(MediaItemAdapter.IOnItemClickListener pListener) {
+    public void setOnItemClickListener(AdapterMediaItem.IOnItemClickListener pListener) {
         this.mMediaItemAdapter.setOnItemClickListener(pListener);
     }
 
@@ -186,7 +186,7 @@ public abstract class FragmentMediaItems extends FragmentBase {
         }
     }
 
-    protected abstract MediaItemAdapter createAdapter();
+    protected abstract AdapterMediaItem createAdapter();
 
     public interface IOnScrollEndListener {
         void onScrollEnd();

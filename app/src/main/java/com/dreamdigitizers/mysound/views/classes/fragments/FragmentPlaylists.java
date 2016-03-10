@@ -1,11 +1,11 @@
 package com.dreamdigitizers.mysound.views.classes.fragments;
 
-import com.dreamdigitizers.mysound.views.classes.support.MediaItemAdapter;
-import com.dreamdigitizers.mysound.views.classes.support.PlaylistAdapter;
+import com.dreamdigitizers.mysound.views.classes.support.AdapterMediaItem;
+import com.dreamdigitizers.mysound.views.classes.support.AdapterPlaylist;
 
 public class FragmentPlaylists extends FragmentMediaItems {
     @Override
-    protected MediaItemAdapter createAdapter() {
-        return new PlaylistAdapter(this.getContext());
+    protected AdapterMediaItem createAdapter() {
+        return new AdapterPlaylist(this.getContext());
     }
 }

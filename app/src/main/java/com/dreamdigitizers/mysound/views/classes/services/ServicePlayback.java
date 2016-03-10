@@ -42,10 +42,16 @@ public class ServicePlayback extends ServiceMediaBrowser {
 
     public static final String CUSTOM_ACTION__FAVORITE = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.FAVORITE";
     public static final String CUSTOM_ACTION__DELETE_PLAYLIST = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.DELETE_PLAYLIST";
+    public static final String CUSTOM_ACTION__ADD_TO_PLAYLIST = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.ADD_TO_PLAYLIST";
+    public static final String CUSTOM_ACTION__REMOVE_FROM_PLAYLIST = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.REMOVE_FROM_PLAYLIST";
+    public static final String CUSTOM_ACTION__CREATE_PLAYLIST = "com.dreamdigitizers.mysound.views.classes.services.ServicePlayback.CREATE_PLAYLIST";
 
     private static final String EVENT_URI__ROOT = "media://serviceplayback?action=%s";
     private static final String EVENT_URI__FAVORITE = ServicePlayback.EVENT_URI__ROOT + "&trackId=%s&userFavorite=%s";
     private static final String EVENT_URI__DELETE_PLAYLIST = ServicePlayback.EVENT_URI__ROOT + "&playlistId=%s";
+    private static final String EVENT_URI__ADD_TO_PLAYLIST = ServicePlayback.EVENT_URI__ROOT + "&trackId=%s&playlistId=%s";
+    private static final String EVENT_URI__REMOVE_FROM_PLAYLIST = ServicePlayback.EVENT_URI__ROOT + "&trackId=%s&playlistId=%s";
+    private static final String EVENT_URI__CREATE_PLAYLIST = ServicePlayback.EVENT_URI__ROOT + "&trackId=%s&playlistId=%s";
 
     //private static final int ART_WIDTH = 800;
     //private static final int ART_HEIGHT = 480;
@@ -69,6 +75,7 @@ public class ServicePlayback extends ServiceMediaBrowser {
     public static final String MEDIA_ID__SOUNDS_SEARCH_MORE = "__SOUNDS_SEARCH_MORE__";
     public static final String MEDIA_ID__FAVORITES = "__FAVORITES__";
     public static final String MEDIA_ID__FAVORITES_MORE = "__FAVORITES_MORE__";
+    public static final String MEDIA_ID__PLAYLISTS_ALL = "__PLAYLISTS_ALL__";
     public static final String MEDIA_ID__PLAYLISTS = "__PLAYLISTS__";
     public static final String MEDIA_ID__PLAYLISTS_MORE = "__PLAYLISTS_MORE__";
     public static final String MEDIA_ID__PLAYLIST = "__PLAYLIST__";
@@ -94,7 +101,7 @@ public class ServicePlayback extends ServiceMediaBrowser {
     private List<CustomQueueItem> mSoundsQueue;
     private List<CustomQueueItem> mSoundsSearchQueue;
     private List<CustomQueueItem> mFavoritesQueue;
-    private Playlists mPlaylists;
+    private List<Playlist> mPlaylists;
     private HashMap<Integer, List<CustomQueueItem>> mPlaylistQueues;
     //private List<CustomQueueItem> mPlaylistQueue;
 
@@ -131,6 +138,7 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.mSoundsQueue = new ArrayList<>();
         this.mSoundsSearchQueue = new ArrayList<>();
         this.mFavoritesQueue = new ArrayList<>();
+        this.mPlaylists = new ArrayList<>();
         this.mPlaylistQueues = new HashMap<>();
 
         this.mChartsMediaItems = new ArrayList<>();
@@ -216,6 +224,15 @@ public class ServicePlayback extends ServiceMediaBrowser {
             case ServicePlayback.CUSTOM_ACTION__DELETE_PLAYLIST:
                 this.processDeletePlaylistRequest(pExtras);
                 break;
+            case ServicePlayback.CUSTOM_ACTION__ADD_TO_PLAYLIST:
+                this.processAddToPlaylistRequest(pExtras);
+                break;
+            case ServicePlayback.CUSTOM_ACTION__REMOVE_FROM_PLAYLIST:
+                this.processRemoveFromPlaylistRequest(pExtras);
+                break;
+            case ServicePlayback.CUSTOM_ACTION__CREATE_PLAYLIST:
+                this.processCreatePlaylistRequest(pExtras);
+                break;
             default:
                 break;
         }
@@ -267,6 +284,9 @@ public class ServicePlayback extends ServiceMediaBrowser {
                 break;
             case ServicePlayback.MEDIA_ID__FAVORITES_MORE:
                 this.loadChildrenFavoritesMore(pResult);
+                break;
+            case ServicePlayback.MEDIA_ID__PLAYLISTS_ALL:
+                this.loadChildrenPlaylistsAll(pResult);
                 break;
             case ServicePlayback.MEDIA_ID__PLAYLISTS:
                 this.loadChildrenPlaylists(pResult);
@@ -406,6 +426,16 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.mPresenter.userFavorites(null, Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING, Constants.SOUNDCLOUD_PARAMETER__LIMIT, this.mFavoritesOffset);
     }
 
+    private void loadChildrenPlaylistsAll(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
+        if (this.mPlaylistsMediaItems.size() > 0 && !this.mIsPlaylistsMore) {
+            pResult.sendResult(this.mPlaylistsMediaItems);
+            return;
+        }
+        this.mPlaylistsResult = pResult;
+        this.mPlaylistsResult.detach();
+        this.mPresenter.userPlaylists(null);
+    }
+
     private void loadChildrenPlaylists(Result<List<MediaBrowserCompat.MediaItem>> pResult) {
         this.mActiveMode = ServicePlayback.ACTIVE_MODE__PLAYLISTS;
         if (this.mPlaylistsMediaItems.size() > 0) {
@@ -445,7 +475,7 @@ public class ServicePlayback extends ServiceMediaBrowser {
     }
 
     private void loadChildrenPlaylistMore(int pPlaylistId, Result<List<MediaBrowserCompat.MediaItem>> pResult) {
-        for (Playlist playlist : this.mPlaylists.getCollection()) {
+        for (Playlist playlist : this.mPlaylists) {
             if (playlist.getId() == pPlaylistId) {
                 List<Track> tracks = playlist.getTracks();
                 List<CustomQueueItem> playlistQueue = new ArrayList<>();
@@ -550,8 +580,7 @@ public class ServicePlayback extends ServiceMediaBrowser {
         }
     }
 
-    /*
-    public void onRxFavoritesNext(List<Track> pTracks) {
+    /*public void onRxFavoritesNext(List<Track> pTracks) {
         if (this.mFavoritesResult != null) {
             List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylist(pTracks, this.mFavoritesQueue, true);
             this.mFavoritesMediaItems.addAll(0, mediaItems);
@@ -561,8 +590,7 @@ public class ServicePlayback extends ServiceMediaBrowser {
                 this.mActiveQueue = this.mFavoritesQueue;
             }
         }
-    }
-    */
+    }*/
 
     public void onRxFavoritesNext(Tracks pTracks) {
         if (this.mFavoritesResult != null) {
@@ -590,8 +618,20 @@ public class ServicePlayback extends ServiceMediaBrowser {
         }
     }
 
+    public void onRxPlaylistsNext(List<Playlist> pPlaylists) {
+        this.mPlaylists.clear();
+        this.mPlaylists.addAll(pPlaylists);
+        this.mIsPlaylistsMore = false;
+        if (this.mPlaylistsResult != null) {
+            List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylists(this.mPlaylists);
+            this.mPlaylistsMediaItems.clear();
+            this.mPlaylistsMediaItems.addAll(mediaItems);
+            this.mPlaylistsResult.sendResult(mediaItems);
+            this.mPlaylistsResult = null;
+        }
+    }
+
     public void onRxPlaylistsNext(Playlists pPlaylists) {
-        this.mPlaylists = pPlaylists;
         if (this.mPlaylistsResult != null) {
             String nextHref = pPlaylists.getNextHref();
             if (UtilsString.isEmpty(nextHref)) {
@@ -606,17 +646,18 @@ public class ServicePlayback extends ServiceMediaBrowser {
                 this.mIsPlaylistsMore = true;
             }
             List<MediaBrowserCompat.MediaItem> mediaItems = this.buildPlaylists(pPlaylists);
+            this.mPlaylists.addAll(pPlaylists.getCollection());
             this.mPlaylistsMediaItems.addAll(mediaItems);
             this.mPlaylistsResult.sendResult(mediaItems);
             this.mPlaylistsResult = null;
         }
     }
 
-    public void onRxPlaylistNext(List<Track> pTracks) {
+    /*public void onRxPlaylistNext(List<Track> pTracks) {
         if (this.mPlaylistResult != null) {
             this.mPlaylistResult = null;
         }
-    }
+    }*/
 
     public void onRxFavoriteNext(Track pTrack) {
         pTrack.setUserFavorite(true);
@@ -632,10 +673,9 @@ public class ServicePlayback extends ServiceMediaBrowser {
 
     public void onRxDeletePlaylistNext(Playlist pPlaylist) {
         int playlistId = pPlaylist.getId();
-        List<Playlist> playlists = this.mPlaylists.getCollection();
-        for (Playlist playlist : playlists) {
+        for (Playlist playlist : this.mPlaylists) {
             if (playlist.getId() == playlistId) {
-                playlists.remove(playlist);
+                this.mPlaylists.remove(playlist);
                 break;
             }
         }
@@ -649,7 +689,19 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.sendDeletePlaylistActionResult(pPlaylist);
     }
 
-    public void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
+    private void onRxAddToPlaylistNext(Track pTrack, Playlist pPlaylist) {
+        this.sendAddToPlaylistActionResult(pTrack, pPlaylist);
+    }
+
+    private void onRxRemoveFromPlaylistNext(Track pTrack, Playlist pPlaylist) {
+        this.sendRemoveFromPlaylistActionResult(pTrack, pPlaylist);
+    }
+
+    private void onRxCreatePlaylistNext(Track pTrack, Playlist pPlaylist) {
+        this.sendCreatePlaylistActionResult(pTrack, pPlaylist);
+    }
+
+    private void onRxError(Throwable pError, UtilsDialog.IRetryAction pRetryAction) {
         this.mSoundsResult = null;
         this.mSoundsSearchResult = null;
         this.mFavoritesResult = null;
@@ -696,9 +748,13 @@ public class ServicePlayback extends ServiceMediaBrowser {
     }
 
     private List<MediaBrowserCompat.MediaItem> buildPlaylists(Playlists pPlaylists) {
+        return this.buildPlaylists(pPlaylists.getCollection());
+    }
+
+    private List<MediaBrowserCompat.MediaItem> buildPlaylists(List<Playlist> pPlaylists) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
 
-        for (Playlist playlist : pPlaylists.getCollection()) {
+        for (Playlist playlist : pPlaylists) {
             MediaMetadataCompat mediaMetadata = SoundCloudMetadataBuilder.build(playlist);
             MediaDescriptionCompat mediaDescription = SoundCloudMetadataBuilder.build(mediaMetadata);
 
@@ -746,6 +802,25 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.mPresenter.deletePlaylist(null, playlist);
     }
 
+    private void processAddToPlaylistRequest(Bundle pExtras) {
+        Track track = (Track) pExtras.getSerializable(Constants.BUNDLE_KEY__TRACK);
+        Playlist playlist = (Playlist) pExtras.getSerializable(Constants.BUNDLE_KEY__PLAYLIST);
+        this.mPresenter.addToPlaylist(null, track, playlist);
+    }
+
+    private void processRemoveFromPlaylistRequest(Bundle pExtras) {
+        Track track = (Track) pExtras.getSerializable(Constants.BUNDLE_KEY__TRACK);
+        Playlist playlist = (Playlist) pExtras.getSerializable(Constants.BUNDLE_KEY__PLAYLIST);
+        this.mPresenter.removeFromPlaylist(null, track, playlist);
+    }
+
+    private void processCreatePlaylistRequest(Bundle pExtras) {
+        Track track = (Track) pExtras.getSerializable(Constants.BUNDLE_KEY__TRACK);
+        String playlistTitle = pExtras.getString(Constants.BUNDLE_KEY__PLAYLIST_TITLE);
+        boolean isPublic = pExtras.getBoolean(Constants.BUNDLE_KEY__IS_PUBLIC);
+        this.mPresenter.createPlaylist(null, track, playlistTitle, isPublic);
+    }
+
     private void sendFavoriteActionResult(Track pTrack) {
         String eventAction = String.format(ServicePlayback.EVENT_URI__FAVORITE, ServicePlayback.CUSTOM_ACTION__FAVORITE, pTrack.getId(), pTrack.getUserFavorite());
         this.getMediaSession().sendSessionEvent(eventAction, null);
@@ -753,6 +828,21 @@ public class ServicePlayback extends ServiceMediaBrowser {
 
     private void sendDeletePlaylistActionResult(Playlist pPlaylist) {
         String eventAction = String.format(ServicePlayback.EVENT_URI__DELETE_PLAYLIST, ServicePlayback.CUSTOM_ACTION__DELETE_PLAYLIST, pPlaylist.getId());
+        this.getMediaSession().sendSessionEvent(eventAction, null);
+    }
+
+    private void sendAddToPlaylistActionResult(Track pTrack, Playlist pPlaylist) {
+        String eventAction = String.format(ServicePlayback.EVENT_URI__ADD_TO_PLAYLIST, ServicePlayback.CUSTOM_ACTION__ADD_TO_PLAYLIST, pTrack.getId(), pPlaylist.getId());
+        this.getMediaSession().sendSessionEvent(eventAction, null);
+    }
+
+    private void sendRemoveFromPlaylistActionResult(Track pTrack, Playlist pPlaylist) {
+        String eventAction = String.format(ServicePlayback.EVENT_URI__REMOVE_FROM_PLAYLIST, ServicePlayback.CUSTOM_ACTION__REMOVE_FROM_PLAYLIST, pTrack.getId(), pPlaylist.getId());
+        this.getMediaSession().sendSessionEvent(eventAction, null);
+    }
+
+    private void sendCreatePlaylistActionResult(Track pTrack, Playlist pPlaylist) {
+        String eventAction = String.format(ServicePlayback.EVENT_URI__CREATE_PLAYLIST, ServicePlayback.CUSTOM_ACTION__CREATE_PLAYLIST, pTrack.getId(), pPlaylist.getId());
         this.getMediaSession().sendSessionEvent(eventAction, null);
     }
 
@@ -783,14 +873,19 @@ public class ServicePlayback extends ServiceMediaBrowser {
         }
 
         @Override
-        public void onRxPlaylistsNext(Playlists pPlaylists) {
+        public void onRxPlaylistsNext(List<Playlist> pPlaylists) {
             ServicePlayback.this.onRxPlaylistsNext(pPlaylists);
         }
 
         @Override
+        public void onRxPlaylistsNext(Playlists pPlaylists) {
+            ServicePlayback.this.onRxPlaylistsNext(pPlaylists);
+        }
+
+        /*@Override
         public void onRxPlaylistNext(List<Track> pTracks) {
             ServicePlayback.this.onRxPlaylistNext(pTracks);
-        }
+        }*/
 
         @Override
         public void onRxFavoriteNext(Track pTrack) {
@@ -805,6 +900,21 @@ public class ServicePlayback extends ServiceMediaBrowser {
         @Override
         public void onRxDeletePlaylistNext(Playlist pPlaylist) {
             ServicePlayback.this.onRxDeletePlaylistNext(pPlaylist);
+        }
+
+        @Override
+        public void onRxAddToPlaylistNext(Track pTrack, Playlist pPlaylist) {
+            ServicePlayback.this.onRxAddToPlaylistNext(pTrack, pPlaylist);
+        }
+
+        @Override
+        public void onRxRemoveFromPlaylistNext(Track pTrack, Playlist pPlaylist) {
+            ServicePlayback.this.onRxRemoveFromPlaylistNext(pTrack, pPlaylist);
+        }
+
+        @Override
+        public void onRxCreatePlaylistNext(Track pTrack, Playlist pPlaylist) {
+            ServicePlayback.this.onRxCreatePlaylistNext(pTrack, pPlaylist);
         }
 
         @Override

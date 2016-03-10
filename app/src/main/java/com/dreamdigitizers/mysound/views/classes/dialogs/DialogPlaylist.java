@@ -1,5 +1,6 @@
 package com.dreamdigitizers.mysound.views.classes.dialogs;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import com.dreamdigitizers.androidbaselibrary.views.classes.dialogs.DialogFragme
 import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentAddToPlaylist;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentCreateNewPlaylist;
+import com.dreamdigitizers.mysound.views.classes.support.AdapterPlaylistDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +25,22 @@ public class DialogPlaylist extends DialogFragmentBase {
     private TabLayout mTabs;
     private ViewPager mViewPager;
     private Button mBtnCancel;
-    private Button mBtnOK;
+
+    private FragmentAddToPlaylist mFragmentAddToPlaylist;
+    private FragmentCreateNewPlaylist mFragmentCreateNewPlaylist;
+
+    private Bundle mArguments;
+
+    private AdapterPlaylistDialog.IOnAddRemoveButtonClickListener mOnAddRemoveButtonClickListener;
+    private FragmentCreateNewPlaylist.IOnOkButtonClickListener mOnOkButtonClickListener;
 
     public DialogPlaylist() {
         this.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    protected void handleArguments(Bundle pArguments) {
+        this.mArguments = pArguments;
     }
 
     @Override
@@ -40,7 +54,6 @@ public class DialogPlaylist extends DialogFragmentBase {
         this.mTabs = (TabLayout) pView.findViewById(R.id.tabs);
         this.mViewPager = (ViewPager) pView.findViewById(R.id.viewPager);
         this.mBtnCancel = (Button) pView.findViewById(R.id.btnCancel);
-        this.mBtnOK = (Button) pView.findViewById(R.id.btnOK);
     }
 
     @Override
@@ -51,24 +64,25 @@ public class DialogPlaylist extends DialogFragmentBase {
         this.mBtnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pView) {
-                DialogPlaylist.this.onButtonCancelClicked();
-            }
-        });
-
-        this.mBtnOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View pView) {
-                DialogPlaylist.this.onButtonOKClicked();
+                DialogPlaylist.this.buttonCancelClicked();
             }
         });
     }
 
-    private void onButtonCancelClicked() {
+    public void setOnAddRemoveButtonClickListener(AdapterPlaylistDialog.IOnAddRemoveButtonClickListener pListener) {
+        this.mOnAddRemoveButtonClickListener = pListener;
+    }
+
+    public void setOnOkButtonClickListener(FragmentCreateNewPlaylist.IOnOkButtonClickListener pListener) {
+        this.mOnOkButtonClickListener = pListener;
+    }
+
+    public void onAddToRemoveFromPlaylistResult() {
+        this.mFragmentAddToPlaylist.onAddToRemoveFromPlaylistResult();
+    }
+
+    private void buttonCancelClicked() {
         this.dismiss();
-    }
-
-    private void onButtonOKClicked() {
-
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -77,10 +91,17 @@ public class DialogPlaylist extends DialogFragmentBase {
 
         public ViewPagerAdapter(FragmentManager pFragmentManager) {
             super(pFragmentManager);
-
             this.mFragments = new ArrayList<>();
-            this.mFragments.add(new FragmentAddToPlaylist());
-            this.mFragments.add(new FragmentCreateNewPlaylist());
+
+            DialogPlaylist.this.mFragmentAddToPlaylist = new FragmentAddToPlaylist();
+            DialogPlaylist.this.mFragmentAddToPlaylist.setArguments(DialogPlaylist.this.mArguments);
+            DialogPlaylist.this.mFragmentAddToPlaylist.setOnAddRemoveButtonClickListener(DialogPlaylist.this.mOnAddRemoveButtonClickListener);
+            this.mFragments.add(DialogPlaylist.this.mFragmentAddToPlaylist);
+
+            DialogPlaylist.this.mFragmentCreateNewPlaylist = new FragmentCreateNewPlaylist();
+            DialogPlaylist.this.mFragmentAddToPlaylist.setArguments(DialogPlaylist.this.mArguments);
+            DialogPlaylist.this.mFragmentCreateNewPlaylist.setOnOkButtonClickListener(DialogPlaylist.this.mOnOkButtonClickListener);
+            this.mFragments.add(DialogPlaylist.this.mFragmentCreateNewPlaylist);
 
             this.mFragmentTitles = new ArrayList<>();
             this.mFragmentTitles.add(DialogPlaylist.this.getContext().getString(R.string.tab__add_to_playlist));

@@ -25,16 +25,16 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class PlaylistAdapter extends MediaItemAdapter<PlaylistAdapter.PlaylistViewHolder> {
-    public PlaylistAdapter(Context pContext) {
+public class AdapterPlaylist extends AdapterMediaItem<AdapterPlaylist.PlaylistViewHolder> {
+    public AdapterPlaylist(Context pContext) {
         this(pContext, new ArrayList<MediaBrowserCompat.MediaItem>());
     }
 
-    public PlaylistAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems) {
+    public AdapterPlaylist(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems) {
         this(pContext, pMediaItems, null);
     }
 
-    public PlaylistAdapter(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, MediaItemAdapter.IOnItemClickListener pListener) {
+    public AdapterPlaylist(Context pContext, List<MediaBrowserCompat.MediaItem> pMediaItems, AdapterMediaItem.IOnItemClickListener pListener) {
         super(pContext, pMediaItems, pListener);
     }
 
@@ -62,7 +62,7 @@ public class PlaylistAdapter extends MediaItemAdapter<PlaylistAdapter.PlaylistVi
         pHolder.mMediaItem = mediaItem;
     }
 
-    protected class PlaylistViewHolder extends MediaItemAdapter.MediaItemViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+    protected class PlaylistViewHolder extends AdapterMediaItem.MediaItemViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         protected CircleImageView mImgAvatar;
         protected TextView mLblUsername;
         protected TextView mLblDuration;
@@ -87,7 +87,7 @@ public class PlaylistAdapter extends MediaItemAdapter<PlaylistAdapter.PlaylistVi
 
         @Override
         public void onCreateContextMenu(ContextMenu pContextMenu, View pView, ContextMenu.ContextMenuInfo pMenuInfo) {
-            MenuInflater menuInflater = new MenuInflater(PlaylistAdapter.this.mContext);
+            MenuInflater menuInflater = new MenuInflater(AdapterPlaylist.this.mContext);
             menuInflater.inflate(R.menu.menu__context_playlist_list, pContextMenu);
 
             MenuItem menuItem = pContextMenu.getItem(0);
@@ -99,8 +99,8 @@ public class PlaylistAdapter extends MediaItemAdapter<PlaylistAdapter.PlaylistVi
             int id = pMenuItem.getItemId();
             switch (id) {
                 case R.id.context_menu_item__delete:
-                    if(PlaylistAdapter.this.mListener != null && PlaylistAdapter.this.mListener instanceof IOnItemClickListener) {
-                        ((IOnItemClickListener) PlaylistAdapter.this.mListener).onDeleteContextMenuItemClicked(this.mMediaItem);
+                    if(AdapterPlaylist.this.mListener != null && AdapterPlaylist.this.mListener instanceof IOnItemClickListener) {
+                        ((IOnItemClickListener) AdapterPlaylist.this.mListener).onDeleteContextMenuItemClicked(this.mMediaItem);
                     }
                     return true;
                 default:
@@ -109,11 +109,11 @@ public class PlaylistAdapter extends MediaItemAdapter<PlaylistAdapter.PlaylistVi
         }
 
         protected void contextMenuButtonClicked() {
-            ((Activity) PlaylistAdapter.this.mContext).openContextMenu(this.mBtnContextMenu);
+            ((Activity) AdapterPlaylist.this.mContext).openContextMenu(this.mBtnContextMenu);
         }
     }
 
-    public interface IOnItemClickListener extends MediaItemAdapter.IOnItemClickListener {
+    public interface IOnItemClickListener extends AdapterMediaItem.IOnItemClickListener {
         void onDeleteContextMenuItemClicked(MediaBrowserCompat.MediaItem pMediaItem);
     }
 }
