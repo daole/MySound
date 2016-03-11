@@ -158,7 +158,12 @@ public class ServicePlayback extends ServiceMediaBrowser {
         this.mView = new ViewPlayback();
         this.mPresenter = (IPresenterPlayback) PresenterFactory.createPresenter(IPresenterPlayback.class, this.mView);
 
-        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
+        String accessToken = Share.getAccessToken();
+        if (UtilsString.isEmpty(accessToken)) {
+            accessToken = this.mPresenter.getAccessToken();
+            Share.setAccessToken(accessToken);
+        }
+        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, accessToken);
     }
 
     @Override

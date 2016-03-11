@@ -20,6 +20,19 @@ class PresenterMain extends PresenterBase<IViewMain> implements IPresenterMain {
     }
 
     @Override
+    public String getAccessToken() {
+        String accessToken = this.mSharedPreferences.getString(Constants.SHARED_PREFERENCES_KEY__ACCESS_TOKEN, null);
+        return accessToken;
+    }
+
+    @Override
+    public void deleteAccessToken() {
+        SharedPreferences.Editor editor = this.mSharedPreferences.edit();
+        editor.remove(Constants.SHARED_PREFERENCES_KEY__ACCESS_TOKEN);
+        editor.commit();
+    }
+
+    @Override
     public void stopMediaPlayer() {
         IViewMain view = this.getView();
         if (view != null) {
@@ -29,12 +42,5 @@ class PresenterMain extends PresenterBase<IViewMain> implements IPresenterMain {
             intent.putExtra(ServicePlayback.COMMAND__NAME, ServicePlayback.COMMAND__STOP);
             context.startService(intent);
         }
-    }
-
-    @Override
-    public void deleteAccessToken() {
-        SharedPreferences.Editor editor = this.mSharedPreferences.edit();
-        editor.remove(Constants.SHARED_PREFERENCES_KEY__ACCESS_TOKEN);
-        editor.commit();
     }
 }

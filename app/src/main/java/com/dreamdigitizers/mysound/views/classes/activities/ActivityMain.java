@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
 import com.dreamdigitizers.androidbaselibrary.views.classes.activities.ActivityBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.androidbaselibrary.views.classes.support.AdListener;
@@ -133,7 +134,12 @@ public class ActivityMain extends ActivityBase {
         if (me != null) {
             this.showMe(me);
         }
-        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, Share.getAccessToken());
+        String accessToken = Share.getAccessToken();
+        if (UtilsString.isEmpty(accessToken)) {
+            accessToken = this.mPresenter.getAccessToken();
+            Share.setAccessToken(accessToken);
+        }
+        ApiFactory.initialize(Constants.SOUNDCLOUD__CLIENT_ID, accessToken);
         this.mShareDataChangedListener = new Share.OnDataChangedListener() {
             @Override
             public void onMeChanged(final Me pNewMe, final Me pOldMe) {

@@ -5,6 +5,7 @@ import com.dreamdigitizers.androidsoundcloudapi.models.Playlist;
 import com.dreamdigitizers.androidsoundcloudapi.models.Track;
 
 public interface IPresenterPlayback extends IPresenterRx {
+    String getAccessToken();
     void charts(UtilsDialog.IRetryAction pRetryAction, int pLinkedPartitioning, int pLimit, int pOffset);
     void tracks(UtilsDialog.IRetryAction pRetryAction);
     void tracks(UtilsDialog.IRetryAction pRetryAction, int pLinkedPartitioning, int pLimit, int pOffset);

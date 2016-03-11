@@ -1,5 +1,8 @@
 package com.dreamdigitizers.mysound.presenters.classes;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.core.IApi;
@@ -29,15 +32,23 @@ import rx.schedulers.Schedulers;
 
 class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenterPlayback {
     private Subscription mSubscription;
+    private SharedPreferences mSharedPreferences;
 
     public PresenterPlayback(IViewPlayback pView) {
         super(pView);
+        this.mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getView().getViewContext());
     }
 
     @Override
     public void dispose() {
         super.dispose();
         this.unsubscribe();
+    }
+
+    @Override
+    public String getAccessToken() {
+        String accessToken = this.mSharedPreferences.getString(Constants.SHARED_PREFERENCES_KEY__ACCESS_TOKEN, null);
+        return accessToken;
     }
 
     @Override
