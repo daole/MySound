@@ -129,7 +129,8 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         Share.setMe(pMe);
                         return api.tracksRx();
                     }
-                }).subscribeOn(Schedulers.io())
+                })
+                .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Track>>() {
@@ -179,7 +180,8 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         Share.setMe(pMe);
                         return api.tracksRx(pLinkedPartitioning, pLimit, pOffset);
                     }
-                }).subscribeOn(Schedulers.io())
+                })
+                .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Tracks>() {
@@ -229,7 +231,8 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         Share.setMe(pMe);
                         return api.tracksRx(pLinkedPartitioning, pLimit, pOffset, pQ);
                     }
-                }).subscribeOn(Schedulers.io())
+                })
+                .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Tracks>() {
@@ -280,7 +283,8 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         Share.setMe(pMe);
                         return api.userFavoritesRx(pMe.getId());
                     }
-                }).subscribeOn(Schedulers.io())
+                })
+                .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Track>>() {
@@ -331,7 +335,8 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         Share.setMe(pMe);
                         return api.userFavoritesRx(pMe.getId(), pLinkedPartitioning, pLimit, pOffset);
                     }
-                }).subscribeOn(Schedulers.io())
+                })
+                .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Tracks>() {
@@ -381,7 +386,8 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         Share.setMe(pMe);
                         return api.userPlaylistsRx(pMe.getId());
                     }
-                }).subscribeOn(Schedulers.io())
+                })
+                .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Playlist>>() {
@@ -431,7 +437,8 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         Share.setMe(pMe);
                         return api.userPlaylistsRx(pMe.getId(), pLinkedPartitioning, pLimit, pOffset);
                     }
-                }).subscribeOn(Schedulers.io())
+                })
+                .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Playlists>() {
@@ -661,8 +668,58 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
     }
 
     @Override
-    public void createPlaylist(UtilsDialog.IRetryAction pRetryAction, Track pTrack, String pPlaylistTitle, boolean pIsPublic) {
+    public void createPlaylist(final UtilsDialog.IRetryAction pRetryAction, final Track pTrack, final String pPlaylistTitle, final boolean pIsPublic) {
+        this.unsubscribe();
+        final IApi api = ApiFactory.getApiInstance();
+        this.mSubscription = api.playlistsRx(
+                pPlaylistTitle,
+                pIsPublic ? Constants.SOUNDCLOUD_PARAMETER__PUBLIC : Constants.SOUNDCLOUD_PARAMETER__PRIVATE,
+                Constants.SOUNDCLOUD_PARAMETER__UNDEFINED,
+                Constants.SOUNDCLOUD_PARAMETER__PLAYLIST)
+                .flatMap(new Func1<Playlist, Observable<Playlist>>() {
+                    @Override
+                    public Observable<Playlist> call(Playlist pPlaylist) {
+                        pPlaylist.getTracks().add(pTrack);
+                        List<ParameterAddTrackToPlaylist.Playlist.Track> parameterTracks = new ArrayList<>();
+                        for (Track track : pPlaylist.getTracks()) {
+                            ParameterAddTrackToPlaylist.Playlist.Track parameterTrack = new ParameterAddTrackToPlaylist.Playlist.Track();
+                            parameterTrack.setId(track.getId());
+                            parameterTracks.add(parameterTrack);
+                        }
+                        ParameterAddTrackToPlaylist.Playlist parameterPlaylist = new ParameterAddTrackToPlaylist.Playlist();
+                        parameterPlaylist.setTracks(parameterTracks);
+                        ParameterAddTrackToPlaylist parameter = new ParameterAddTrackToPlaylist();
+                        parameter.setPlaylist(parameterPlaylist);
 
+                        return api.playlistRx(pPlaylist.getId(), parameter);
+                    }
+                }).subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Playlist>() {
+                    @Override
+                    public void onStart() {
+                        PresenterPlayback.this.onStart();
+                    }
+
+                    @Override
+                    public void onNext(Playlist pPlaylist) {
+                        IViewPlayback view = PresenterPlayback.this.getView();
+                        if (view != null) {
+                            view.onRxCreatePlaylistNext(pTrack, pPlaylist);
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        PresenterPlayback.this.onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable pError) {
+                        PresenterPlayback.this.onError(pError, pRetryAction);
+                    }
+                });
     }
 
     private void unsubscribe() {
