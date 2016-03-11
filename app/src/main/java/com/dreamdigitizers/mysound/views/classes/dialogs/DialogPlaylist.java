@@ -99,7 +99,7 @@ public class DialogPlaylist extends DialogFragmentBase {
             this.mFragments.add(DialogPlaylist.this.mFragmentAddToPlaylist);
 
             DialogPlaylist.this.mFragmentCreateNewPlaylist = new FragmentCreateNewPlaylist();
-            DialogPlaylist.this.mFragmentAddToPlaylist.setArguments(DialogPlaylist.this.mArguments);
+            DialogPlaylist.this.mFragmentCreateNewPlaylist.setArguments(DialogPlaylist.this.mArguments);
             DialogPlaylist.this.mFragmentCreateNewPlaylist.setOnOkButtonClickListener(DialogPlaylist.this.mOnOkButtonClickListener);
             this.mFragments.add(DialogPlaylist.this.mFragmentCreateNewPlaylist);
 

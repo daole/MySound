@@ -28,6 +28,7 @@
     <string name="media_description_title__favorite">Thích</string>
     <string name="media_description_title__new">Mới</string>
     <string name="media_description_title__playlist">Danh sách</string>
+    <string name="message__playlist_created">Danh sách mới đã được tạo.</string>
     <string name="message__no_data_to_load">Đã tải hết dữ liệu.</string>
     <string name="message__soundcloud_problem">Hiện tại đang có vấn đề sử dụng tài khoản Facebook hoặc Google để đăng nhập SoundCloud. Chúng tôi rất xin lỗi vì sự bất tiện này nhưng bạn hãy sử dụng tài khoản SoundCloud để đăng nhập. Chúng tôi cũng đang chờ SoundCloud khắc phục lỗi trên.</string>
     <string name="confirmation__logout">Bạn có chắc là bạn muốn đăng xuất?</string>

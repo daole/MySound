@@ -1,5 +1,6 @@
 package com.dreamdigitizers.mysound.views.classes.services;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -871,6 +872,11 @@ public class ServicePlayback extends ServiceMediaBrowser {
     }
 
     private class ViewPlayback extends IViewRx.ViewRx implements IViewPlayback {
+        @Override
+        public Context getViewContext() {
+            return ServicePlayback.this;
+        }
+
         @Override
         public void onRxChartsNext(Charts pCharts) {
             ServicePlayback.this.onRxChartsNext(pCharts);

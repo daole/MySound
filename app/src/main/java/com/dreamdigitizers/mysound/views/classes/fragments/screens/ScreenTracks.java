@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.media.MediaBrowserCompat;
 
 import com.dreamdigitizers.mysound.Constants;
+import com.dreamdigitizers.mysound.R;
 import com.dreamdigitizers.mysound.presenters.interfaces.IPresenterTracks;
 import com.dreamdigitizers.mysound.views.classes.dialogs.DialogPlaylist;
 import com.dreamdigitizers.mysound.views.classes.fragments.FragmentCreateNewPlaylist;
@@ -56,6 +57,7 @@ public abstract class ScreenTracks<P extends IPresenterTracks> extends ScreenMed
 
     @Override
     public void onPlaylistCreated() {
+        this.showMessage(R.string.message__playlist_created);
     }
 
     @Override

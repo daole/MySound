@@ -21,7 +21,6 @@
         
         <Button
             android:id="@+id/btnCancel"
-            android:layout_toLeftOf="@+id/btnOK"
             style="@style/Button.BorderLess.Dialog.Cancel" />
         
     </LinearLayout>

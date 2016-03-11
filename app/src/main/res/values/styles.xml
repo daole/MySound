@@ -146,6 +146,11 @@
         <item name="android:src">@drawable/ic__default_profile</item>
     </style>
 
+    <style name="ImageView.Avatar.Dialog" parent="ImageView.Avatar">
+        <item name="android:layout_width">@dimen/profile_image_width_dialog</item>
+        <item name="android:layout_height">@dimen/profile_image_height_dialog</item>
+    </style>
+
     <style name="ImageView.Favorite" parent="ImageView">
         <item name="android:src">@drawable/ic__favorite</item>
     </style>
@@ -209,5 +214,7 @@
     <style name="PlaceHolder.PlaylistActions" parent="Container.WrapContent.Vertical">
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginTop">@dimen/margin</item>
+        <item name="android:layout_marginBottom">@dimen/margin</item>
     </style>
 </resources>

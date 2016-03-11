@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.core.IApi;
 import com.dreamdigitizers.androidsoundcloudapi.core.IApiV2;
@@ -32,6 +33,7 @@ import rx.schedulers.Schedulers;
 
 class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenterPlayback {
     private Subscription mSubscription;
+    private Subscription mSubscription2;
     private SharedPreferences mSharedPreferences;
 
     public PresenterPlayback(IViewPlayback pView) {
@@ -391,27 +393,33 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         }
                     }
                 })
-                .flatMap(new Func1<Me, Observable<List<Playlist>>>() {
+                .flatMap(new Func1<Me, Observable<Playlists>>() {
+                //.flatMap(new Func1<Me, Observable<List<Playlist>>>() {
                     @Override
-                    public Observable<List<Playlist>> call(Me pMe) {
+                    public Observable<Playlists> call(Me pMe) {
+                    //public Observable<List<Playlist>> call(Me pMe) {
                         Share.setMe(pMe);
-                        return api.userPlaylistsRx(pMe.getId());
+                        return getAllPlaylists(pMe, 0, null);
+                        //return api.userPlaylistsRx(pMe.getId());
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Playlist>>() {
+                .subscribe(new Subscriber<Playlists>() {
+                //.subscribe(new Subscriber<List<Playlist>>() {
                     @Override
                     public void onStart() {
                         PresenterPlayback.this.onStart();
                     }
 
                     @Override
-                    public void onNext(List<Playlist> pPlaylists) {
+                    public void onNext(Playlists pPlaylists) {
+                    //public void onNext(List<Playlist> pPlaylists) {
                         IViewPlayback view = PresenterPlayback.this.getView();
                         if (view != null) {
-                            view.onRxPlaylistsNext(pPlaylists);
+                            view.onRxPlaylistsNext(pPlaylists.getCollection());
+                            //view.onRxPlaylistsNext(pPlaylists);
                         }
                     }
 
@@ -425,6 +433,29 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
                         PresenterPlayback.this.onError(pError, pRetryAction);
                     }
                 });
+    }
+
+    private Observable<Playlists> getAllPlaylists(final Me pMe, final int pOffset, final Playlists pOriginalPlaylists) {
+        if (pOriginalPlaylists == null || !UtilsString.isEmpty(pOriginalPlaylists.getNextHref())) {
+            final IApi api = ApiFactory.getApiInstance();
+            return api.userPlaylistsRx(
+                    pMe.getId(),
+                    Constants.SOUNDCLOUD_PARAMETER__LINKED_PARTITIONING,
+                    Constants.SOUNDCLOUD_PARAMETER__LIMIT,
+                    pOffset)
+                    .flatMap(new Func1<Playlists, Observable<Playlists>>() {
+                        @Override
+                        public Observable<Playlists> call(Playlists pPlaylists) {
+                            if (pOriginalPlaylists != null) {
+                                pOriginalPlaylists.getCollection().addAll(pPlaylists.getCollection());
+                                pOriginalPlaylists.setNextHref(pPlaylists.getNextHref());
+                                return getAllPlaylists(pMe, pOffset + Constants.SOUNDCLOUD_PARAMETER__LIMIT, pOriginalPlaylists);
+                            }
+                            return getAllPlaylists(pMe, pOffset + Constants.SOUNDCLOUD_PARAMETER__LIMIT, pPlaylists);
+                        }
+                    });
+        }
+        return Observable.just(pOriginalPlaylists);
     }
 
     @Override
@@ -737,6 +768,10 @@ class PresenterPlayback extends PresenterRx<IViewPlayback> implements IPresenter
         if(this.mSubscription != null) {
             this.mSubscription.unsubscribe();
             this.mSubscription = null;
+        }
+        if(this.mSubscription2 != null) {
+            this.mSubscription2.unsubscribe();
+            this.mSubscription2 = null;
         }
     }
 }

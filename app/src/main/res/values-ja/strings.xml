@@ -28,6 +28,7 @@
     <string name="media_description_title__favorite">お気に入り</string>
     <string name="media_description_title__new">新しい</string>
     <string name="media_description_title__playlist">プレイリスト</string>
+    <string name="message__playlist_created">新しいプレイリストが作成されました。</string>
     <string name="message__no_data_to_load">データがもっとありません。</string>
     <string name="message__soundcloud_problem">SoundCloudのバグのため、FacebookかGoogleのアカウントでログインすることができません。この不具合で申し訳ありませんが、ご自分のSoundCloudのアカウントでログインしてください。私たちもSoundCloudがこのバグを修正することを待っております。</string>
     <string name="confirmation__logout">ログアウトしますか？</string>

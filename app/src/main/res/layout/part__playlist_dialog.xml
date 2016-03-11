@@ -11,7 +11,7 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgAvatar"
-            style="@style/ImageView.Avatar" />
+            style="@style/ImageView.Avatar.Dialog" />
 
         <TextView
             android:id="@+id/lblTitle"
