@@ -18,9 +18,18 @@ import com.dreamdigitizers.mysound.views.interfaces.IViewSplash;
 
 public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewSplash {
     private Handler mHandler;
+    private Runnable mChangeScreenRunnable;
 
     public ScreenSplash() {
         this.mHandler = new Handler();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.mChangeScreenRunnable != null) {
+            this.mHandler.removeCallbacks(this.mChangeScreenRunnable);
+        }
     }
 
     @Override
@@ -56,7 +65,7 @@ public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewS
     public void onResume() {
         super.onResume();
         final String accessToken = this.mPresenter.getAccessToken();
-        this.mHandler.postDelayed(new Runnable() {
+        this.mChangeScreenRunnable = new Runnable() {
             @Override
             public void run() {
                 if (UtilsString.isEmpty(accessToken)) {
@@ -66,7 +75,8 @@ public class ScreenSplash extends ScreenBase<IPresenterSplash> implements IViewS
                     ScreenSplash.this.goToMainActivity();
                 }
             }
-        }, Constants.SPLASH_SCREEN_TIME);
+        };
+        this.mHandler.postDelayed(this.mChangeScreenRunnable, Constants.SPLASH_SCREEN_TIME);
     }
 
     private void goToMainActivity() {
