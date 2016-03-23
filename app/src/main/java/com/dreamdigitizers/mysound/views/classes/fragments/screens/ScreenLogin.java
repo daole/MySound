@@ -9,6 +9,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.dreamdigitizers.androidbaselibrary.utilities.UtilsDialog;
+import com.dreamdigitizers.androidbaselibrary.utilities.UtilsString;
 import com.dreamdigitizers.androidbaselibrary.views.classes.fragments.screens.ScreenBase;
 import com.dreamdigitizers.androidsoundcloudapi.core.ApiFactory;
 import com.dreamdigitizers.androidsoundcloudapi.support.SoundCloudWebViewClient;
@@ -99,9 +100,13 @@ public class ScreenLogin extends ScreenBase<IPresenterLogin> implements IViewLog
 
     @Override
     public void onLoginComplete(String pAccessToken) {
-        this.mPresenter.saveAccessToken(pAccessToken);
-        Share.setAccessToken(pAccessToken);
-        this.goToMainActivity();
+        if (UtilsString.isEmpty(pAccessToken)) {
+            this.getActivity().finish();
+        } else {
+            this.mPresenter.saveAccessToken(pAccessToken);
+            Share.setAccessToken(pAccessToken);
+            this.goToMainActivity();
+        }
     }
 
     private void goToMainActivity() {
