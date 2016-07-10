@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MySound.iml" filepath="$PROJECT_DIR$/MySound.iml" />
       <module fileurl="file://$PROJECT_DIR$/../AndroidBaseLibrary/app/androidBaseLibrary.iml" filepath="$PROJECT_DIR$/../AndroidBaseLibrary/app/androidBaseLibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../AndroidSoundCloudApi/app/androidSoundCloudApi.iml" filepath="$PROJECT_DIR$/../AndroidSoundCloudApi/app/androidSoundCloudApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../AndroidSoundCloudApisClient/app/androidSoundCloudApisClient.iml" filepath="$PROJECT_DIR$/../AndroidSoundCloudApisClient/app/androidSoundCloudApisClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

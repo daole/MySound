@@ -1,5 +1,5 @@
 include ':app'
 include ':androidBaseLibrary'
 project(':androidBaseLibrary').projectDir = new File(settingsDir, '../AndroidBaseLibrary/app')
-include ':androidSoundCloudApi'
-project(':androidSoundCloudApi').projectDir = new File(settingsDir, '../androidSoundCloudApi/app')
+include ':androidSoundCloudApisClient'
+project(':androidSoundCloudApisClient').projectDir = new File(settingsDir, '../AndroidSoundCloudApisClient/app')
