@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation" >
+
     <string name="drawer_item__playlists">プレイリスト</string>
     <string name="action__fast_forward">早送り</string>
     <string name="action__pause">ポーズ</string>
@@ -46,4 +49,5 @@
     <string name="title__screen_playlists">プレイリスト</string>
     <string name="title__screen_sounds">新しい</string>
     <string name="title__screen_sounds_search">結果</string>
+
 </resources>

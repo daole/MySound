@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation" >
+
     <string name="drawer_item__playlists">Danh sách</string>
     <string name="action__fast_forward">Tua nhanh</string>
     <string name="action__pause">Tạm Ngưng</string>
@@ -46,4 +49,5 @@
     <string name="title__screen_playlists">Tất cả danh sách</string>
     <string name="title__screen_sounds">Mới</string>
     <string name="title__screen_sounds_search">Kết quả</string>
+
 </resources>
